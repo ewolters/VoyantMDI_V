@@ -1,0 +1,478 @@
+{
+ "properties": {
+  "connectionReferences": {
+   "shared_sharepointonline": {
+    "runtimeSource": "embedded",
+    "connection": {
+     "connectionReferenceLogicalName": "craf4_sharedsharepointonline_17d15"
+    },
+    "api": {
+     "name": "shared_sharepointonline"
+    }
+   },
+   "shared_office365": {
+    "runtimeSource": "embedded",
+    "connection": {
+     "connectionReferenceLogicalName": "craf4_sharedoffice365_mdi"
+    },
+    "api": {
+     "name": "shared_office365"
+    }
+   }
+  },
+  "definition": {
+   "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+    "$connections": {
+     "defaultValue": {},
+     "type": "Object"
+    },
+    "$authentication": {
+     "defaultValue": {},
+     "type": "SecureObject"
+    }
+   },
+   "triggers": {
+    "Every_morning": {
+     "type": "Recurrence",
+     "recurrence": {
+      "frequency": "Day",
+      "interval": 1,
+      "timeZone": "Central Standard Time",
+      "schedule": {
+       "hours": [
+        "6"
+       ],
+       "minutes": [
+        30
+       ]
+      }
+     }
+    }
+   },
+   "actions": {
+    "Today": {
+     "type": "Compose",
+     "runAfter": {},
+     "inputs": "@formatDateTime(convertFromUtc(utcNow(), 'Central Standard Time'), 'yyyy-MM-dd')"
+    },
+    "Yesterday": {
+     "type": "Compose",
+     "runAfter": {
+      "Today": [
+       "Succeeded"
+      ]
+     },
+     "inputs": "@formatDateTime(addDays(convertFromUtc(utcNow(), 'Central Standard Time'), -1), 'yyyy-MM-dd')"
+    },
+    "Get_settings": {
+     "runAfter": {
+      "Yesterday": [
+       "Succeeded"
+      ]
+     },
+     "type": "OpenApiConnection",
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "GetItems"
+      },
+      "parameters": {
+       "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+       "table": "1ce134d3-335f-415c-8ae0-e8cf7c0d9e16",
+       "$filter": "Title eq 'Alert_Email' or Title eq 'NB_MinMissing'"
+      },
+      "authentication": "@parameters('$authentication')"
+     }
+    },
+    "Alert_row": {
+     "type": "Query",
+     "runAfter": {
+      "Get_settings": [
+       "Succeeded"
+      ]
+     },
+     "inputs": {
+      "from": "@body('Get_settings')?['value']",
+      "where": "@equals(item()?['Title'], 'Alert_Email')"
+     }
+    },
+    "Min_row": {
+     "type": "Query",
+     "runAfter": {
+      "Alert_row": [
+       "Succeeded"
+      ]
+     },
+     "inputs": {
+      "from": "@body('Get_settings')?['value']",
+      "where": "@equals(item()?['Title'], 'NB_MinMissing')"
+     }
+    },
+    "AlertEmail": {
+     "type": "Compose",
+     "runAfter": {
+      "Min_row": [
+       "Succeeded"
+      ]
+     },
+     "inputs": "@first(body('Alert_row'))?['SettingValue']"
+    },
+    "MinMissing": {
+     "type": "Compose",
+     "runAfter": {
+      "AlertEmail": [
+       "Succeeded"
+      ]
+     },
+     "inputs": "@int(coalesce(first(body('Min_row'))?['SettingValue'], '2'))"
+    },
+    "Get_shifts": {
+     "runAfter": {
+      "MinMissing": [
+       "Succeeded"
+      ]
+     },
+     "type": "OpenApiConnection",
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "GetItems"
+      },
+      "parameters": {
+       "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+       "table": "5f5caae7-2355-467a-b3a4-f48b6d18820b",
+       "$filter": "ShiftDate ge '@{outputs('Yesterday')}T00:00:00Z' and ShiftDate lt '@{outputs('Today')}T00:00:00Z'",
+       "$top": 500
+      },
+      "authentication": "@parameters('$authentication')"
+     }
+    },
+    "Get_hours": {
+     "runAfter": {
+      "Get_shifts": [
+       "Succeeded"
+      ]
+     },
+     "type": "OpenApiConnection",
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "GetItems"
+      },
+      "parameters": {
+       "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+       "table": "afa6c071-4098-4a7f-b8a9-0277ce745c2d",
+       "$filter": "ShiftDate ge '@{outputs('Yesterday')}T00:00:00Z' and ShiftDate lt '@{outputs('Today')}T00:00:00Z'",
+       "$top": 5000
+      },
+      "authentication": "@parameters('$authentication')"
+     },
+     "runtimeConfiguration": {
+      "paginationPolicy": {
+       "minimumItemCount": 20000
+      }
+     }
+    },
+    "Incomplete": {
+     "type": "InitializeVariable",
+     "runAfter": {
+      "Get_hours": [
+       "Succeeded"
+      ]
+     },
+     "inputs": {
+      "variables": [
+       {
+        "name": "Incomplete",
+        "type": "array",
+        "value": []
+       }
+      ]
+     }
+    },
+    "Each_shift": {
+     "type": "Foreach",
+     "foreach": "@body('Get_shifts')?['value']",
+     "runtimeConfiguration": {
+      "concurrency": {
+       "repetitions": 1
+      }
+     },
+     "runAfter": {
+      "Incomplete": [
+       "Succeeded"
+      ]
+     },
+     "actions": {
+      "Expected": {
+       "type": "Compose",
+       "runAfter": {},
+       "inputs": "@div(add(int(mul(float(coalesce(items('Each_shift')?['PlannedShiftHrs'], 0)), 60)), 59), 60)"
+      },
+      "Filled": {
+       "type": "Query",
+       "runAfter": {
+        "Expected": [
+         "Succeeded"
+        ]
+       },
+       "inputs": {
+        "from": "@body('Get_hours')?['value']",
+        "where": "@and(equals(item()?['ShiftKey'], items('Each_shift')?['Title']), not(equals(item()?['CumulativeUnits'], null)))"
+       }
+      },
+      "Missing": {
+       "type": "Compose",
+       "runAfter": {
+        "Filled": [
+         "Succeeded"
+        ]
+       },
+       "inputs": "@sub(outputs('Expected'), length(body('Filled')))"
+      },
+      "Enough_missing": {
+       "type": "If",
+       "runAfter": {
+        "Missing": [
+         "Succeeded"
+        ]
+       },
+       "expression": {
+        "and": [
+         {
+          "greaterOrEquals": [
+           "@outputs('Missing')",
+           "@outputs('MinMissing')"
+          ]
+         }
+        ]
+       },
+       "actions": {
+        "Existing_action": {
+         "runAfter": {},
+         "type": "OpenApiConnection",
+         "inputs": {
+          "host": {
+           "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+           "connectionName": "shared_sharepointonline",
+           "operationId": "GetItems"
+          },
+          "parameters": {
+           "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+           "table": "803c69e8-a326-4ece-bc21-9ac6f5b4ce24",
+           "$filter": "RefKey eq 'NB-@{items('Each_shift')?['Title']}'",
+           "$top": 1
+          },
+          "authentication": "@parameters('$authentication')"
+         }
+        },
+        "Not_raised_yet": {
+         "type": "If",
+         "runAfter": {
+          "Existing_action": [
+           "Succeeded"
+          ]
+         },
+         "expression": {
+          "and": [
+           {
+            "equals": [
+             "@length(body('Existing_action')?['value'])",
+             0
+            ]
+           }
+          ]
+         },
+         "actions": {
+          "Raise_action": {
+           "runAfter": {},
+           "type": "OpenApiConnection",
+           "inputs": {
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+             "connectionName": "shared_sharepointonline",
+             "operationId": "PostItem"
+            },
+            "parameters": {
+             "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+             "table": "803c69e8-a326-4ece-bc21-9ac6f5b4ce24",
+             "item/Title": "Board not complete: @{items('Each_shift')?['Title']} (@{outputs('Missing')} of @{outputs('Expected')} hours missing)",
+             "item/Line": "@{items('Each_shift')?['Line']}",
+             "item/SQDCP/Value": "People",
+             "item/Source/Value": "HxH",
+             "item/Status/Value": "Open",
+             "item/Progress": 0,
+             "item/Problem": "Hour-by-hour board left incomplete on @{outputs('Yesterday')}. Fill the missing hours and confirm the reason at Tier 1.",
+             "item/RaisedDate": "@utcNow()",
+             "item/DueDate": "@addDays(utcNow(), 2)",
+             "item/RefKey": "NB-@{items('Each_shift')?['Title']}"
+            },
+            "authentication": "@parameters('$authentication')"
+           }
+          }
+         },
+         "else": {
+          "actions": {}
+         }
+        },
+        "Note_incomplete": {
+         "type": "AppendToArrayVariable",
+         "runAfter": {
+          "Not_raised_yet": [
+           "Succeeded"
+          ]
+         },
+         "inputs": {
+          "name": "Incomplete",
+          "value": "@{items('Each_shift')?['Title']}: @{outputs('Missing')} of @{outputs('Expected')} hours missing"
+         }
+        }
+       },
+       "else": {
+        "actions": {}
+       }
+      }
+     }
+    },
+    "Get_lines": {
+     "runAfter": {
+      "Each_shift": [
+       "Succeeded"
+      ]
+     },
+     "type": "OpenApiConnection",
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "GetItems"
+      },
+      "parameters": {
+       "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+       "table": "d0b85ec7-8373-4b66-a93b-2ad99def3859",
+       "$filter": "Active eq 1"
+      },
+      "authentication": "@parameters('$authentication')"
+     }
+    },
+    "LinesRan": {
+     "type": "Select",
+     "runAfter": {
+      "Get_lines": [
+       "Succeeded"
+      ]
+     },
+     "inputs": {
+      "from": "@body('Get_shifts')?['value']",
+      "select": "@item()?['Line']"
+     }
+    },
+    "NoBoard": {
+     "type": "Query",
+     "runAfter": {
+      "LinesRan": [
+       "Succeeded"
+      ]
+     },
+     "inputs": {
+      "from": "@body('Get_lines')?['value']",
+      "where": "@not(contains(body('LinesRan'), item()?['Title']))"
+     }
+    },
+    "NoBoardNames": {
+     "type": "Select",
+     "runAfter": {
+      "NoBoard": [
+       "Succeeded"
+      ]
+     },
+     "inputs": {
+      "from": "@body('NoBoard')",
+      "select": "@item()?['Title']"
+     }
+    },
+    "Send_digest": {
+     "runAfter": {
+      "NoBoardNames": [
+       "Succeeded"
+      ]
+     },
+     "type": "OpenApiConnection",
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+       "connectionName": "shared_office365",
+       "operationId": "SendEmailV2"
+      },
+      "parameters": {
+       "emailMessage/To": "@{outputs('AlertEmail')}",
+       "emailMessage/Subject": "MDI board check @{outputs('Yesterday')}: @{length(variables('Incomplete'))} incomplete shift(s)",
+       "emailMessage/Body": "<p><b>Shifts checked:</b> @{length(body('Get_shifts')?['value'])}</p><p><b>Incomplete (actions raised in NEWSPAPER):</b><br>@{if(empty(variables('Incomplete')), 'None', join(variables('Incomplete'), '<br>'))}</p><p><b>Active lines with no board yesterday</b> (down, or not filled in?):<br>@{if(empty(body('NoBoardNames')), 'None', join(body('NoBoardNames'), ', '))}</p>",
+       "emailMessage/Importance": "Normal"
+      },
+      "authentication": "@parameters('$authentication')"
+     }
+    },
+    "Catch": {
+     "type": "Scope",
+     "runAfter": {
+      "Send_digest": [
+       "Failed",
+       "TimedOut",
+       "Skipped"
+      ]
+     },
+     "actions": {
+      "Catch_get_alert_email": {
+       "runAfter": {},
+       "type": "OpenApiConnection",
+       "inputs": {
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connectionName": "shared_sharepointonline",
+         "operationId": "GetItems"
+        },
+        "parameters": {
+         "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+         "table": "1ce134d3-335f-415c-8ae0-e8cf7c0d9e16",
+         "$filter": "Title eq 'Alert_Email'",
+         "$top": 1
+        },
+        "authentication": "@parameters('$authentication')"
+       }
+      },
+      "Catch_send_alert": {
+       "runAfter": {
+        "Catch_get_alert_email": [
+         "Succeeded"
+        ]
+       },
+       "type": "OpenApiConnection",
+       "inputs": {
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+         "connectionName": "shared_office365",
+         "operationId": "SendEmailV2"
+        },
+        "parameters": {
+         "emailMessage/To": "@{first(body('Catch_get_alert_email')?['value'])?['SettingValue']}",
+         "emailMessage/Subject": "MDI flow FAILED: @{workflow()?['tags']?['flowDisplayName']}",
+         "emailMessage/Body": "<p>An MDI flow failed and needs a look.</p><p><b>Flow:</b> @{workflow()?['tags']?['flowDisplayName']}<br><b>Run:</b> <a href=\"https://make.powerautomate.com/environments/@{workflow()?['tags']?['environmentName']}/flows/@{workflow()?['name']}/runs/@{workflow()?['run']?['name']}\">open the run history</a></p>",
+         "emailMessage/Importance": "Normal"
+        },
+        "authentication": "@parameters('$authentication')"
+       }
+      }
+     }
+    }
+   },
+   "outputs": {}
+  }
+ },
+ "schemaVersion": "1.0.0.0"
+}

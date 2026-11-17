@@ -1,0 +1,1049 @@
+- cHdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =90
+- cBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =34
+      Color: =RGBA(255, 255, 255, 1)
+      X: =24
+      Y: =6
+      Width: =170
+      Height: =52
+- cBrandSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NEW ALBANY"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 178, 169, 1)
+      FontWeight: =FontWeight.Bold
+      X: =27
+      Y: =56
+      Width: =170
+      Height: =24
+- cTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="MDI SETTINGS"
+      Font: =Font.Georgia
+      Size: =26
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Wrap: =false
+      X: =190
+      Y: =20
+      Width: =420
+      Height: =50
+- cBadge:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varNoAdmin, "SETUP MODE: nobody is an MDI admin yet. Open PEOPLE and tick MDI ADMIN on yourself.", varCan, "EDITOR  ·  " & User().FullName, "VIEW ONLY  ·  ask an MDI admin to tick CAN EDIT SETTINGS for you")
+      Font: =Font.Arial
+      Size: =13
+      Color: =If(varNoAdmin, RGBA(210, 153, 34, 1), varCan, RGBA(176, 227, 228, 1), RGBA(177, 179, 179, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Right
+      X: =1000
+      Y: =10
+      Width: =900
+      Height: =70
+- cSubBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =0
+      Y: =90
+      Width: =1920
+      Height: =52
+- cTab0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="ESCALATION"
+      OnSelect: =Navigate(Screen1, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =12
+      Y: =96
+      Width: =304
+      Height: =40
+- cTab1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="DROPDOWN LISTS"
+      OnSelect: =Navigate(scrDrop, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =324
+      Y: =96
+      Width: =304
+      Height: =40
+- cTab2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="LINES & VALUE STREAMS"
+      OnSelect: =Navigate(scrLines, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =636
+      Y: =96
+      Width: =304
+      Height: =40
+- cTab3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="STANDARDS"
+      OnSelect: =Navigate(scrStd, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =948
+      Y: =96
+      Width: =304
+      Height: =40
+- cTab4:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="THRESHOLDS & LINKS"
+      OnSelect: =Navigate(scrCfg, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =1260
+      Y: =96
+      Width: =304
+      Height: =40
+- cTab5:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="PEOPLE"
+      OnSelect: =Navigate(scrPeople, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =1572
+      Y: =96
+      Width: =304
+      Height: =40
+- cLoad:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="↻"
+      OnSelect: |-
+        =Set(varMe, LookUp(People, Lower(Email) = Lower(User().Email)));
+        Set(varNoAdmin, CountRows(Filter(People, MDIAdmin = true)) = 0);
+        Set(varAdm, Coalesce(varMe.MDIAdmin, false) || varNoAdmin);
+        Set(varCan, Coalesce(varMe.CanEditConfig, false) || varAdm);
+        ClearCollect(colCfg, MDI_Config);
+        ClearCollect(colKM, KPI_Metrics);
+        If(IsBlank(varCMode), Set(varCMode, "S"))
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Tooltip: ="Reload from SharePoint"
+      BorderThickness: =1
+      X: =1880
+      Y: =98
+      Width: =36
+      Height: =36
+- cM0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SETTINGS & APP LINKS"
+      OnSelect: =Set(varCMode, "S")
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varCMode = "S", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 1))
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      X: =16
+      Y: =150
+      Width: =300
+      Height: =44
+- cM1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="TIER 3 METRICS"
+      OnSelect: =Set(varCMode, "M")
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varCMode = "M", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 1))
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      X: =324
+      Y: =150
+      Width: =300
+      Height: =44
+- cImp:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="IMPORT HISTORY  ▸"
+      OnSelect: =Navigate(scrImport, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      Tooltip: ="Back-fill Hour x Hour and Tier 2 history from the line data-entry workbooks"
+      X: =1604
+      Y: =150
+      Width: =300
+      Height: =44
+- cK0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="ALL"
+      OnSelect: =Set(varKind, "All")
+      Font: =Font.Arial
+      Size: =10
+      FontWeight: =FontWeight.Bold
+      Fill: =If(Coalesce(varKind, "All") = "All", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(Coalesce(varKind, "All") = "All", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      Visible: =varCMode = "S"
+      X: =650
+      Y: =152
+      Width: =132
+      Height: =40
+- cK1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="THRESHOLD"
+      OnSelect: =Set(varKind, "Threshold")
+      Font: =Font.Arial
+      Size: =10
+      FontWeight: =FontWeight.Bold
+      Fill: =If(Coalesce(varKind, "All") = "Threshold", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(Coalesce(varKind, "All") = "Threshold", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      Visible: =varCMode = "S"
+      X: =790
+      Y: =152
+      Width: =132
+      Height: =40
+- cK2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="APP LINK"
+      OnSelect: =Set(varKind, "App link")
+      Font: =Font.Arial
+      Size: =10
+      FontWeight: =FontWeight.Bold
+      Fill: =If(Coalesce(varKind, "All") = "App link", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(Coalesce(varKind, "All") = "App link", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      Visible: =varCMode = "S"
+      X: =930
+      Y: =152
+      Width: =132
+      Height: =40
+- cK3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="FLOW"
+      OnSelect: =Set(varKind, "Flow")
+      Font: =Font.Arial
+      Size: =10
+      FontWeight: =FontWeight.Bold
+      Fill: =If(Coalesce(varKind, "All") = "Flow", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(Coalesce(varKind, "All") = "Flow", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      Visible: =varCMode = "S"
+      X: =1070
+      Y: =152
+      Width: =132
+      Height: =40
+- cK4:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SITE"
+      OnSelect: =Set(varKind, "Site")
+      Font: =Font.Arial
+      Size: =10
+      FontWeight: =FontWeight.Bold
+      Fill: =If(Coalesce(varKind, "All") = "Site", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(Coalesce(varKind, "All") = "Site", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      Visible: =varCMode = "S"
+      X: =1210
+      Y: =152
+      Width: =132
+      Height: =40
+- cK5:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="OTHER"
+      OnSelect: =Set(varKind, "Other")
+      Font: =Font.Arial
+      Size: =10
+      FontWeight: =FontWeight.Bold
+      Fill: =If(Coalesce(varKind, "All") = "Other", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(Coalesce(varKind, "All") = "Other", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      Visible: =varCMode = "S"
+      X: =1350
+      Y: =152
+      Width: =132
+      Height: =40
+- ch0:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SETTING"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "S"
+      X: =16
+      Y: =204
+      Width: =300
+      Height: =26
+- ch1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="VALUE"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "S"
+      X: =326
+      Y: =204
+      Width: =380
+      Height: =26
+- ch2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHAT IT DOES"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "S"
+      X: =716
+      Y: =204
+      Width: =390
+      Height: =26
+- galC:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Visible: =varCMode = "S"
+      Items: =SortByColumns(Filter(colCfg, (Coalesce(varKind, "All") = "All" || Kind.Value = varKind) && Title <> "Setup_Code"), "Title", SortOrder.Ascending)
+      TemplateSize: =50
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      OnSelect: =Set(varC, ThisItem)
+      TemplateFill: =If(ThisItem.ID = varC.ID, RGBA(229, 243, 243, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =RGBA(217, 217, 214, 1)
+      BorderThickness: =1
+      X: =16
+      Y: =232
+      Width: =1100
+      Height: =838
+    Children:
+      - gcN:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Title
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =0
+            Y: =0
+            Width: =300
+            Height: =44
+      - gcV:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Coalesce(ThisItem.SettingValue, "(blank)")
+            Font: =Font.Arial
+            Size: =11
+            Color: =If(IsBlank(ThisItem.SettingValue), RGBA(210, 153, 34, 1), RGBA(7, 39, 45, 1))
+            X: =310
+            Y: =0
+            Width: =380
+            Height: =44
+      - gcD:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Coalesce(ThisItem.Notes, "")
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            X: =700
+            Y: =0
+            Width: =390
+            Height: =44
+- cFormBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varCMode = "S"
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =1132
+      Y: =204
+      Width: =772
+      Height: =866
+- cFormT:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varC.ID), "PICK A SETTING", varC.Title)
+      Font: =Font.Arial
+      Size: =16
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "S"
+      X: =1148
+      Y: =212
+      Width: =740
+      Height: =36
+- cFormN:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Coalesce(varC.Notes, "")
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varCMode = "S"
+      X: =1148
+      Y: =252
+      Width: =740
+      Height: =120
+- cValC:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varCMode = "S"
+      Text: ="VALUE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =380
+      Width: =200
+      Height: =20
+- cVal:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(varC.SettingValue, "")
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan && !IsBlank(varC.ID), DisplayMode.Edit, DisplayMode.Disabled)
+      Mode: =TextMode.MultiLine
+      Visible: =varCMode = "S"
+      X: =1148
+      Y: =402
+      Width: =740
+      Height: =150
+- cHint:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Switch(varC.Kind.Value, "App link", "Paste the app's web link (Power Apps → app → Details → Web link). Add &hidenavbar=true for TVs.", "Threshold", "A number. Boards read it on their next REFRESH.", "Flow", "Leave as installed unless your MDI contact says otherwise.", "")
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 72, 81, 1)
+      Visible: =varCMode = "S"
+      X: =1148
+      Y: =560
+      Width: =740
+      Height: =50
+- cSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SAVE SETTING"
+      OnSelect: |-
+        =IfError(Patch(MDI_Config, LookUp(MDI_Config, ID = varC.ID), {SettingValue: Trim(cVal.Text)}),
+         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+         Notify("Setting saved", NotificationType.Success); Select(cLoad))
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(varCan && !IsBlank(varC.ID), DisplayMode.Edit, DisplayMode.Disabled)
+      Visible: =varCMode = "S"
+      X: =1148
+      Y: =620
+      Width: =240
+      Height: =50
+- cOpen:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="OPEN LINK"
+      OnSelect: =Launch(cVal.Text)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      Visible: =varCMode = "S" && StartsWith(cVal.Text, "http")
+      X: =1404
+      Y: =620
+      Width: =200
+      Height: =50
+- cmh0:
+    Control: Label@2.5.1
+    Properties:
+      Text: =""
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "M"
+      X: =16
+      Y: =204
+      Width: =44
+      Height: =26
+- cmh1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="METRIC"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "M"
+      X: =70
+      Y: =204
+      Width: =380
+      Height: =26
+- cmh2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="BETTER"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "M"
+      X: =460
+      Y: =204
+      Width: =100
+      Height: =26
+- cmh3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="GREEN"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "M"
+      X: =570
+      Y: =204
+      Width: =110
+      Height: =26
+- cmh4:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="AMBER"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "M"
+      X: =690
+      Y: =204
+      Width: =110
+      Height: =26
+- cmh5:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ORDER"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "M"
+      X: =810
+      Y: =204
+      Width: =90
+      Height: =26
+- cmh6:
+    Control: Label@2.5.1
+    Properties:
+      Text: =""
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "M"
+      X: =910
+      Y: =204
+      Width: =100
+      Height: =26
+- galM:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Visible: =varCMode = "M"
+      Items: =SortByColumns(AddColumns(colKM, LO, Find(Letter.Value, "SQDCP")), "LO", SortOrder.Ascending, "DisplayOrder", SortOrder.Ascending)
+      TemplateSize: =48
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      OnSelect: =Set(varM, ThisItem); Set(varMA, Coalesce(ThisItem.Active, false))
+      TemplateFill: =If(ThisItem.ID = varM.ID, RGBA(229, 243, 243, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =RGBA(217, 217, 214, 1)
+      BorderThickness: =1
+      X: =16
+      Y: =232
+      Width: =1100
+      Height: =838
+    Children:
+      - gmL:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Letter.Value
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =Switch(ThisItem.Letter.Value, "S", RGBA(207, 34, 46, 1), "Q", RGBA(130, 80, 223, 1), "D", RGBA(9, 105, 218, 1), "C", RGBA(26, 127, 55, 1), RGBA(191, 135, 0, 1))
+            X: =0
+            Y: =6
+            Width: =44
+            Height: =36
+      - gmN:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.MetricName & "  (" & ThisItem.Unit & ")"
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =54
+            Y: =0
+            Width: =380
+            Height: =44
+      - gmB:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Better.Value
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(117, 120, 123, 1)
+            X: =444
+            Y: =0
+            Width: =100
+            Height: =44
+      - gmG:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.Green)
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(46, 160, 67, 1)
+            FontWeight: =FontWeight.Bold
+            X: =554
+            Y: =0
+            Width: =110
+            Height: =44
+      - gmA:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.Amber)
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(210, 153, 34, 1)
+            FontWeight: =FontWeight.Bold
+            X: =674
+            Y: =0
+            Width: =110
+            Height: =44
+      - gmO:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.DisplayOrder)
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(117, 120, 123, 1)
+            X: =794
+            Y: =0
+            Width: =90
+            Height: =44
+      - gmAc:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(ThisItem.Active, "", "off")
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(207, 34, 46, 1)
+            X: =894
+            Y: =0
+            Width: =100
+            Height: =44
+- cmFormBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varCMode = "M"
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =1132
+      Y: =204
+      Width: =772
+      Height: =866
+- cmFormT:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varM.ID), "PICK A METRIC", varM.Letter.Value & "  ·  " & varM.MetricName)
+      Font: =Font.Arial
+      Size: =16
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "M"
+      X: =1148
+      Y: =212
+      Width: =740
+      Height: =36
+- cmNotes:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Coalesce(varM.Notes, "")
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varCMode = "M"
+      X: =1148
+      Y: =252
+      Width: =740
+      Height: =80
+- cmNameC:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varCMode = "M"
+      Text: ="NAME ON THE BOARD"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =340
+      Width: =440
+      Height: =20
+- cmName:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(varM.MetricName, "")
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan && !IsBlank(varM.ID), DisplayMode.Edit, DisplayMode.Disabled)
+      Visible: =varCMode = "M"
+      X: =1148
+      Y: =362
+      Width: =440
+      Height: =44
+- cmShortC:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varCMode = "M"
+      Text: ="SHORT LABEL"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1604
+      Y: =340
+      Width: =270
+      Height: =20
+- cmShort:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(varM.Short, "")
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan && !IsBlank(varM.ID), DisplayMode.Edit, DisplayMode.Disabled)
+      Visible: =varCMode = "M"
+      X: =1604
+      Y: =362
+      Width: =270
+      Height: =44
+- cmBC:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varCMode = "M"
+      Text: ="BETTER WHEN"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =420
+      Width: =200
+      Height: =20
+- cmB:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["Higher", "Lower"]
+      Default: =Coalesce(varM.Better.Value, "Higher")
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =varCMode = "M"
+      DisplayMode: =If(varCan && !IsBlank(varM.ID), DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1148
+      Y: =442
+      Width: =200
+      Height: =44
+- cmGC:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varCMode = "M"
+      Text: ="GREEN AT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1364
+      Y: =420
+      Width: =160
+      Height: =20
+- cmG:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varM.Green), "", Text(varM.Green))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan && !IsBlank(varM.ID), DisplayMode.Edit, DisplayMode.Disabled)
+      Visible: =varCMode = "M"
+      X: =1364
+      Y: =442
+      Width: =160
+      Height: =44
+- cmAC:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varCMode = "M"
+      Text: ="AMBER AT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1540
+      Y: =420
+      Width: =160
+      Height: =20
+- cmA:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varM.Amber), "", Text(varM.Amber))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan && !IsBlank(varM.ID), DisplayMode.Edit, DisplayMode.Disabled)
+      Visible: =varCMode = "M"
+      X: =1540
+      Y: =442
+      Width: =160
+      Height: =44
+- cmOC:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varCMode = "M"
+      Text: ="ORDER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1716
+      Y: =420
+      Width: =160
+      Height: =20
+- cmO:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varM.DisplayOrder), "", Text(varM.DisplayOrder))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan && !IsBlank(varM.ID), DisplayMode.Edit, DisplayMode.Disabled)
+      Visible: =varCMode = "M"
+      X: =1716
+      Y: =442
+      Width: =160
+      Height: =44
+- cmRule:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(cmB.Selected.Value = "Higher", "Green when the value is " & cmG.Text & " or more; amber from " & cmA.Text & "; red below that.", "Green when the value is " & cmG.Text & " or less; amber up to " & cmA.Text & "; red above that.")
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varCMode = "M"
+      X: =1148
+      Y: =496
+      Width: =740
+      Height: =40
+- cmAct:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varMA, "✓  SHOWN ON TIER 3", "HIDDEN ON TIER 3")
+      OnSelect: =Set(varMA, !varMA)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varMA, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varMA, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      Visible: =varCMode = "M"
+      DisplayMode: =If(varCan && !IsBlank(varM.ID), DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1148
+      Y: =548
+      Width: =280
+      Height: =40
+- cmSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SAVE METRIC"
+      OnSelect: |-
+        =If(!IsNumeric(cmG.Text) || !IsNumeric(cmA.Text), Notify("Green and amber must be numbers.", NotificationType.Warning),
+        IfError(Patch(KPI_Metrics, LookUp(KPI_Metrics, ID = varM.ID), {MetricName: cmName.Text, Short: cmShort.Text, Better: {Value: cmB.Selected.Value}, Green: Value(cmG.Text), Amber: Value(cmA.Text), DisplayOrder: If(IsNumeric(cmO.Text), Value(cmO.Text), Blank()), Active: varMA}),
+         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+         Notify("Metric saved", NotificationType.Success); Select(cLoad)))
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varCMode = "M"
+      DisplayMode: =If(varCan && !IsBlank(varM.ID), DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1148
+      Y: =606
+      Width: =240
+      Height: =50
+- cmNote:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Tier 3 calculates each metric; here you only set targets, order and whether it shows. A letter tile shows its worst metric."
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varCMode = "M"
+      X: =1148
+      Y: =670
+      Width: =740
+      Height: =50

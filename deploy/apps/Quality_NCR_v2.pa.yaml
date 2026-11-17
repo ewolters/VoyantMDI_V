@@ -1,0 +1,2603 @@
+- nHdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =90
+- nBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =34
+      Color: =RGBA(255, 255, 255, 1)
+      X: =24
+      Y: =6
+      Width: =170
+      Height: =52
+- nBrandSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NEW ALBANY"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 178, 169, 1)
+      FontWeight: =FontWeight.Bold
+      X: =27
+      Y: =56
+      Width: =170
+      Height: =24
+- nTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="QUALITY  ·  NCR"
+      Font: =Font.Georgia
+      Size: =24
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =190
+      Y: =20
+      Width: =420
+      Height: =50
+- nTab0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="REWORK"
+      OnSelect: =Navigate(Screen1, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =640
+      Y: =24
+      Width: =160
+      Height: =44
+- nTab1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="NCR LOG"
+      OnSelect: =Navigate(scrNCR, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 178, 169, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =808
+      Y: =24
+      Width: =160
+      Height: =44
+- nUser:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="Logged in: " & User().FullName
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(177, 179, 179, 1)
+      Align: =Align.Right
+      X: =1500
+      Y: =20
+      Width: =400
+      Height: =50
+- nLoad:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =Set(varNc0, DateAdd(Today(), -365, TimeUnit.Days));
+        IfError(ClearCollect(colNcr, Filter(NCR, RaisedAt >= varNc0)), Notify("Could not load NCR: " & FirstError.Message, NotificationType.Error), true);
+        IfError(ClearCollect(colNcDef, Sort(Filter(Lookups, Category.Value = "NCR defect" && Active = true), SortOrder)), Notify("Could not load NCR defects from Lookups", NotificationType.Warning), true);
+        Set(varNcDue, Coalesce(Value(LookUp(MDI_Config, Title = "NCR_DueDays").SettingValue), 30));
+        Set(varNcNewsLink, LookUp(MDI_Config, Title = "App_Newspaper").SettingValue);
+        If(!IsBlank(varNc), Set(varNc, LookUp(colNcr, ID = varNc.ID)));
+        If(IsBlank(varNcStep), Set(varNcStep, 1));
+        Set(varNcLoaded, Now())
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =0
+      Y: =1079
+      Width: =1
+      Height: =1
+- nSide:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =If(IsBlank(varNc), Clear(colNcPh); Clear(colNcNews),
+         ClearCollect(colNcPh, Filter(TS_Photos, RefID = varNc.ID && Module.Value = "NCR"));
+         ClearCollect(colNcNews, Filter(Newspaper, RefKey = varNc.Title)))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =1
+      Y: =1079
+      Width: =1
+      Height: =1
+- nListBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(248, 249, 249, 1)
+      X: =12
+      Y: =98
+      Width: =640
+      Height: =974
+- nListT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NCR LOG"
+      Font: =Font.Georgia
+      Size: =16
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =28
+      Y: =104
+      Width: =300
+      Height: =34
+- nBtnNew:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="+  NEW NCR"
+      OnSelect: =Set(varNc, Blank()); Set(varNcNew, true); Set(varNcStep, 1); Clear(colNcPh); Clear(colNcNews); Select(nReset)
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(207, 34, 46, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =456
+      Y: =102
+      Width: =180
+      Height: =44
+      Tooltip: ="Raise a new nonconformance report."
+- nF0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="OPEN"
+      OnSelect: =Set(varNcF, "open")
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(Coalesce(varNcF, "open") = "open", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(Coalesce(varNcF, "open") = "open", RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =28
+      Y: =152
+      Width: =102
+      Height: =38
+- nF1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="ALL"
+      OnSelect: =Set(varNcF, "all")
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(Coalesce(varNcF, "open") = "all", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(Coalesce(varNcF, "open") = "all", RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =136
+      Y: =152
+      Width: =102
+      Height: =38
+- nF2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="CLOSED"
+      OnSelect: =Set(varNcF, "closed")
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(Coalesce(varNcF, "open") = "closed", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(Coalesce(varNcF, "open") = "closed", RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =244
+      Y: =152
+      Width: =102
+      Height: =38
+- nDdFLine:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "All lines"})}, {t: Distinct(PLAYBOOK, Line)}), t)
+      Default: ="All lines"
+      Font: =Font.Arial
+      Size: =12
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =358
+      Y: =152
+      Width: =130
+      Height: =38
+- nTxtFind:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="search"
+      Font: =Font.Arial
+      Size: =12
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =496
+      Y: =152
+      Width: =140
+      Height: =38
+      Tooltip: |-
+        ="Search NCR #, job, lot, product, defect, customer or supplier."
+- nkOpen:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(CountRows(Filter(colNcr, !(Status.Value in ["Closed", "Void"]))))
+      Font: =Font.Arial
+      Size: =24
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(255, 255, 255, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =4
+      X: =28
+      Y: =198
+      Width: =146
+      Height: =60
+- nkOpenC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OPEN"
+      Font: =Font.Arial
+      Size: =8
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =28
+      Y: =200
+      Width: =146
+      Height: =18
+- nkOver:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(CountRows(Filter(Filter(colNcr, !(Status.Value in ["Closed", "Void"])), !IsBlank(DueDate) && DueDate < Today())))
+      Font: =Font.Arial
+      Size: =24
+      Color: =RGBA(207, 34, 46, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(255, 255, 255, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =4
+      X: =182
+      Y: =198
+      Width: =146
+      Height: =60
+- nkOverC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OVERDUE"
+      Font: =Font.Arial
+      Size: =8
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =182
+      Y: =200
+      Width: =146
+      Height: =18
+- nkCrit:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(CountRows(Filter(Filter(colNcr, !(Status.Value in ["Closed", "Void"])), Severity.Value in ["Critical", "Major"])))
+      Font: =Font.Arial
+      Size: =24
+      Color: =RGBA(207, 34, 46, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(255, 255, 255, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =4
+      X: =336
+      Y: =198
+      Width: =146
+      Height: =60
+- nkCritC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CRITICAL / MAJOR OPEN"
+      Font: =Font.Arial
+      Size: =8
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =336
+      Y: =200
+      Width: =146
+      Height: =18
+- nkM:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(CountRows(Filter(colNcr, RaisedAt >= Date(Year(Today()), Month(Today()), 1) && Status.Value <> "Void")))
+      Font: =Font.Arial
+      Size: =24
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(255, 255, 255, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =4
+      X: =490
+      Y: =198
+      Width: =146
+      Height: =60
+- nkMC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="RAISED THIS MONTH"
+      Font: =Font.Arial
+      Size: =8
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =490
+      Y: =200
+      Width: =146
+      Height: =18
+- galNcr:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =SortByColumns(Filter(colNcr,
+          Switch(Coalesce(varNcF, "open"), "open", !(Status.Value in ["Closed", "Void"]), "closed", Status.Value = "Closed", true),
+          nDdFLine.Selected.Value = "All lines" || Line = nDdFLine.Selected.Value,
+          IsBlank(nTxtFind.Text) || nTxtFind.Text in (Title & " " & Job & " " & Lot & " " & ProductForm & " " & DefectCategory & " " & Party & " " & Owner)),
+         "RaisedAt", SortOrder.Descending)
+      TemplateSize: =96
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      X: =20
+      Y: =268
+      Width: =624
+      Height: =798
+    Children:
+      - gNcSel:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =If(!IsBlank(varNc) && varNc.ID = ThisItem.ID, RGBA(176, 227, 228, 1), RGBA(255, 255, 255, 1))
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =90
+      - gNcBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =Switch(ThisItem.Status.Value, "Open", RGBA(207, 34, 46, 1), "Contained", RGBA(191, 135, 0, 1), "Dispositioned", RGBA(130, 80, 223, 1), "CA in progress", RGBA(9, 105, 218, 1), "Closed", RGBA(46, 160, 67, 1), RGBA(117, 120, 123, 1))
+            X: =0
+            Y: =0
+            Width: =6
+            Height: =90
+      - gNcNo:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Coalesce(ThisItem.Title, "NCR #" & ThisItem.ID)
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =14
+            Y: =4
+            Width: =200
+            Height: =30
+      - gNcSt:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Status.Value
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =Switch(ThisItem.Status.Value, "Open", RGBA(207, 34, 46, 1), "Contained", RGBA(191, 135, 0, 1), "Dispositioned", RGBA(130, 80, 223, 1), "CA in progress", RGBA(9, 105, 218, 1), "Closed", RGBA(46, 160, 67, 1), RGBA(117, 120, 123, 1))
+            X: =214
+            Y: =8
+            Width: =130
+            Height: =24
+      - gNcSev:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Upper(ThisItem.Severity.Value)
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =Switch(ThisItem.Severity.Value, "Critical", RGBA(130, 7, 30, 1), "Major", RGBA(207, 34, 46, 1), RGBA(191, 135, 0, 1))
+            X: =352
+            Y: =8
+            Width: =90
+            Height: =24
+      - gNcAge:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(ThisItem.Status.Value in ["Closed", "Void"], "closed " & Text(ThisItem.ClosedAt, "m/d"),
+               !IsBlank(ThisItem.DueDate) && ThisItem.DueDate < Today(), "OVERDUE " & DateDiff(ThisItem.DueDate, Today()) & "d",
+               DateDiff(ThisItem.RaisedAt, Now(), TimeUnit.Days) & "d open")
+            Font: =Font.Arial
+            Size: =11
+            Color: =If(!(ThisItem.Status.Value in ["Closed", "Void"]) && !IsBlank(ThisItem.DueDate) && ThisItem.DueDate < Today(), RGBA(207, 34, 46, 1), RGBA(117, 120, 123, 1))
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Right
+            X: =446
+            Y: =4
+            Width: =164
+            Height: =30
+      - gNcWhat:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(Coalesce(ThisItem.NCType.Value, "Product") <> "Product", Upper(ThisItem.NCType.Value) & If(IsBlank(ThisItem.Clause), "", "  ·  ISO " & ThisItem.Clause) & If(IsBlank(ThisItem.AuditRef), "", "  ·  " & ThisItem.AuditRef) & "  ·  ", "") & Coalesce(ThisItem.DefectCategory, "—") & If(Coalesce(ThisItem.QtyAffected, 0) > 0, "  ·  " & Text(ThisItem.QtyAffected, "#,##0") & " " & ThisItem.Unit.Value, "") & "  ·  " & ThisItem.Source.Value
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            Wrap: =false
+            X: =14
+            Y: =34
+            Width: =600
+            Height: =26
+      - gNcWhere:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="Line " & ThisItem.Line & If(IsBlank(ThisItem.ProductForm), "", "  ·  " & ThisItem.ProductForm) & If(IsBlank(ThisItem.Job), "", "  ·  job " & ThisItem.Job) & If(IsBlank(ThisItem.Lot), "", "  ·  lot " & ThisItem.Lot) & "  ·  " & Coalesce(ThisItem.Owner, "no owner")
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(117, 120, 123, 1)
+            Wrap: =false
+            X: =14
+            Y: =60
+            Width: =600
+            Height: =24
+      - gNcTap:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =""
+            OnSelect: =Set(varNcNew, false); Set(varNc, ThisItem); Set(varNcStep, Switch(ThisItem.Status.Value, "Open", 2, "Contained", 3, "Dispositioned", 4, "CA in progress", 5, 5)); Select(nReset); Select(nSide)
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 178, 169, 0.08)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(0, 178, 169, 0.15)
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =90
+- nListE:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varNcLoaded), "Loading…", "No NCRs match.")
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(177, 179, 179, 1)
+      Visible: |-
+        =CountRows(SortByColumns(Filter(colNcr,
+          Switch(Coalesce(varNcF, "open"), "open", !(Status.Value in ["Closed", "Void"]), "closed", Status.Value = "Closed", true),
+          nDdFLine.Selected.Value = "All lines" || Line = nDdFLine.Selected.Value,
+          IsBlank(nTxtFind.Text) || nTxtFind.Text in (Title & " " & Job & " " & Lot & " " & ProductForm & " " & DefectCategory & " " & Party & " " & Owner)),
+         "RaisedAt", SortOrder.Descending)) = 0
+      X: =28
+      Y: =290
+      Width: =608
+      Height: =40
+- nRecBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =664
+      Y: =98
+      Width: =1244
+      Height: =974
+- nEmpty:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Select an NCR on the left, or press + NEW NCR."
+      Font: =Font.Arial
+      Size: =18
+      Color: =RGBA(177, 179, 179, 1)
+      Align: =Align.Center
+      Visible: =!(varNcNew || !IsBlank(varNc))
+      X: =664
+      Y: =480
+      Width: =1244
+      Height: =60
+- nRecNo:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varNcNew, "NEW NCR", Coalesce(varNc.Title, "NCR #" & varNc.ID))
+      Font: =Font.Georgia
+      Size: =22
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc))
+      X: =680
+      Y: =104
+      Width: =330
+      Height: =40
+- nRecSt:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(varNcNew, "not saved yet", varNc.Status.Value)
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Visible: =(varNcNew || !IsBlank(varNc))
+      Fill: =If(varNcNew, RGBA(117, 120, 123, 1), Switch(varNc.Status.Value, "Open", RGBA(207, 34, 46, 1), "Contained", RGBA(191, 135, 0, 1), "Dispositioned", RGBA(130, 80, 223, 1), "CA in progress", RGBA(9, 105, 218, 1), "Closed", RGBA(46, 160, 67, 1), RGBA(117, 120, 123, 1)))
+      X: =1014
+      Y: =110
+      Width: =160
+      Height: =30
+- nStamp:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varNcNew || IsBlank(varNc), "Every stage you save is stamped with your name and the time (ISO 9001 8.7.2 / 10.2.2 evidence).",
+         "Raised " & Text(varNc.RaisedAt, "m/d h:mm AM/PM") & " by " & varNc.RaisedBy &
+         If(IsBlank(varNc.ContainedAt), "", "   ·   contained " & Text(varNc.ContainedAt, "m/d") & " by " & varNc.ContainedBy) &
+         If(IsBlank(varNc.DispositionAt), "", "   ·   disposition " & Text(varNc.DispositionAt, "m/d") & " by " & varNc.DispositionBy) &
+         If(IsBlank(varNc.CAAt), "", "   ·   CA " & Text(varNc.CAAt, "m/d") & " by " & varNc.CABy) &
+         If(IsBlank(varNc.ClosedAt), "", "   ·   closed " & Text(varNc.ClosedAt, "m/d") & " by " & varNc.ClosedBy))
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc))
+      X: =1184
+      Y: =100
+      Width: =708
+      Height: =48
+- nStg1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If((!varNcNew && !IsBlank(varNc) && true), "✓  ", "") & "1  IDENTIFY"
+      OnSelect: =If(varNcNew && 1 > 1, Notify("Save the NCR first (stage 1).", NotificationType.Warning), Set(varNcStep, 1))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varNcStep = 1, RGBA(0, 178, 169, 1), (!varNcNew && !IsBlank(varNc) && true), RGBA(46, 160, 67, 1), RGBA(217, 217, 214, 1))
+      Color: =If(varNcStep = 1, RGBA(7, 39, 45, 1), (!varNcNew && !IsBlank(varNc) && true), RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc))
+      Tooltip: |-
+        ="What, where, how many. Traceability: line, date, product, job, lot (ISO 8.5.2 / 8.7.2a)."
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =680
+      Y: =152
+      Width: =237
+      Height: =44
+- nStg2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If((!varNcNew && !IsBlank(varNc) && !IsBlank(varNc.ContainedAt)), "✓  ", "") & "2  CONTAIN"
+      OnSelect: =If(varNcNew && 2 > 1, Notify("Save the NCR first (stage 1).", NotificationType.Warning), Set(varNcStep, 2))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varNcStep = 2, RGBA(0, 178, 169, 1), (!varNcNew && !IsBlank(varNc) && !IsBlank(varNc.ContainedAt)), RGBA(46, 160, 67, 1), RGBA(217, 217, 214, 1))
+      Color: =If(varNcStep = 2, RGBA(7, 39, 45, 1), (!varNcNew && !IsBlank(varNc) && !IsBlank(varNc.ContainedAt)), RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc))
+      Tooltip: |-
+        ="Stop it going further: hold, segregate, tag, sort (ISO 8.7.1b)."
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =923
+      Y: =152
+      Width: =237
+      Height: =44
+- nStg3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If((!varNcNew && !IsBlank(varNc) && !IsBlank(varNc.DispositionAt)), "✓  ", "") & "3  DISPOSITION"
+      OnSelect: =If(varNcNew && 3 > 1, Notify("Save the NCR first (stage 1).", NotificationType.Warning), Set(varNcStep, 3))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varNcStep = 3, RGBA(0, 178, 169, 1), (!varNcNew && !IsBlank(varNc) && !IsBlank(varNc.DispositionAt)), RGBA(46, 160, 67, 1), RGBA(217, 217, 214, 1))
+      Color: =If(varNcStep = 3, RGBA(7, 39, 45, 1), (!varNcNew && !IsBlank(varNc) && !IsBlank(varNc.DispositionAt)), RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc))
+      Tooltip: ="Decide what happens to the product, who authorized it, concessions, and re-verify after rework (ISO 8.7.1, 8.7.2)."
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1166
+      Y: =152
+      Width: =237
+      Height: =44
+- nStg4:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If((!varNcNew && !IsBlank(varNc) && (!IsBlank(varNc.CAAt) || !varNc.CARequired)), "✓  ", "") & "4  CORRECTIVE ACTION"
+      OnSelect: =If(varNcNew && 4 > 1, Notify("Save the NCR first (stage 1).", NotificationType.Warning), Set(varNcStep, 4))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varNcStep = 4, RGBA(0, 178, 169, 1), (!varNcNew && !IsBlank(varNc) && (!IsBlank(varNc.CAAt) || !varNc.CARequired)), RGBA(46, 160, 67, 1), RGBA(217, 217, 214, 1))
+      Color: =If(varNcStep = 4, RGBA(7, 39, 45, 1), (!varNcNew && !IsBlank(varNc) && (!IsBlank(varNc.CAAt) || !varNc.CARequired)), RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc))
+      Tooltip: ="Why did it happen, could it happen elsewhere, and what will we change (ISO 10.2.1b-c)."
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1409
+      Y: =152
+      Width: =237
+      Height: =44
+- nStg5:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If((!varNcNew && !IsBlank(varNc) && varNc.Status.Value = "Closed"), "✓  ", "") & "5  VERIFY & CLOSE"
+      OnSelect: =If(varNcNew && 5 > 1, Notify("Save the NCR first (stage 1).", NotificationType.Warning), Set(varNcStep, 5))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varNcStep = 5, RGBA(0, 178, 169, 1), (!varNcNew && !IsBlank(varNc) && varNc.Status.Value = "Closed"), RGBA(46, 160, 67, 1), RGBA(217, 217, 214, 1))
+      Color: =If(varNcStep = 5, RGBA(7, 39, 45, 1), (!varNcNew && !IsBlank(varNc) && varNc.Status.Value = "Closed"), RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc))
+      Tooltip: ="Did the fix work? Update risks and the QMS, then close (ISO 10.2.1d-f)."
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1652
+      Y: =152
+      Width: =237
+      Height: =44
+- nStgHelp:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Switch(varNcStep, 1, "What, where, how many. Traceability: line, date, product, job, lot (ISO 8.5.2 / 8.7.2a).", 2, "Stop it going further: hold, segregate, tag, sort (ISO 8.7.1b).", 3, "Decide what happens to the product, who authorized it, concessions, and re-verify after rework (ISO 8.7.1, 8.7.2).", 4, "Why did it happen, could it happen elsewhere, and what will we change (ISO 10.2.1b-c).", 5, "Did the fix work? Update risks and the QMS, then close (ISO 10.2.1d-f).")
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc))
+      X: =680
+      Y: =198
+      Width: =1212
+      Height: =24
+- n1cSrc:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="FOUND AT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =680
+      Y: =230
+      Width: =230
+      Height: =20
+- n1Src:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["In-process", "Final inspection", "Customer complaint", "Supplier / incoming", "Audit"]
+      Default: =If(varNcNew || IsBlank(varNc), "In-process", varNc.Source.Value)
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =680
+      Y: =252
+      Width: =230
+      Height: =48
+      Tooltip: ="Where the nonconformity was found."
+- n1cSev:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SEVERITY"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =920
+      Y: =230
+      Width: =150
+      Height: =20
+- n1Sev:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["Minor", "Major", "Critical"]
+      Default: =If(varNcNew || IsBlank(varNc), "Minor", varNc.Severity.Value)
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Tooltip: |-
+        ="Minor: no customer/safety impact. Major: product would reach customer or big quantity. Critical: safety, regulatory or customer-reported."
+      X: =920
+      Y: =252
+      Width: =150
+      Height: =48
+- n1cLine:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =1080
+      Y: =230
+      Width: =120
+      Height: =20
+- n1Line:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =Distinct(PLAYBOOK, Line)
+      Default: =If(varNcNew || IsBlank(varNc), "209", varNc.Line)
+      Font: =Font.Arial
+      Size: =16
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =1080
+      Y: =252
+      Width: =120
+      Height: =48
+      Tooltip: ="Line that made the product."
+- n1cDate:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PRODUCTION DATE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =1210
+      Y: =230
+      Width: =180
+      Height: =20
+- n1Date:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =ForAll(Sequence(60, 0, -1), With({d: DateAdd(Today(), Value, TimeUnit.Days)}, {Value: Text(d, "ddd m/d/yy"), D: d}))
+      Default: =If(varNcNew || IsBlank(varNc) || IsBlank(varNc.ShiftDate), Text(Today(), "ddd m/d/yy"), Text(varNc.ShiftDate, "ddd m/d/yy"))
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =1210
+      Y: =252
+      Width: =180
+      Height: =48
+      Tooltip: ="Date the product was made."
+- n1cSh:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SHIFT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =1400
+      Y: =230
+      Width: =90
+      Height: =20
+- n1Shift:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["1", "2", "3"]
+      Default: =If(varNcNew || IsBlank(varNc), "1", Text(varNc.Shift))
+      Font: =Font.Arial
+      Size: =16
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =1400
+      Y: =252
+      Width: =90
+      Height: =48
+- n1cOwn:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NCR OWNER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =1500
+      Y: =230
+      Width: =392
+      Height: =20
+- n1Own:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varNcNew || IsBlank(varNc), User().FullName, varNc.Owner)
+      HintText: ="who drives it to closure"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =1500
+      Y: =252
+      Width: =392
+      Height: =48
+- n1cProd:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PRODUCT  (SIZE | FORM)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =680
+      Y: =316
+      Width: =420
+      Height: =20
+- n1Prod:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "(not product-specific)", Size: "", Form: ""})},
+         {t: ForAll(Filter(PLAYBOOK, Line = n1Line.Selected.Value), {Value: Size & " | " & Form, Size: Size, Form: Form})}), t)
+      Default: =If(varNcNew || IsBlank(varNc) || IsBlank(varNc.Size), "(not product-specific)", varNc.Size & " | " & varNc.Form)
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =680
+      Y: =338
+      Width: =420
+      Height: =48
+- n1cJob:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="JOB #"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =1110
+      Y: =316
+      Width: =160
+      Height: =20
+- n1Job:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varNcNew || IsBlank(varNc), "", varNc.Job)
+      HintText: ="job"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Center
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =1110
+      Y: =338
+      Width: =160
+      Height: =48
+      Tooltip: ="Job number (traceability)."
+- n1cLot:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LOT / BATCH / CODE DATE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =1280
+      Y: =316
+      Width: =220
+      Height: =20
+- n1Lot:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varNcNew || IsBlank(varNc), "", varNc.Lot)
+      HintText: ="lot or code date"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Center
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =1280
+      Y: =338
+      Width: =220
+      Height: =48
+      Tooltip: ="Lot, batch or code date (traceability)."
+- n1cParty:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CUSTOMER / SUPPLIER  (IF ANY)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =1510
+      Y: =316
+      Width: =382
+      Height: =20
+- n1Party:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varNcNew || IsBlank(varNc), "", varNc.Party)
+      HintText: ="customer or supplier name"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =1510
+      Y: =338
+      Width: =382
+      Height: =48
+- n1cDef:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DEFECT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =680
+      Y: =402
+      Width: =330
+      Height: =20
+- n1Def:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "(pick a defect)"})}, {t: ForAll(colNcDef, {Value: Title})}), t)
+      Default: =If(varNcNew || IsBlank(varNc) || IsBlank(varNc.DefectCategory), "(pick a defect)", varNc.DefectCategory)
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Fill: =If(Self.Selected.Value = "(pick a defect)" && n1Type.Selected.Value = "Product", RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      Tooltip: ="Defect list = Lookups, Category NCR defect. Add or retire them there."
+      X: =680
+      Y: =424
+      Width: =330
+      Height: =48
+- n1cQty:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="QTY AFFECTED"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =1020
+      Y: =402
+      Width: =150
+      Height: =20
+- n1Qty:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varNcNew || IsBlank(varNc), "", Text(varNc.QtyAffected))
+      HintText: ="0"
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =18
+      Align: =Align.Center
+      BorderColor: =If(n1Type.Selected.Value = "Product" && Coalesce(Value(Self.Text), 0) <= 0, RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Fill: =If(n1Type.Selected.Value = "Product" && Coalesce(Value(Self.Text), 0) <= 0, RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =1020
+      Y: =424
+      Width: =150
+      Height: =48
+      Tooltip: ="REQUIRED. How much is affected."
+- n1cUnit:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="UNIT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =1180
+      Y: =402
+      Width: =130
+      Height: =20
+- n1Unit:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["units", "cases", "pallets", "lbs", "kg", "gallons"]
+      Default: =If(varNcNew || IsBlank(varNc), "units", varNc.Unit.Value)
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =1180
+      Y: =424
+      Width: =130
+      Height: =48
+- n1cDue:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CLOSE BY  (M/D/YYYY)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =1320
+      Y: =402
+      Width: =180
+      Height: =20
+- n1cType:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TYPE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =1510
+      Y: =402
+      Width: =382
+      Height: =20
+- n1Type:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["Product", "QMS finding", "Customer complaint", "Supplier"]
+      Default: =If(varNcNew || IsBlank(varNc) || IsBlank(varNc.NCType.Value), "Product", varNc.NCType.Value)
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Tooltip: ="QMS finding = a system nonconformity (internal audit, T-card pull). Product fields (defect, qty) are optional for it."
+      X: =1510
+      Y: =424
+      Width: =382
+      Height: =48
+- n1Due:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varNcNew || IsBlank(varNc) || IsBlank(varNc.DueDate), Text(DateAdd(Today(), Coalesce(varNcDue, 30), TimeUnit.Days), "m/d/yyyy"), Text(varNc.DueDate, "m/d/yyyy"))
+      HintText: =""
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Center
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Fill: =If(IsError(DateValue(Self.Text)) || IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      Tooltip: ="Target date to close. Default comes from MDI_Config NCR_DueDays."
+      X: =1320
+      Y: =424
+      Width: =180
+      Height: =48
+- n1cDesc:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHAT IS WRONG  (REQUIREMENT vs WHAT WE FOUND, HOW IT WAS FOUND)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =680
+      Y: =488
+      Width: =820
+      Height: =20
+- n1Desc:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varNcNew || IsBlank(varNc), "", varNc.Description)
+      HintText: ="Spec says … we found … found by …"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Mode: =TextMode.MultiLine
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =680
+      Y: =510
+      Width: =820
+      Height: =230
+      Tooltip: ="REQUIRED. The requirement, what was found, and how it was found."
+- n1cPh:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PHOTO  (OPTIONAL, ADDS ON SAVE)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =1510
+      Y: =488
+      Width: =382
+      Height: =20
+- n1Img:
+    Control: Image@2.2.3
+    Properties:
+      Image: =If(IsBlank(n1AddPh.Media), SampleImage, n1AddPh.Media)
+      ImagePosition: =ImagePosition.Fit
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      Fill: =RGBA(243, 244, 244, 1)
+      X: =1510
+      Y: =510
+      Width: =382
+      Height: =230
+- n1AddPh:
+    Control: AddMedia@2.2.1
+    Properties:
+      Text: =If(IsBlank(Self.Media), "📷  TAP TO ADD PHOTO", "")
+      Size: =13
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 72, 81, 1)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =1510
+      Y: =510
+      Width: =382
+      Height: =230
+- n1cPhs:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PHOTOS ON THIS NCR"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =680
+      Y: =750
+      Width: =400
+      Height: =20
+- galNcPh:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colNcPh
+      WrapCount: =6
+      TemplateSize: =140
+      TemplatePadding: =0
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      X: =680
+      Y: =772
+      Width: =1212
+      Height: =140
+    Children:
+      - gNcPh:
+          Control: Image@2.2.3
+          Properties:
+            Image: =ThisItem.Thumbnail.Large
+            ImagePosition: =ImagePosition.Fill
+            X: =2
+            Y: =2
+            Width: =196
+            Height: =132
+- n1NoPh:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No photos yet."
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(177, 179, 179, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1 && CountRows(colNcPh) = 0
+      X: =680
+      Y: =780
+      Width: =400
+      Height: =30
+- n1Save:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(!IsBlank(n1Own.Text) && (!(n1Type.Selected.Value = "Product") || (n1Def.Selected.Value <> "(pick a defect)" && Coalesce(Value(n1Qty.Text), 0) > 0)) && !IsBlank(n1Desc.Text) && !IsError(DateValue(n1Due.Text)), If(varNcNew, "RAISE NCR", "SAVE CHANGES"), "FILL THE YELLOW FIELDS")
+      OnSelect: |-
+        =IfError(
+         If(varNcNew,
+          Set(varNc, Patch(NCR, Defaults(NCR), {NCType: {Value: n1Type.Selected.Value}, Source: {Value: n1Src.Selected.Value}, Severity: {Value: n1Sev.Selected.Value}, Line: n1Line.Selected.Value,
+           ValueStream: LookUp(Lines, Title = n1Line.Selected.Value).ValueStream, ShiftDate: n1Date.Selected.D, Shift: Value(n1Shift.Selected.Value),
+           Size: n1Prod.Selected.Size, Form: n1Prod.Selected.Form, ProductForm: If(n1Prod.Selected.Size = "", Blank(), n1Prod.Selected.Size & " " & n1Prod.Selected.Form),
+           Job: n1Job.Text, Lot: n1Lot.Text, Party: n1Party.Text, DefectCategory: If(n1Def.Selected.Value = "(pick a defect)", varNc.DefectCategory, n1Def.Selected.Value), Description: n1Desc.Text,
+           QtyAffected: Value(n1Qty.Text), Unit: {Value: n1Unit.Selected.Value}, Owner: n1Own.Text, DueDate: DateValue(n1Due.Text)}, {Status: {Value: "Open"}, RaisedBy: User().FullName, RaisedAt: Now(), CARequired: n1Sev.Selected.Value <> "Minor", Effective: {Value: "Pending"}}));
+          Set(varNc, Patch(NCR, varNc, {Title: "NCR-" & Text(Year(Today())) & "-" & Text(varNc.ID, "0000")})); Set(varNcNew, false),
+          Set(varNc, Patch(NCR, LookUp(NCR, ID = varNc.ID), {NCType: {Value: n1Type.Selected.Value}, Source: {Value: n1Src.Selected.Value}, Severity: {Value: n1Sev.Selected.Value}, Line: n1Line.Selected.Value,
+           ValueStream: LookUp(Lines, Title = n1Line.Selected.Value).ValueStream, ShiftDate: n1Date.Selected.D, Shift: Value(n1Shift.Selected.Value),
+           Size: n1Prod.Selected.Size, Form: n1Prod.Selected.Form, ProductForm: If(n1Prod.Selected.Size = "", Blank(), n1Prod.Selected.Size & " " & n1Prod.Selected.Form),
+           Job: n1Job.Text, Lot: n1Lot.Text, Party: n1Party.Text, DefectCategory: If(n1Def.Selected.Value = "(pick a defect)", varNc.DefectCategory, n1Def.Selected.Value), Description: n1Desc.Text,
+           QtyAffected: Value(n1Qty.Text), Unit: {Value: n1Unit.Selected.Value}, Owner: n1Own.Text, DueDate: DateValue(n1Due.Text)})));
+         If(!IsBlank(n1AddPh.Media), Patch(TS_Photos, LookUp(TS_Photos, ID = Value('MDI-UploadPhoto'.Run(JSON(n1AddPh.Media, JSONFormat.IncludeBinaryData), varNc.Title & ".jpg", 0, 0, 0, "Finding", n1Desc.Text, User().Email).photoid)),
+           {Module: {Value: "NCR"}, RefID: varNc.ID})),
+         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+         Notify(varNc.Title & " saved. Next: contain it.", NotificationType.Success); Reset(n1AddPh); Select(nLoad); Select(nSide); If(varNcStep = 1 && IsBlank(varNc.ContainedAt), Set(varNcStep, 2)))
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsBlank(n1Own.Text) && (!(n1Type.Selected.Value = "Product") || (n1Def.Selected.Value <> "(pick a defect)" && Coalesce(Value(n1Qty.Text), 0) > 0)) && !IsBlank(n1Desc.Text) && !IsError(DateValue(n1Due.Text)), RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+      Color: =If(!IsBlank(n1Own.Text) && (!(n1Type.Selected.Value = "Product") || (n1Def.Selected.Value <> "(pick a defect)" && Coalesce(Value(n1Qty.Text), 0) > 0)) && !IsBlank(n1Desc.Text) && !IsError(DateValue(n1Due.Text)), RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 1
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.Disabled, !IsBlank(n1Own.Text) && (!(n1Type.Selected.Value = "Product") || (n1Def.Selected.Value <> "(pick a defect)" && Coalesce(Value(n1Qty.Text), 0) > 0)) && !IsBlank(n1Desc.Text) && !IsError(DateValue(n1Due.Text)), DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1572
+      Y: =990
+      Width: =320
+      Height: =64
+- n2cAct:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CONTAINMENT  (WHAT DID WE DO TO STOP IT GOING FURTHER?  HOLD, TAG, SEGREGATE, SORT, STOP LINE, PULL FROM WAREHOUSE)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 2
+      X: =680
+      Y: =236
+      Width: =1212
+      Height: =20
+- n2Act:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varNc), "", varNc.Containment)
+      HintText: ="e.g. 14 pallets on QA hold in cage B, line purged, first-off check before restart"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 2
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Mode: =TextMode.MultiLine
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =680
+      Y: =258
+      Width: =1212
+      Height: =200
+- n2cQty:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="QTY ON HOLD"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 2
+      X: =680
+      Y: =470
+      Width: =200
+      Height: =20
+- n2Qty:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varNc), "", Text(varNc.QtyOnHold))
+      HintText: ="0"
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =20
+      Align: =Align.Center
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 2
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =680
+      Y: =492
+      Width: =200
+      Height: =52
+- n2Unit:
+    Control: Label@2.5.1
+    Properties:
+      Text: =varNc.Unit.Value
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 2
+      X: =886
+      Y: =492
+      Width: =100
+      Height: =52
+- n2cLoc:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHERE IS IT HELD?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 2
+      X: =1000
+      Y: =470
+      Width: =500
+      Height: =20
+- n2Loc:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varNc), "", varNc.HoldLocation)
+      HintText: ="QA cage, warehouse aisle, customer site"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 2
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =1000
+      Y: =492
+      Width: =500
+      Height: =52
+- n2Note:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Tag every held unit or pallet with the NCR number so it can't be used by mistake (ISO 8.7.1). If nothing could be held (already shipped), say so above and inform the customer at disposition."
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 2
+      X: =680
+      Y: =560
+      Width: =1212
+      Height: =50
+- n2Save:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SAVE CONTAINMENT"
+      OnSelect: |-
+        =IfError(Set(varNc, Patch(NCR, LookUp(NCR, ID = varNc.ID), {Containment: n2Act.Text, QtyOnHold: Value(n2Qty.Text), HoldLocation: n2Loc.Text,
+           ContainedBy: If(IsBlank(varNc.ContainedAt), User().FullName, varNc.ContainedBy), ContainedAt: Coalesce(varNc.ContainedAt, Now()), Status: {Value: If(Switch(varNc.Status.Value, "Open", 1, "Contained", 2, "Dispositioned", 3, "CA in progress", 4, "Closed", 5, 6) < Switch("Contained", "Open", 1, "Contained", 2, "Dispositioned", 3, "CA in progress", 4, "Closed", 5, 6), "Contained", varNc.Status.Value)}})),
+         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+         Notify("Containment saved.", NotificationType.Success); Select(nLoad); Set(varNcStep, 3))
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(191, 135, 0, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 2
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")) || IsBlank(n2Act.Text), DisplayMode.Disabled, DisplayMode.Edit)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1572
+      Y: =990
+      Width: =320
+      Height: =64
+- n3cDisp:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DISPOSITION"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3
+      X: =680
+      Y: =236
+      Width: =300
+      Height: =20
+- n3Disp:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["(choose)", "Use as is", "Rework", "Repair", "Regrade", "Scrap", "Return to supplier", "Not product (QMS finding)"]
+      Default: =If(IsBlank(varNc) || IsBlank(varNc.Disposition.Value), "(choose)", varNc.Disposition.Value)
+      Font: =Font.Arial
+      Size: =16
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Fill: =If(Self.Selected.Value = "(choose)", RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      Tooltip: ="Use as is needs a concession. Rework / repair / regrade must be re-verified before release (ISO 8.7.1)."
+      X: =680
+      Y: =258
+      Width: =300
+      Height: =52
+- n3cQty:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="QTY"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3
+      X: =990
+      Y: =236
+      Width: =160
+      Height: =20
+- n3Qty:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varNc), "", Text(Coalesce(varNc.DispQty, varNc.QtyAffected)))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =18
+      Align: =Align.Center
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =990
+      Y: =258
+      Width: =160
+      Height: =52
+- n3cInf:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CUSTOMER INFORMED?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3
+      X: =1160
+      Y: =236
+      Width: =190
+      Height: =20
+- n3Inf:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["No", "Yes"]
+      Default: =If(varNcNew || IsBlank(varNc), "No", If(varNc.CustomerInformed, "Yes", "No"))
+      Font: =Font.Arial
+      Size: =16
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Tooltip: ="Yes if the customer was told (required when product reached them or for a concession, ISO 8.7.1c)."
+      X: =1160
+      Y: =258
+      Width: =190
+      Height: =52
+- n3cCon:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CONCESSION / DEVIATION  (REF + WHO APPROVED)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3
+      X: =1360
+      Y: =236
+      Width: =532
+      Height: =20
+- n3Con:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varNc), "", varNc.Concession)
+      HintText: ="needed for Use as is"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =If(n3Disp.Selected.Value = "Use as is" && IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Fill: =If(n3Disp.Selected.Value = "Use as is" && IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =1360
+      Y: =258
+      Width: =532
+      Height: =52
+- n3cNotes:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DISPOSITION DETAIL  (WHAT EXACTLY HAPPENS TO THE PRODUCT, BY WHEN)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3
+      X: =680
+      Y: =330
+      Width: =1212
+      Height: =20
+- n3Notes:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varNc), "", varNc.DispNotes)
+      HintText: |-
+        ="e.g. rework on line 209 2nd shift: relabel 640 cases, QA to check 100%"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Mode: =TextMode.MultiLine
+      X: =680
+      Y: =352
+      Width: =1212
+      Height: =140
+- n3Auth:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(IsBlank(varNc.DispositionAt), "Authorized by: " & User().FullName & " (you), stamped when you save.", "Authorized by " & varNc.DispositionBy & " on " & Text(varNc.DispositionAt, "m/d/yyyy h:mm AM/PM"))
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3
+      X: =680
+      Y: =500
+      Width: =1212
+      Height: =30
+- n3RvBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(243, 244, 244, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3 && (n3Disp.Selected.Value in ["Rework", "Repair", "Regrade"])
+      X: =680
+      Y: =560
+      Width: =1212
+      Height: =330
+- n3RvT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="RE-VERIFY AFTER CORRECTION  (ISO 8.7.1)  ·  product that was reworked, repaired or regraded must be checked again before it ships"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(130, 80, 223, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3 && (n3Disp.Selected.Value in ["Rework", "Repair", "Regrade"])
+      X: =692
+      Y: =568
+      Width: =1188
+      Height: =30
+- n3cRv:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="RE-VERIFIED OK?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3 && (n3Disp.Selected.Value in ["Rework", "Repair", "Regrade"])
+      X: =692
+      Y: =606
+      Width: =200
+      Height: =20
+- n3Rv:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["No", "Yes"]
+      Default: =If(varNcNew || IsBlank(varNc), "No", If(varNc.Reverified, "Yes", "No"))
+      Font: =Font.Arial
+      Size: =16
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3 && (n3Disp.Selected.Value in ["Rework", "Repair", "Regrade"])
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      X: =692
+      Y: =628
+      Width: =200
+      Height: =52
+- n3cRvN:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="HOW IT WAS CHECKED / RESULT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3 && (n3Disp.Selected.Value in ["Rework", "Repair", "Regrade"])
+      X: =902
+      Y: =606
+      Width: =600
+      Height: =20
+- n3RvN:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varNc), "", varNc.ReverifyNotes)
+      HintText: ="100% sort by QA, 0 defects found in 640 cases"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3 && (n3Disp.Selected.Value in ["Rework", "Repair", "Regrade"])
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Mode: =TextMode.MultiLine
+      X: =902
+      Y: =628
+      Width: =978
+      Height: =140
+- n3RvBy:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varNc.ReverifiedAt), "", "Re-verified by " & varNc.ReverifiedBy & " on " & Text(varNc.ReverifiedAt, "m/d h:mm AM/PM"))
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3 && (n3Disp.Selected.Value in ["Rework", "Repair", "Regrade"])
+      X: =692
+      Y: =780
+      Width: =600
+      Height: =30
+- n3Save:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(n3Disp.Selected.Value <> "(choose)" && (n3Disp.Selected.Value <> "Use as is" || !IsBlank(n3Con.Text)), "SAVE DISPOSITION", "CHOOSE A DISPOSITION")
+      OnSelect: |-
+        =IfError(Set(varNc, Patch(NCR, LookUp(NCR, ID = varNc.ID), {Disposition: {Value: n3Disp.Selected.Value}, DispQty: Value(n3Qty.Text), DispNotes: n3Notes.Text,
+           CustomerInformed: n3Inf.Selected.Value = "Yes", Concession: n3Con.Text,
+           DispositionBy: If(IsBlank(varNc.DispositionAt), User().FullName, varNc.DispositionBy), DispositionAt: Coalesce(varNc.DispositionAt, Now()),
+           Reverified: (n3Disp.Selected.Value in ["Rework", "Repair", "Regrade"]) && n3Rv.Selected.Value = "Yes", ReverifyNotes: n3RvN.Text,
+           ReverifiedBy: If((n3Disp.Selected.Value in ["Rework", "Repair", "Regrade"]) && n3Rv.Selected.Value = "Yes", Coalesce(varNc.ReverifiedBy, User().FullName), Blank()),
+           ReverifiedAt: If((n3Disp.Selected.Value in ["Rework", "Repair", "Regrade"]) && n3Rv.Selected.Value = "Yes", Coalesce(varNc.ReverifiedAt, Now()), Blank()),
+           Status: {Value: If(Switch(varNc.Status.Value, "Open", 1, "Contained", 2, "Dispositioned", 3, "CA in progress", 4, "Closed", 5, 6) < Switch("Dispositioned", "Open", 1, "Contained", 2, "Dispositioned", 3, "CA in progress", 4, "Closed", 5, 6), "Dispositioned", varNc.Status.Value)}})),
+         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+         Notify("Disposition saved.", NotificationType.Success); Select(nLoad); If(!(n3Disp.Selected.Value in ["Rework", "Repair", "Regrade"]) || n3Rv.Selected.Value = "Yes", Set(varNcStep, 4)))
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(130, 80, 223, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 3
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.Disabled, n3Disp.Selected.Value <> "(choose)" && (n3Disp.Selected.Value <> "Use as is" || !IsBlank(n3Con.Text)), DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1572
+      Y: =990
+      Width: =320
+      Height: =64
+- n4cReq:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CORRECTIVE ACTION NEEDED?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4
+      X: =680
+      Y: =236
+      Width: =240
+      Height: =20
+- n4Req:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["No", "Yes"]
+      Default: =If(IsBlank(varNc), "Yes", If(varNc.CARequired, "Yes", "No"))
+      Font: =Font.Arial
+      Size: =16
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Tooltip: ="No only when it is a one-off with a known cause that is already gone. Say why in the root cause box."
+      X: =680
+      Y: =258
+      Width: =240
+      Height: =52
+- n4ReqN:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="Raised automatically for Major and Critical NCRs. ISO 10.2.1b: evaluate the need for action to eliminate the cause so it does not recur or occur elsewhere."
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4
+      X: =940
+      Y: =258
+      Width: =952
+      Height: =52
+- n4cRc:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ROOT CAUSE  (WHY DID IT HAPPEN?  ASK WHY UNTIL YOU REACH SOMETHING YOU CAN FIX)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4
+      X: =680
+      Y: =320
+      Width: =1212
+      Height: =20
+- n4Rc:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varNc), "", varNc.RootCause)
+      HintText: ="Why 1 … Why 2 … root cause"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =If(n4Req.Selected.Value = "Yes" && IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Mode: =TextMode.MultiLine
+      Fill: =If(n4Req.Selected.Value = "Yes" && IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =680
+      Y: =342
+      Width: =610
+      Height: =220
+- n4cSim:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="COULD IT HAPPEN ELSEWHERE?  (OTHER LINES, PRODUCTS, SHIFTS)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4
+      X: =1300
+      Y: =320
+      Width: =592
+      Height: =20
+- n4Sim:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varNc), "", varNc.SimilarCheck)
+      HintText: |-
+        ="checked lines 204 and 211: same capper, same risk"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Mode: =TextMode.MultiLine
+      X: =1300
+      Y: =342
+      Width: =592
+      Height: =220
+- n4ActT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ACTIONS  (tracked in the Newspaper, Source = NCR)  ·  " & CountRows(colNcNews) & " linked"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4
+      X: =680
+      Y: =580
+      Width: =700
+      Height: =30
+- n4News:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="+  ADD ACTION TO NEWSPAPER"
+      OnSelect: |-
+        =IfError(Patch(Newspaper, Defaults(Newspaper), {Action: "Corrective action " & varNc.Title & ": " & Coalesce(varNc.DefectCategory, "NCR"),
+           Line: varNc.Line, ValueStream: varNc.ValueStream, SQDCP: {Value: "Quality"}, Source: {Value: "NCR"}, Status: {Value: "Open"},
+           Problem: varNc.Description, Countermeasure: n4Rc.Text, Owner: varNc.Owner, RaisedDate: Now(), DueDate: varNc.DueDate, RefKey: varNc.Title});
+         Patch(NCR, LookUp(NCR, ID = varNc.ID), {NewspaperRef: varNc.Title}); Select(nSide),
+         Notify("Action not created: " & FirstError.Message, NotificationType.Error),
+         Notify("Action added to the Newspaper. Edit owner, due date and detail there.", NotificationType.Success))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Tooltip: ="Creates a Quality action in the Newspaper, linked to this NCR (RefKey = NCR number)."
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =680
+      Y: =616
+      Width: =300
+      Height: =48
+- n4Open:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="OPEN NEWSPAPER  ↗"
+      OnSelect: =Launch(varNcNewsLink)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 178, 169, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4 && !IsBlank(varNcNewsLink)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =990
+      Y: =616
+      Width: =220
+      Height: =48
+- n4Rca:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="ROOT CAUSE ANALYSIS  (COMING)"
+      OnSelect: =false
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(217, 217, 214, 1)
+      Color: =RGBA(177, 179, 179, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4
+      DisplayMode: =DisplayMode.Disabled
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(177, 179, 179, 1)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1220
+      Y: =616
+      Width: =300
+      Height: =48
+- galNcNews:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colNcNews
+      TemplateSize: =40
+      TemplatePadding: =0
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4
+      X: =680
+      Y: =674
+      Width: =1212
+      Height: =280
+    Children:
+      - gNnA:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Action
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            Wrap: =false
+            X: =8
+            Y: =2
+            Width: =760
+            Height: =36
+      - gNnO:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Coalesce(ThisItem.Owner, "no owner") & "  ·  due " & Text(ThisItem.DueDate, "m/d")
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            X: =770
+            Y: =2
+            Width: =280
+            Height: =36
+      - gNnS:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Status.Value
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =Switch(ThisItem.Status.Value, "Closed", RGBA(46, 160, 67, 1), "In progress", RGBA(9, 105, 218, 1), RGBA(207, 34, 46, 1))
+            X: =1060
+            Y: =6
+            Width: =140
+            Height: =28
+- n4Save:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If((n4Req.Selected.Value = "No" || !IsBlank(n4Rc.Text)), "SAVE CORRECTIVE ACTION", "ENTER THE ROOT CAUSE")
+      OnSelect: |-
+        =IfError(Set(varNc, Patch(NCR, LookUp(NCR, ID = varNc.ID), {CARequired: n4Req.Selected.Value = "Yes", RootCause: n4Rc.Text, SimilarCheck: n4Sim.Text,
+           CABy: If(IsBlank(varNc.CAAt), User().FullName, varNc.CABy), CAAt: Coalesce(varNc.CAAt, Now()),
+           Status: If(n4Req.Selected.Value = "Yes", {Value: If(Switch(varNc.Status.Value, "Open", 1, "Contained", 2, "Dispositioned", 3, "CA in progress", 4, "Closed", 5, 6) < Switch("CA in progress", "Open", 1, "Contained", 2, "Dispositioned", 3, "CA in progress", 4, "Closed", 5, 6), "CA in progress", varNc.Status.Value)}, {Value: varNc.Status.Value})})),
+         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+         Notify("Corrective action saved.", NotificationType.Success); Select(nLoad); Set(varNcStep, 5))
+      Font: =Font.Arial
+      Size: =15
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(9, 105, 218, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 4
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.Disabled, (n4Req.Selected.Value = "No" || !IsBlank(n4Rc.Text)), DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1572
+      Y: =990
+      Width: =320
+      Height: =64
+- n5cEff:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DID THE FIX WORK?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      X: =680
+      Y: =236
+      Width: =240
+      Height: =20
+- n5Eff:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["Pending", "Yes", "No"]
+      Default: =If(IsBlank(varNc) || IsBlank(varNc.Effective.Value), "Pending", varNc.Effective.Value)
+      Font: =Font.Arial
+      Size: =16
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Tooltip: ="No = it came back. Re-open the root cause (stage 4) with new actions."
+      X: =680
+      Y: =258
+      Width: =240
+      Height: =52
+- n5cEv:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="EVIDENCE  (HOW YOU KNOW: NO REPEAT IN X WEEKS, AUDIT, DATA)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      X: =930
+      Y: =236
+      Width: =962
+      Height: =20
+- n5Ev:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varNc), "", varNc.EffectNotes)
+      HintText: ="0 repeats in 6 weeks of HxH and QA data"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =If(n5Eff.Selected.Value = "Yes" && IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Mode: =TextMode.MultiLine
+      Fill: =If(n5Eff.Selected.Value = "Yes" && IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =930
+      Y: =258
+      Width: =962
+      Height: =150
+- n5cRk:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="RISKS / QMS UPDATED?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      X: =680
+      Y: =430
+      Width: =240
+      Height: =20
+- n5Rk:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["No", "Yes"]
+      Default: =If(varNcNew || IsBlank(varNc), "No", If(varNc.RiskQMSUpdated, "Yes", "No"))
+      Font: =Font.Arial
+      Size: =16
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Tooltip: |-
+        ="ISO 10.2.1e-f: update risks (PFMEA), control plan, SOPs, standard work, training as needed."
+      X: =680
+      Y: =452
+      Width: =240
+      Height: =52
+- n5cRkN:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHAT CHANGED  (PFMEA, CONTROL PLAN, SOP, STANDARD WORK, TRAINING)  OR WHY NOTHING NEEDED TO"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      X: =930
+      Y: =430
+      Width: =962
+      Height: =20
+- n5RkN:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varNc), "", varNc.RiskQMSNotes)
+      HintText: ="SOP QA-14 rev C, operators retrained 10/24"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.View, DisplayMode.Edit)
+      Mode: =TextMode.MultiLine
+      X: =930
+      Y: =452
+      Width: =962
+      Height: =120
+- n5ChT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="READY TO CLOSE?"
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      X: =680
+      Y: =600
+      Width: =400
+      Height: =30
+- n5Ch0:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(!IsBlank(varNc) && !IsBlank(varNc.ContainedAt), "✓   ", "✗   ") & "Contained"
+      Font: =Font.Arial
+      Size: =13
+      Color: =If(!IsBlank(varNc) && !IsBlank(varNc.ContainedAt), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      X: =680
+      Y: =636
+      Width: =590
+      Height: =32
+- n5Ch1:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(!IsBlank(varNc) && !IsBlank(varNc.DispositionAt), "✓   ", "✗   ") & "Disposition decided and authorized"
+      Font: =Font.Arial
+      Size: =13
+      Color: =If(!IsBlank(varNc) && !IsBlank(varNc.DispositionAt), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      X: =680
+      Y: =670
+      Width: =590
+      Height: =32
+- n5Ch2:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(!IsBlank(varNc) && (!(varNc.Disposition.Value in ["Rework", "Repair", "Regrade"]) || varNc.Reverified), "✓   ", "✗   ") & "Re-verified after rework / repair / regrade"
+      Font: =Font.Arial
+      Size: =13
+      Color: =If(!IsBlank(varNc) && (!(varNc.Disposition.Value in ["Rework", "Repair", "Regrade"]) || varNc.Reverified), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      X: =680
+      Y: =704
+      Width: =590
+      Height: =32
+- n5Ch3:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(!IsBlank(varNc) && (varNc.Disposition.Value <> "Use as is" || !IsBlank(varNc.Concession)), "✓   ", "✗   ") & "Concession recorded for Use as is"
+      Font: =Font.Arial
+      Size: =13
+      Color: =If(!IsBlank(varNc) && (varNc.Disposition.Value <> "Use as is" || !IsBlank(varNc.Concession)), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      X: =680
+      Y: =738
+      Width: =590
+      Height: =32
+- n5Ch4:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(!IsBlank(varNc) && (!varNc.CARequired || !IsBlank(varNc.RootCause)), "✓   ", "✗   ") & "Root cause recorded"
+      Font: =Font.Arial
+      Size: =13
+      Color: =If(!IsBlank(varNc) && (!varNc.CARequired || !IsBlank(varNc.RootCause)), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      X: =1280
+      Y: =636
+      Width: =590
+      Height: =32
+- n5Ch5:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(!IsBlank(varNc) && (!varNc.CARequired || n5Eff.Selected.Value = "Yes"), "✓   ", "✗   ") & "Fix proven effective"
+      Font: =Font.Arial
+      Size: =13
+      Color: =If(!IsBlank(varNc) && (!varNc.CARequired || n5Eff.Selected.Value = "Yes"), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      X: =1280
+      Y: =670
+      Width: =590
+      Height: =32
+- n5Ch6:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(!IsBlank(varNc) && CountRows(Filter(colNcNews, Status.Value <> "Closed")) = 0, "✓   ", "✗   ") & "Linked Newspaper actions closed"
+      Font: =Font.Arial
+      Size: =13
+      Color: =If(!IsBlank(varNc) && CountRows(Filter(colNcNews, Status.Value <> "Closed")) = 0, RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+      FontWeight: =FontWeight.Bold
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      X: =1280
+      Y: =704
+      Width: =590
+      Height: =32
+- n5Save:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SAVE"
+      OnSelect: |-
+        =IfError(Set(varNc, Patch(NCR, LookUp(NCR, ID = varNc.ID), {Effective: {Value: n5Eff.Selected.Value}, EffectNotes: n5Ev.Text, RiskQMSUpdated: n5Rk.Selected.Value = "Yes", RiskQMSNotes: n5RkN.Text, VerifiedBy: If(n5Eff.Selected.Value = "Pending", varNc.VerifiedBy, User().FullName),
+           VerifiedAt: If(n5Eff.Selected.Value = "Pending", varNc.VerifiedAt, Now())})),
+         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error), Notify("Saved.", NotificationType.Success); Select(nLoad))
+      Font: =Font.Arial
+      Size: =15
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(217, 217, 214, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5
+      DisplayMode: =If((!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")), DisplayMode.Disabled, DisplayMode.Edit)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1376
+      Y: =990
+      Width: =180
+      Height: =64
+- n5Close:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If((!IsBlank(varNc) && !IsBlank(varNc.ContainedAt) && !IsBlank(varNc.DispositionAt) && (!(varNc.Disposition.Value in ["Rework", "Repair", "Regrade"]) || varNc.Reverified) && (varNc.Disposition.Value <> "Use as is" || !IsBlank(varNc.Concession)) && (!varNc.CARequired || !IsBlank(varNc.RootCause)) && (!varNc.CARequired || n5Eff.Selected.Value = "Yes") && CountRows(Filter(colNcNews, Status.Value <> "Closed")) = 0), "CLOSE NCR", "NOT READY TO CLOSE")
+      OnSelect: |-
+        =IfError(Set(varNc, Patch(NCR, LookUp(NCR, ID = varNc.ID), {Effective: {Value: n5Eff.Selected.Value}, EffectNotes: n5Ev.Text, RiskQMSUpdated: n5Rk.Selected.Value = "Yes", RiskQMSNotes: n5RkN.Text, VerifiedBy: User().FullName, VerifiedAt: Now(),
+           Status: {Value: "Closed"}, ClosedBy: User().FullName, ClosedAt: Now()})),
+         Notify("NOT CLOSED: " & FirstError.Message, NotificationType.Error), Notify(varNc.Title & " closed.", NotificationType.Success); Select(nLoad))
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =If((!IsBlank(varNc) && !IsBlank(varNc.ContainedAt) && !IsBlank(varNc.DispositionAt) && (!(varNc.Disposition.Value in ["Rework", "Repair", "Regrade"]) || varNc.Reverified) && (varNc.Disposition.Value <> "Use as is" || !IsBlank(varNc.Concession)) && (!varNc.CARequired || !IsBlank(varNc.RootCause)) && (!varNc.CARequired || n5Eff.Selected.Value = "Yes") && CountRows(Filter(colNcNews, Status.Value <> "Closed")) = 0), RGBA(46, 160, 67, 1), RGBA(217, 217, 214, 1))
+      Color: =If((!IsBlank(varNc) && !IsBlank(varNc.ContainedAt) && !IsBlank(varNc.DispositionAt) && (!(varNc.Disposition.Value in ["Rework", "Repair", "Regrade"]) || varNc.Reverified) && (varNc.Disposition.Value <> "Use as is" || !IsBlank(varNc.Concession)) && (!varNc.CARequired || !IsBlank(varNc.RootCause)) && (!varNc.CARequired || n5Eff.Selected.Value = "Yes") && CountRows(Filter(colNcNews, Status.Value <> "Closed")) = 0), RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5 && !(!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void"))
+      DisplayMode: =If((!IsBlank(varNc) && !IsBlank(varNc.ContainedAt) && !IsBlank(varNc.DispositionAt) && (!(varNc.Disposition.Value in ["Rework", "Repair", "Regrade"]) || varNc.Reverified) && (varNc.Disposition.Value <> "Use as is" || !IsBlank(varNc.Concession)) && (!varNc.CARequired || !IsBlank(varNc.RootCause)) && (!varNc.CARequired || n5Eff.Selected.Value = "Yes") && CountRows(Filter(colNcNews, Status.Value <> "Closed")) = 0), DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1572
+      Y: =990
+      Width: =320
+      Height: =64
+- n5Reopen:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="REOPEN"
+      OnSelect: |-
+        =IfError(Set(varNc, Patch(NCR, LookUp(NCR, ID = varNc.ID), {Status: {Value: If(IsBlank(varNc.DispositionAt), "Open", "CA in progress")}, ClosedBy: Blank(), ClosedAt: Blank()})),
+         Notify("NOT REOPENED: " & FirstError.Message, NotificationType.Error), Notify("Reopened.", NotificationType.Success); Select(nLoad))
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(191, 135, 0, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =(varNcNew || !IsBlank(varNc)) && (!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void"))
+      Tooltip: ="Reopen a closed or voided NCR (the history stamps are kept)."
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1572
+      Y: =990
+      Width: =320
+      Height: =64
+- n5Void:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="VOID (RAISED BY MISTAKE)"
+      OnSelect: |-
+        =IfError(Set(varNc, Patch(NCR, LookUp(NCR, ID = varNc.ID), {Status: {Value: "Void"}, ClosedBy: User().FullName, ClosedAt: Now()})),
+         Notify("NOT VOIDED: " & FirstError.Message, NotificationType.Error), Notify("Voided. It stays in the log for audit but is excluded from counts.", NotificationType.Success); Select(nLoad))
+      Font: =Font.Arial
+      Size: =10
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(117, 120, 123, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Visible: =(varNcNew || !IsBlank(varNc)) && varNcStep = 5 && !(!varNcNew && !IsBlank(varNc) && (varNc.Status.Value = "Closed" || varNc.Status.Value = "Void")) && !varNcNew
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =680
+      Y: =1006
+      Width: =240
+      Height: =40
+- nReset:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: =Reset(n1Src); Reset(n1Sev); Reset(n1Line); Reset(n1Date); Reset(n1Shift); Reset(n1Own); Reset(n1Prod); Reset(n1Job); Reset(n1Lot); Reset(n1Party); Reset(n1Def); Reset(n1Qty); Reset(n1Unit); Reset(n1Due); Reset(n1Desc); Reset(n1AddPh); Reset(n1Type); Reset(n2Act); Reset(n2Qty); Reset(n2Loc); Reset(n3Disp); Reset(n3Qty); Reset(n3Inf); Reset(n3Con); Reset(n3Notes); Reset(n3Rv); Reset(n3RvN); Reset(n4Req); Reset(n4Rc); Reset(n4Sim); Reset(n5Eff); Reset(n5Ev); Reset(n5Rk); Reset(n5RkN)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =2
+      Y: =1079
+      Width: =1
+      Height: =1
+- nLoaded:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varNcLoaded), "", "Loaded " & Text(varNcLoaded, "h:mm AM/PM") & "  ·  last 12 months")
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      X: =28
+      Y: =1050
+      Width: =300
+      Height: =20

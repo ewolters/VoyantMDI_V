@@ -1,0 +1,539 @@
+{
+ "properties": {
+  "connectionReferences": {
+   "shared_sharepointonline": {
+    "runtimeSource": "embedded",
+    "connection": {
+     "connectionReferenceLogicalName": "craf4_sharedsharepointonline_17d15"
+    },
+    "api": {
+     "name": "shared_sharepointonline"
+    }
+   },
+   "shared_excelonlinebusiness": {
+    "runtimeSource": "embedded",
+    "connection": {
+     "connectionReferenceLogicalName": "craf4_sharedexcelonlinebusiness_mdi"
+    },
+    "api": {
+     "name": "shared_excelonlinebusiness"
+    }
+   }
+  },
+  "definition": {
+   "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+    "$connections": {
+     "defaultValue": {},
+     "type": "Object"
+    },
+    "$authentication": {
+     "defaultValue": {},
+     "type": "SecureObject"
+    },
+    "MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)": {
+     "defaultValue": "https://verxted.sharepoint.com/sites/MDISandbox",
+     "type": "String",
+     "metadata": {
+      "schemaName": "craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461"
+     }
+    }
+   },
+   "triggers": {
+    "manual": {
+     "type": "Request",
+     "kind": "PowerAppV2",
+     "inputs": {
+      "schema": {
+       "type": "object",
+       "properties": {
+        "text": {
+         "title": "Mode",
+         "description": "LIST or READ",
+         "type": "string",
+         "x-ms-content-hint": "TEXT",
+         "x-ms-dynamically-added": true
+        },
+        "text_1": {
+         "title": "FileName",
+         "description": "Workbook name in MDI_Imports (READ only)",
+         "type": "string",
+         "x-ms-content-hint": "TEXT",
+         "x-ms-dynamically-added": true
+        }
+       },
+       "required": [
+        "text",
+        "text_1"
+       ]
+      }
+     }
+    }
+   },
+   "actions": {
+    "Make_sure_import_folder_exists": {
+     "runAfter": {},
+     "type": "OpenApiConnection",
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "HttpRequest"
+      },
+      "parameters": {
+       "dataset": "@parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)')",
+       "parameters/method": "POST",
+       "parameters/uri": "_api/web/folders",
+       "parameters/headers": {
+        "Accept": "application/json;odata=nometadata",
+        "Content-Type": "application/json;odata=nometadata"
+       },
+       "parameters/body": "{\"ServerRelativeUrl\": \"@{concat(uriPath(parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)')), '/Shared Documents/MDI_Imports')}\"}"
+      },
+      "authentication": "@parameters('$authentication')"
+     }
+    },
+    "List_or_read": {
+     "runAfter": {
+      "Make_sure_import_folder_exists": [
+       "Succeeded",
+       "Failed"
+      ]
+     },
+     "type": "If",
+     "expression": {
+      "equals": [
+       "@toUpper(triggerBody()?['text'])",
+       "LIST"
+      ]
+     },
+     "actions": {
+      "List_files": {
+       "runAfter": {},
+       "type": "OpenApiConnection",
+       "inputs": {
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connectionName": "shared_sharepointonline",
+         "operationId": "HttpRequest"
+        },
+        "parameters": {
+         "dataset": "@parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)')",
+         "parameters/method": "GET",
+         "parameters/uri": "_api/web/GetFolderByServerRelativeUrl('@{replace(concat(uriPath(parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)')), '/Shared Documents/MDI_Imports'), ' ', '%20')}')/Files?$select=Name,TimeLastModified,Length&$orderby=TimeLastModified%20desc",
+         "parameters/headers": {
+          "Accept": "application/json;odata=nometadata",
+          "Content-Type": "application/json;odata=nometadata"
+         }
+        },
+        "authentication": "@parameters('$authentication')"
+       }
+      },
+      "Respond_list": {
+       "runAfter": {
+        "List_files": [
+         "Succeeded"
+        ]
+       },
+       "type": "Response",
+       "kind": "PowerApp",
+       "inputs": {
+        "statusCode": 200,
+        "body": {
+         "files": "@{string(body('List_files')?['value'])}",
+         "folder": "@{concat(parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)'), '/Shared%20Documents/Forms/AllItems.aspx?id=', encodeUriComponent(concat(uriPath(parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)')), '/Shared Documents/MDI_Imports')))}",
+         "prod": "",
+         "dt": "",
+         "shift": "",
+         "err": ""
+        },
+        "schema": {
+         "type": "object",
+         "properties": {
+          "files": {
+           "title": "files",
+           "type": "string",
+           "x-ms-content-hint": "TEXT",
+           "x-ms-dynamically-added": true
+          },
+          "folder": {
+           "title": "folder",
+           "type": "string",
+           "x-ms-content-hint": "TEXT",
+           "x-ms-dynamically-added": true
+          },
+          "prod": {
+           "title": "prod",
+           "type": "string",
+           "x-ms-content-hint": "TEXT",
+           "x-ms-dynamically-added": true
+          },
+          "dt": {
+           "title": "dt",
+           "type": "string",
+           "x-ms-content-hint": "TEXT",
+           "x-ms-dynamically-added": true
+          },
+          "shift": {
+           "title": "shift",
+           "type": "string",
+           "x-ms-content-hint": "TEXT",
+           "x-ms-dynamically-added": true
+          },
+          "err": {
+           "title": "err",
+           "type": "string",
+           "x-ms-content-hint": "TEXT",
+           "x-ms-dynamically-added": true
+          }
+         },
+         "additionalProperties": {}
+        }
+       }
+      },
+      "Respond_list_failed": {
+       "runAfter": {
+        "List_files": [
+         "Failed",
+         "TimedOut"
+        ]
+       },
+       "type": "Response",
+       "kind": "PowerApp",
+       "inputs": {
+        "statusCode": 200,
+        "body": {
+         "files": "",
+         "folder": "@{concat(parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)'), '/Shared%20Documents/Forms/AllItems.aspx?id=', encodeUriComponent(concat(uriPath(parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)')), '/Shared Documents/MDI_Imports')))}",
+         "prod": "",
+         "dt": "",
+         "shift": "",
+         "err": "Could not list the MDI_Imports folder: @{outputs('List_files')?['statusCode']}"
+        },
+        "schema": {
+         "type": "object",
+         "properties": {
+          "files": {
+           "title": "files",
+           "type": "string",
+           "x-ms-content-hint": "TEXT",
+           "x-ms-dynamically-added": true
+          },
+          "folder": {
+           "title": "folder",
+           "type": "string",
+           "x-ms-content-hint": "TEXT",
+           "x-ms-dynamically-added": true
+          },
+          "prod": {
+           "title": "prod",
+           "type": "string",
+           "x-ms-content-hint": "TEXT",
+           "x-ms-dynamically-added": true
+          },
+          "dt": {
+           "title": "dt",
+           "type": "string",
+           "x-ms-content-hint": "TEXT",
+           "x-ms-dynamically-added": true
+          },
+          "shift": {
+           "title": "shift",
+           "type": "string",
+           "x-ms-content-hint": "TEXT",
+           "x-ms-dynamically-added": true
+          },
+          "err": {
+           "title": "err",
+           "type": "string",
+           "x-ms-content-hint": "TEXT",
+           "x-ms-dynamically-added": true
+          }
+         },
+         "additionalProperties": {}
+        }
+       }
+      }
+     },
+     "else": {
+      "actions": {
+       "Get_drives": {
+        "runAfter": {},
+        "type": "OpenApiConnection",
+        "inputs": {
+         "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "HttpRequest"
+         },
+         "parameters": {
+          "dataset": "@parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)')",
+          "parameters/method": "GET",
+          "parameters/uri": "_api/v2.0/drives?$select=id,name,webUrl",
+          "parameters/headers": {
+           "Accept": "application/json"
+          }
+         },
+         "authentication": "@parameters('$authentication')"
+        }
+       },
+       "Find_documents_library": {
+        "runAfter": {
+         "Get_drives": [
+          "Succeeded"
+         ]
+        },
+        "type": "Query",
+        "inputs": {
+         "from": "@body('Get_drives')?['value']",
+         "where": "@endsWith(toLower(item()?['webUrl']), '/shared%20documents')"
+        }
+       },
+       "Get_workbook": {
+        "runAfter": {
+         "Find_documents_library": [
+          "Succeeded"
+         ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+         "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "HttpRequest"
+         },
+         "parameters": {
+          "dataset": "@parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)')",
+          "parameters/method": "GET",
+          "parameters/uri": "_api/v2.0/drives/@{first(body('Find_documents_library'))?['id']}/root:/MDI_Imports/@{encodeUriComponent(triggerBody()?['text_1'])}?$select=id,name",
+          "parameters/headers": {
+           "Accept": "application/json"
+          }
+         },
+         "authentication": "@parameters('$authentication')"
+        }
+       },
+       "Rows_shift": {
+        "runAfter": {
+         "Get_workbook": [
+          "Succeeded"
+         ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+         "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+          "connectionName": "shared_excelonlinebusiness",
+          "operationId": "GetItems"
+         },
+         "parameters": {
+          "source": "@parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)')",
+          "drive": "@first(body('Find_documents_library'))?['id']",
+          "file": "@body('Get_workbook')?['id']",
+          "table": "Tbl_Shift",
+          "dateTimeFormat": "ISO 8601"
+         },
+         "authentication": "@parameters('$authentication')"
+        },
+        "runtimeConfiguration": {
+         "paginationPolicy": {
+          "minimumItemCount": 5000
+         }
+        }
+       },
+       "Rows_production": {
+        "runAfter": {
+         "Get_workbook": [
+          "Succeeded"
+         ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+         "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+          "connectionName": "shared_excelonlinebusiness",
+          "operationId": "GetItems"
+         },
+         "parameters": {
+          "source": "@parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)')",
+          "drive": "@first(body('Find_documents_library'))?['id']",
+          "file": "@body('Get_workbook')?['id']",
+          "table": "Tbl_Production",
+          "dateTimeFormat": "ISO 8601"
+         },
+         "authentication": "@parameters('$authentication')"
+        },
+        "runtimeConfiguration": {
+         "paginationPolicy": {
+          "minimumItemCount": 5000
+         }
+        }
+       },
+       "Rows_downtime": {
+        "runAfter": {
+         "Get_workbook": [
+          "Succeeded"
+         ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+         "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+          "connectionName": "shared_excelonlinebusiness",
+          "operationId": "GetItems"
+         },
+         "parameters": {
+          "source": "@parameters('MDI SharePoint site (craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461)')",
+          "drive": "@first(body('Find_documents_library'))?['id']",
+          "file": "@body('Get_workbook')?['id']",
+          "table": "Tbl_Downtime",
+          "dateTimeFormat": "ISO 8601"
+         },
+         "authentication": "@parameters('$authentication')"
+        },
+        "runtimeConfiguration": {
+         "paginationPolicy": {
+          "minimumItemCount": 5000
+         }
+        }
+       },
+       "Respond_rows": {
+        "runAfter": {
+         "Rows_shift": [
+          "Succeeded"
+         ],
+         "Rows_production": [
+          "Succeeded"
+         ],
+         "Rows_downtime": [
+          "Succeeded"
+         ]
+        },
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+         "statusCode": 200,
+         "body": {
+          "files": "",
+          "folder": "",
+          "prod": "@{string(body('Rows_production')?['value'])}",
+          "dt": "@{string(body('Rows_downtime')?['value'])}",
+          "shift": "@{string(body('Rows_shift')?['value'])}",
+          "err": ""
+         },
+         "schema": {
+          "type": "object",
+          "properties": {
+           "files": {
+            "title": "files",
+            "type": "string",
+            "x-ms-content-hint": "TEXT",
+            "x-ms-dynamically-added": true
+           },
+           "folder": {
+            "title": "folder",
+            "type": "string",
+            "x-ms-content-hint": "TEXT",
+            "x-ms-dynamically-added": true
+           },
+           "prod": {
+            "title": "prod",
+            "type": "string",
+            "x-ms-content-hint": "TEXT",
+            "x-ms-dynamically-added": true
+           },
+           "dt": {
+            "title": "dt",
+            "type": "string",
+            "x-ms-content-hint": "TEXT",
+            "x-ms-dynamically-added": true
+           },
+           "shift": {
+            "title": "shift",
+            "type": "string",
+            "x-ms-content-hint": "TEXT",
+            "x-ms-dynamically-added": true
+           },
+           "err": {
+            "title": "err",
+            "type": "string",
+            "x-ms-content-hint": "TEXT",
+            "x-ms-dynamically-added": true
+           }
+          },
+          "additionalProperties": {}
+         }
+        }
+       },
+       "Respond_read_failed": {
+        "runAfter": {
+         "Respond_rows": [
+          "Skipped"
+         ]
+        },
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+         "statusCode": 200,
+         "body": {
+          "files": "",
+          "folder": "",
+          "prod": "",
+          "dt": "",
+          "shift": "",
+          "err": "Could not read @{triggerBody()?['text_1']}. It needs the tables Tbl_Shift, Tbl_Production and Tbl_Downtime (the Log_ tabs of the line data-entry workbook), and must not be open for editing by someone else."
+         },
+         "schema": {
+          "type": "object",
+          "properties": {
+           "files": {
+            "title": "files",
+            "type": "string",
+            "x-ms-content-hint": "TEXT",
+            "x-ms-dynamically-added": true
+           },
+           "folder": {
+            "title": "folder",
+            "type": "string",
+            "x-ms-content-hint": "TEXT",
+            "x-ms-dynamically-added": true
+           },
+           "prod": {
+            "title": "prod",
+            "type": "string",
+            "x-ms-content-hint": "TEXT",
+            "x-ms-dynamically-added": true
+           },
+           "dt": {
+            "title": "dt",
+            "type": "string",
+            "x-ms-content-hint": "TEXT",
+            "x-ms-dynamically-added": true
+           },
+           "shift": {
+            "title": "shift",
+            "type": "string",
+            "x-ms-content-hint": "TEXT",
+            "x-ms-dynamically-added": true
+           },
+           "err": {
+            "title": "err",
+            "type": "string",
+            "x-ms-content-hint": "TEXT",
+            "x-ms-dynamically-added": true
+           }
+          },
+          "additionalProperties": {}
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "outputs": {}
+  }
+ },
+ "schemaVersion": "1.0.0.0"
+}

@@ -1,0 +1,1197 @@
+- bHdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =90
+- bBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =34
+      Color: =RGBA(255, 255, 255, 1)
+      X: =24
+      Y: =6
+      Width: =170
+      Height: =52
+- bBrandSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NEW ALBANY"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 178, 169, 1)
+      FontWeight: =FontWeight.Bold
+      X: =27
+      Y: =56
+      Width: =170
+      Height: =24
+- bTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TIER 3  ·  BOWLER"
+      Font: =Font.Georgia
+      Size: =26
+      Color: =RGBA(176, 227, 228, 1)
+      FontWeight: =FontWeight.Bold
+      X: =190
+      Y: =20
+      Width: =700
+      Height: =50
+      Wrap: =false
+- bScope:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") & Char(10) & "as of " & Text(varD, "ddd m/d")
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(176, 227, 228, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Right
+      X: =1300
+      Y: =10
+      Width: =608
+      Height: =70
+- bSubBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =0
+      Y: =90
+      Width: =1920
+      Height: =44
+- bPath:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PLANT" & If(IsBlank(varVS), "", "  ›  " & varVS) & If(IsBlank(varVert), "", "  ›  " & varVert) & If(IsBlank(varLn), "", "  ›  LINE " & varLn)
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =96
+      Width: =640
+      Height: =32
+      Tooltip: ="Change the scope on PERFORMANCE (value stream, vertical or line)."
+- bTab0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="PERFORMANCE"
+      OnSelect: =Navigate(Screen1, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =10
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =830
+      Y: =96
+      Width: =154
+      Height: =32
+- bTab1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="BOWLER"
+      OnSelect: =Navigate(scrBowler, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =10
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 178, 169, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =990
+      Y: =96
+      Width: =154
+      Height: =32
+- bTab2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="VARIANCES"
+      OnSelect: =Navigate(scrVariance, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =10
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1150
+      Y: =96
+      Width: =154
+      Height: =32
+- bTab3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="ROOT CAUSE"
+      OnSelect: =false
+      Font: =Font.Arial
+      Size: =10
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(217, 217, 214, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      DisplayMode: =DisplayMode.Disabled
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(177, 179, 179, 1)
+      Tooltip: |-
+        ="Root cause analysis: coming soon"
+      X: =1310
+      Y: =96
+      Width: =154
+      Height: =32
+- bNoData:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(IsBlank(varLoadedAt), "Open PERFORMANCE first: it loads the data for every screen.", "")
+      Font: =Font.Arial
+      Size: =18
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Center
+      X: =12
+      Y: =500
+      Width: =1896
+      Height: =60
+- bHead:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WEEK OF " & Upper(Text(varWk, "mmm d")) & "  ·  DAY BY DAY + WEEK TO DATE + MONTH TO DATE  ·  " & If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") & "  ·  target / actual / variance for every metric  ·  green variance = favorable"
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =12
+      Y: =140
+      Width: =1896
+      Height: =32
+- bhM:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="METRIC"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =12
+      Y: =174
+      Width: =300
+      Height: =26
+- bhm0:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Upper(Text(DateAdd(varWk, 0, TimeUnit.Days), "ddd m/d"))
+      Font: =Font.Arial
+      Size: =10
+      Color: =If(DateAdd(varWk, 0, TimeUnit.Days) = varD, RGBA(7, 39, 45, 1), RGBA(117, 120, 123, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =394
+      Y: =174
+      Width: =150
+      Height: =26
+- bhm1:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Upper(Text(DateAdd(varWk, 1, TimeUnit.Days), "ddd m/d"))
+      Font: =Font.Arial
+      Size: =10
+      Color: =If(DateAdd(varWk, 1, TimeUnit.Days) = varD, RGBA(7, 39, 45, 1), RGBA(117, 120, 123, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =548
+      Y: =174
+      Width: =150
+      Height: =26
+- bhm2:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Upper(Text(DateAdd(varWk, 2, TimeUnit.Days), "ddd m/d"))
+      Font: =Font.Arial
+      Size: =10
+      Color: =If(DateAdd(varWk, 2, TimeUnit.Days) = varD, RGBA(7, 39, 45, 1), RGBA(117, 120, 123, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =702
+      Y: =174
+      Width: =150
+      Height: =26
+- bhm3:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Upper(Text(DateAdd(varWk, 3, TimeUnit.Days), "ddd m/d"))
+      Font: =Font.Arial
+      Size: =10
+      Color: =If(DateAdd(varWk, 3, TimeUnit.Days) = varD, RGBA(7, 39, 45, 1), RGBA(117, 120, 123, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =856
+      Y: =174
+      Width: =150
+      Height: =26
+- bhm4:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Upper(Text(DateAdd(varWk, 4, TimeUnit.Days), "ddd m/d"))
+      Font: =Font.Arial
+      Size: =10
+      Color: =If(DateAdd(varWk, 4, TimeUnit.Days) = varD, RGBA(7, 39, 45, 1), RGBA(117, 120, 123, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1010
+      Y: =174
+      Width: =150
+      Height: =26
+- bhm5:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Upper(Text(DateAdd(varWk, 5, TimeUnit.Days), "ddd m/d"))
+      Font: =Font.Arial
+      Size: =10
+      Color: =If(DateAdd(varWk, 5, TimeUnit.Days) = varD, RGBA(7, 39, 45, 1), RGBA(117, 120, 123, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1164
+      Y: =174
+      Width: =150
+      Height: =26
+- bhm6:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Upper(Text(DateAdd(varWk, 6, TimeUnit.Days), "ddd m/d"))
+      Font: =Font.Arial
+      Size: =10
+      Color: =If(DateAdd(varWk, 6, TimeUnit.Days) = varD, RGBA(7, 39, 45, 1), RGBA(117, 120, 123, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1318
+      Y: =174
+      Width: =150
+      Height: =26
+- bhW:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WTD"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1476
+      Y: =174
+      Width: =200
+      Height: =26
+- bhY:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="MTD " & Upper(Text(varD, "mmm"))
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1680
+      Y: =174
+      Width: =200
+      Height: =26
+- galBowl:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =SortByColumns(AddColumns(colMet, LO, Find(Ltr, "SQDCP")), "LO", SortOrder.Ascending, "Ord", SortOrder.Ascending)
+      TemplateSize: =84
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      BorderThickness: =0
+      X: =12
+      Y: =202
+      Width: =1896
+      Height: =640
+    Children:
+      - bmL:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =Switch(ThisItem.Ltr, "S", RGBA(207, 34, 46, 1), "Q", RGBA(130, 80, 223, 1), "D", RGBA(9, 105, 218, 1), "C", RGBA(26, 127, 55, 1), RGBA(191, 135, 0, 1))
+            X: =0
+            Y: =2
+            Width: =34
+            Height: =80
+      - bmLt:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Ltr
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =0
+            Y: =2
+            Width: =34
+            Height: =80
+      - bmBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(7, 39, 45, 1)
+            X: =36
+            Y: =2
+            Width: =264
+            Height: =80
+      - bmN:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Nm
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            X: =44
+            Y: =4
+            Width: =252
+            Height: =40
+      - bmU:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(ThisItem.Code = "QUAL_NCR", "not yet collected", ThisItem.Un & "  ·  " & If(ThisItem.Hi, "higher is better", "lower is better"))
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(176, 227, 228, 1)
+            X: =44
+            Y: =44
+            Width: =252
+            Height: =34
+      - bmRT:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="target"
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Right
+            X: =306
+            Y: =2
+            Width: =70
+            Height: =26
+      - bmRA:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="actual"
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Right
+            X: =306
+            Y: =28
+            Width: =70
+            Height: =28
+      - bmRV:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="variance"
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Right
+            X: =306
+            Y: =56
+            Width: =70
+            Height: =26
+      - bmSep:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(217, 217, 214, 1)
+            X: =0
+            Y: =82
+            Width: =1896
+            Height: =1
+      - bc0a:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 0)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Switch(Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1)), RGBA(217, 217, 214, 1)))
+            X: =382
+            Y: =28
+            Width: =150
+            Height: =28
+      - bc0t:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 0)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Text(Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Center
+            X: =382
+            Y: =2
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc0v:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 0)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Text(Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =382
+            Y: =28
+            Width: =150
+            Height: =28
+            Wrap: =false
+      - bc0d:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 0)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, With({d: Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC)}, If(d > 0, "+", "") & Text(d, Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0"))), ""))
+            Font: =Font.Arial
+            Size: =10
+            Color: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 0)}, If(If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, If(ThisItem.Hi, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) <= 0), true), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1)))
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =382
+            Y: =56
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc1a:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 1)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Switch(Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1)), RGBA(217, 217, 214, 1)))
+            X: =536
+            Y: =28
+            Width: =150
+            Height: =28
+      - bc1t:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 1)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Text(Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Center
+            X: =536
+            Y: =2
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc1v:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 1)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Text(Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =536
+            Y: =28
+            Width: =150
+            Height: =28
+            Wrap: =false
+      - bc1d:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 1)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, With({d: Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC)}, If(d > 0, "+", "") & Text(d, Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0"))), ""))
+            Font: =Font.Arial
+            Size: =10
+            Color: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 1)}, If(If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, If(ThisItem.Hi, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) <= 0), true), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1)))
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =536
+            Y: =56
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc2a:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 2)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Switch(Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1)), RGBA(217, 217, 214, 1)))
+            X: =690
+            Y: =28
+            Width: =150
+            Height: =28
+      - bc2t:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 2)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Text(Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Center
+            X: =690
+            Y: =2
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc2v:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 2)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Text(Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =690
+            Y: =28
+            Width: =150
+            Height: =28
+            Wrap: =false
+      - bc2d:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 2)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, With({d: Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC)}, If(d > 0, "+", "") & Text(d, Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0"))), ""))
+            Font: =Font.Arial
+            Size: =10
+            Color: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 2)}, If(If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, If(ThisItem.Hi, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) <= 0), true), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1)))
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =690
+            Y: =56
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc3a:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 3)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Switch(Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1)), RGBA(217, 217, 214, 1)))
+            X: =844
+            Y: =28
+            Width: =150
+            Height: =28
+      - bc3t:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 3)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Text(Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Center
+            X: =844
+            Y: =2
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc3v:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 3)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Text(Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =844
+            Y: =28
+            Width: =150
+            Height: =28
+            Wrap: =false
+      - bc3d:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 3)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, With({d: Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC)}, If(d > 0, "+", "") & Text(d, Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0"))), ""))
+            Font: =Font.Arial
+            Size: =10
+            Color: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 3)}, If(If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, If(ThisItem.Hi, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) <= 0), true), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1)))
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =844
+            Y: =56
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc4a:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 4)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Switch(Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1)), RGBA(217, 217, 214, 1)))
+            X: =998
+            Y: =28
+            Width: =150
+            Height: =28
+      - bc4t:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 4)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Text(Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Center
+            X: =998
+            Y: =2
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc4v:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 4)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Text(Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =998
+            Y: =28
+            Width: =150
+            Height: =28
+            Wrap: =false
+      - bc4d:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 4)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, With({d: Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC)}, If(d > 0, "+", "") & Text(d, Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0"))), ""))
+            Font: =Font.Arial
+            Size: =10
+            Color: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 4)}, If(If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, If(ThisItem.Hi, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) <= 0), true), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1)))
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =998
+            Y: =56
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc5a:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 5)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Switch(Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1)), RGBA(217, 217, 214, 1)))
+            X: =1152
+            Y: =28
+            Width: =150
+            Height: =28
+      - bc5t:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 5)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Text(Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Center
+            X: =1152
+            Y: =2
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc5v:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 5)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Text(Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =1152
+            Y: =28
+            Width: =150
+            Height: =28
+            Wrap: =false
+      - bc5d:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 5)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, With({d: Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC)}, If(d > 0, "+", "") & Text(d, Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0"))), ""))
+            Font: =Font.Arial
+            Size: =10
+            Color: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 5)}, If(If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, If(ThisItem.Hi, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) <= 0), true), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1)))
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =1152
+            Y: =56
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc6a:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 6)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Switch(Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1)), RGBA(217, 217, 214, 1)))
+            X: =1306
+            Y: =28
+            Width: =150
+            Height: =28
+      - bc6t:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 6)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Text(Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Center
+            X: =1306
+            Y: =2
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bc6v:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 6)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Text(Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =1306
+            Y: =28
+            Width: =150
+            Height: =28
+            Wrap: =false
+      - bc6d:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 6)}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, With({d: Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC)}, If(d > 0, "+", "") & Text(d, Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0"))), ""))
+            Font: =Font.Arial
+            Size: =10
+            Color: |-
+              =With({c: LookUp(colDy, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT") && i = 6)}, If(If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, If(ThisItem.Hi, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) <= 0), true), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1)))
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =1306
+            Y: =56
+            Width: =150
+            Height: =26
+            Wrap: =false
+      - bcWa:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colWTD, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT"))}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Switch(Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1)), RGBA(217, 217, 214, 1)))
+            BorderColor: =RGBA(7, 39, 45, 1)
+            BorderThickness: =2
+            X: =1464
+            Y: =28
+            Width: =200
+            Height: =28
+      - bcWt:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colWTD, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT"))}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Text(Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Center
+            X: =1464
+            Y: =2
+            Width: =200
+            Height: =26
+            Wrap: =false
+      - bcWv:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colWTD, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT"))}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Text(Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =1464
+            Y: =28
+            Width: =200
+            Height: =28
+            Wrap: =false
+      - bcWd:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colWTD, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT"))}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, With({d: Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC)}, If(d > 0, "+", "") & Text(d, Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0"))), ""))
+            Font: =Font.Arial
+            Size: =10
+            Color: |-
+              =With({c: LookUp(colWTD, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT"))}, If(If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, If(ThisItem.Hi, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) <= 0), true), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1)))
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =1464
+            Y: =56
+            Width: =200
+            Height: =26
+            Wrap: =false
+      - bcYa:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colMTD, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT"))}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Switch(Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1)), RGBA(217, 217, 214, 1)))
+            BorderColor: =RGBA(7, 39, 45, 1)
+            BorderThickness: =2
+            X: =1668
+            Y: =28
+            Width: =200
+            Height: =28
+      - bcYt:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colMTD, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT"))}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Text(Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Center
+            X: =1668
+            Y: =2
+            Width: =200
+            Height: =26
+            Wrap: =false
+      - bcYv:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colMTD, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT"))}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N", Text(Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC), Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0")), ""))
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =1668
+            Y: =28
+            Width: =200
+            Height: =28
+            Wrap: =false
+      - bcYd:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colMTD, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT"))}, If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, With({d: Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC)}, If(d > 0, "+", "") & Text(d, Switch(ThisItem.Code, "SAF_EVENTS", "0", "SAF_HAZ", "0", "SAF_AUD", "0.0", "QUAL_RW", "0.0", "QUAL_SCRAP", "0.00", "QUAL_NCR", "0", "DEL_ATT", "0", "DEL_DT", "0", "DEL_DTE", "0.0", "COST_OEE", "0", "COST_SPEED", "0.0", "PEO_CREW", "0", "PEO_PC", "0", "0.0"))), ""))
+            Font: =Font.Arial
+            Size: =10
+            Color: |-
+              =With({c: LookUp(colMTD, G = If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT"))}, If(If(!IsBlank(c) && Switch(ThisItem.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC) <> "N" && Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, If(ThisItem.Hi, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) >= 0, Switch(ThisItem.Code, "SAF_EVENTS", c.v_SAF_EVENTS, "SAF_HAZ", c.v_SAF_HAZ, "SAF_AUD", c.v_SAF_AUD, "QUAL_RW", c.v_QUAL_RW, "QUAL_SCRAP", c.v_QUAL_SCRAP, "QUAL_NCR", c.v_QUAL_NCR, "DEL_ATT", c.v_DEL_ATT, "DEL_DT", c.v_DEL_DT, "DEL_DTE", c.v_DEL_DTE, "COST_OEE", c.v_COST_OEE, "COST_SPEED", c.v_COST_SPEED, "PEO_CREW", c.v_PEO_CREW, "PEO_PC", c.v_PEO_PC) - Switch(ThisItem.Code, "SAF_EVENTS", c.g_SAF_EVENTS, "SAF_HAZ", c.g_SAF_HAZ, "SAF_AUD", c.g_SAF_AUD, "QUAL_RW", c.g_QUAL_RW, "QUAL_SCRAP", c.g_QUAL_SCRAP, "QUAL_NCR", c.g_QUAL_NCR, "DEL_ATT", c.g_DEL_ATT, "DEL_DT", c.g_DEL_DT, "DEL_DTE", c.g_DEL_DTE, "COST_OEE", c.g_COST_OEE, "COST_SPEED", c.g_COST_SPEED, "PEO_CREW", c.g_PEO_CREW, "PEO_PC", c.g_PEO_PC) <= 0), true), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1)))
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =1668
+            Y: =56
+            Width: =200
+            Height: =26
+            Wrap: =false
+- bKids:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="BY " & If(!IsBlank(varVert), "LINE", !IsBlank(varVS), "VERTICAL / LINE", "VALUE STREAM")
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =12
+      Y: =850
+      Width: =400
+      Height: =32
+- bDdMet:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =ForAll(SortByColumns(AddColumns(colMet, LO, Find(Ltr, "SQDCP")), "LO", SortOrder.Ascending, "Ord", SortOrder.Ascending), {Value: Ltr & "  ·  " & Nm, Code: Code})
+      Font: =Font.Arial
+      Size: =12
+      Default: ="D  ·  " & LookUp(colMet, Code = varHdD).Nm
+      X: =420
+      Y: =848
+      Width: =360
+      Height: =36
+- galBowlKids:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =SortByColumns(Filter(colP, K <> "top"), "Ord", SortOrder.Ascending)
+      TemplateSize: =40
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      BorderThickness: =0
+      X: =12
+      Y: =888
+      Width: =1896
+      Height: =180
+    Children:
+      - bkBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =If(ThisItem.K = "line", RGBA(7, 39, 45, 1), RGBA(0, 72, 81, 1))
+            X: =0
+            Y: =2
+            Width: =376
+            Height: =36
+      - bkN:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.G
+            Font: =Font.Arial
+            Size: =If(Len(ThisItem.G) > 22, 11, 13)
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            X: =10
+            Y: =2
+            Width: =360
+            Height: =36
+      - bkc0:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 0)}, If(IsBlank(c), RGBA(217, 217, 214, 1), Switch(Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1))))
+            X: =382
+            Y: =2
+            Width: =150
+            Height: =36
+      - bkt0:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 0)}, If(IsBlank(c), "", Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.t_SAF_EVENTS, "SAF_HAZ", c.t_SAF_HAZ, "SAF_AUD", c.t_SAF_AUD, "QUAL_RW", c.t_QUAL_RW, "QUAL_SCRAP", c.t_QUAL_SCRAP, "QUAL_NCR", c.t_QUAL_NCR, "DEL_ATT", c.t_DEL_ATT, "DEL_DT", c.t_DEL_DT, "DEL_DTE", c.t_DEL_DTE, "COST_OEE", c.t_COST_OEE, "COST_SPEED", c.t_COST_SPEED, "PEO_CREW", c.t_PEO_CREW, "PEO_PC", c.t_PEO_PC)))
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =382
+            Y: =2
+            Width: =150
+            Height: =36
+            Wrap: =false
+      - bkc1:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 1)}, If(IsBlank(c), RGBA(217, 217, 214, 1), Switch(Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1))))
+            X: =536
+            Y: =2
+            Width: =150
+            Height: =36
+      - bkt1:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 1)}, If(IsBlank(c), "", Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.t_SAF_EVENTS, "SAF_HAZ", c.t_SAF_HAZ, "SAF_AUD", c.t_SAF_AUD, "QUAL_RW", c.t_QUAL_RW, "QUAL_SCRAP", c.t_QUAL_SCRAP, "QUAL_NCR", c.t_QUAL_NCR, "DEL_ATT", c.t_DEL_ATT, "DEL_DT", c.t_DEL_DT, "DEL_DTE", c.t_DEL_DTE, "COST_OEE", c.t_COST_OEE, "COST_SPEED", c.t_COST_SPEED, "PEO_CREW", c.t_PEO_CREW, "PEO_PC", c.t_PEO_PC)))
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =536
+            Y: =2
+            Width: =150
+            Height: =36
+            Wrap: =false
+      - bkc2:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 2)}, If(IsBlank(c), RGBA(217, 217, 214, 1), Switch(Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1))))
+            X: =690
+            Y: =2
+            Width: =150
+            Height: =36
+      - bkt2:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 2)}, If(IsBlank(c), "", Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.t_SAF_EVENTS, "SAF_HAZ", c.t_SAF_HAZ, "SAF_AUD", c.t_SAF_AUD, "QUAL_RW", c.t_QUAL_RW, "QUAL_SCRAP", c.t_QUAL_SCRAP, "QUAL_NCR", c.t_QUAL_NCR, "DEL_ATT", c.t_DEL_ATT, "DEL_DT", c.t_DEL_DT, "DEL_DTE", c.t_DEL_DTE, "COST_OEE", c.t_COST_OEE, "COST_SPEED", c.t_COST_SPEED, "PEO_CREW", c.t_PEO_CREW, "PEO_PC", c.t_PEO_PC)))
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =690
+            Y: =2
+            Width: =150
+            Height: =36
+            Wrap: =false
+      - bkc3:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 3)}, If(IsBlank(c), RGBA(217, 217, 214, 1), Switch(Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1))))
+            X: =844
+            Y: =2
+            Width: =150
+            Height: =36
+      - bkt3:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 3)}, If(IsBlank(c), "", Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.t_SAF_EVENTS, "SAF_HAZ", c.t_SAF_HAZ, "SAF_AUD", c.t_SAF_AUD, "QUAL_RW", c.t_QUAL_RW, "QUAL_SCRAP", c.t_QUAL_SCRAP, "QUAL_NCR", c.t_QUAL_NCR, "DEL_ATT", c.t_DEL_ATT, "DEL_DT", c.t_DEL_DT, "DEL_DTE", c.t_DEL_DTE, "COST_OEE", c.t_COST_OEE, "COST_SPEED", c.t_COST_SPEED, "PEO_CREW", c.t_PEO_CREW, "PEO_PC", c.t_PEO_PC)))
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =844
+            Y: =2
+            Width: =150
+            Height: =36
+            Wrap: =false
+      - bkc4:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 4)}, If(IsBlank(c), RGBA(217, 217, 214, 1), Switch(Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1))))
+            X: =998
+            Y: =2
+            Width: =150
+            Height: =36
+      - bkt4:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 4)}, If(IsBlank(c), "", Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.t_SAF_EVENTS, "SAF_HAZ", c.t_SAF_HAZ, "SAF_AUD", c.t_SAF_AUD, "QUAL_RW", c.t_QUAL_RW, "QUAL_SCRAP", c.t_QUAL_SCRAP, "QUAL_NCR", c.t_QUAL_NCR, "DEL_ATT", c.t_DEL_ATT, "DEL_DT", c.t_DEL_DT, "DEL_DTE", c.t_DEL_DTE, "COST_OEE", c.t_COST_OEE, "COST_SPEED", c.t_COST_SPEED, "PEO_CREW", c.t_PEO_CREW, "PEO_PC", c.t_PEO_PC)))
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =998
+            Y: =2
+            Width: =150
+            Height: =36
+            Wrap: =false
+      - bkc5:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 5)}, If(IsBlank(c), RGBA(217, 217, 214, 1), Switch(Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1))))
+            X: =1152
+            Y: =2
+            Width: =150
+            Height: =36
+      - bkt5:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 5)}, If(IsBlank(c), "", Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.t_SAF_EVENTS, "SAF_HAZ", c.t_SAF_HAZ, "SAF_AUD", c.t_SAF_AUD, "QUAL_RW", c.t_QUAL_RW, "QUAL_SCRAP", c.t_QUAL_SCRAP, "QUAL_NCR", c.t_QUAL_NCR, "DEL_ATT", c.t_DEL_ATT, "DEL_DT", c.t_DEL_DT, "DEL_DTE", c.t_DEL_DTE, "COST_OEE", c.t_COST_OEE, "COST_SPEED", c.t_COST_SPEED, "PEO_CREW", c.t_PEO_CREW, "PEO_PC", c.t_PEO_PC)))
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =1152
+            Y: =2
+            Width: =150
+            Height: =36
+            Wrap: =false
+      - bkc6:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 6)}, If(IsBlank(c), RGBA(217, 217, 214, 1), Switch(Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1))))
+            X: =1306
+            Y: =2
+            Width: =150
+            Height: =36
+      - bkt6:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colDy, G = ThisItem.G && i = 6)}, If(IsBlank(c), "", Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.t_SAF_EVENTS, "SAF_HAZ", c.t_SAF_HAZ, "SAF_AUD", c.t_SAF_AUD, "QUAL_RW", c.t_QUAL_RW, "QUAL_SCRAP", c.t_QUAL_SCRAP, "QUAL_NCR", c.t_QUAL_NCR, "DEL_ATT", c.t_DEL_ATT, "DEL_DT", c.t_DEL_DT, "DEL_DTE", c.t_DEL_DTE, "COST_OEE", c.t_COST_OEE, "COST_SPEED", c.t_COST_SPEED, "PEO_CREW", c.t_PEO_CREW, "PEO_PC", c.t_PEO_PC)))
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =1306
+            Y: =2
+            Width: =150
+            Height: =36
+            Wrap: =false
+      - bkcW:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colWTD, G = ThisItem.G)}, If(IsBlank(c), RGBA(217, 217, 214, 1), Switch(Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1))))
+            BorderColor: =RGBA(7, 39, 45, 1)
+            BorderThickness: =3
+            X: =1464
+            Y: =2
+            Width: =200
+            Height: =36
+      - bktW:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colWTD, G = ThisItem.G)}, If(IsBlank(c), "", Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.t_SAF_EVENTS, "SAF_HAZ", c.t_SAF_HAZ, "SAF_AUD", c.t_SAF_AUD, "QUAL_RW", c.t_QUAL_RW, "QUAL_SCRAP", c.t_QUAL_SCRAP, "QUAL_NCR", c.t_QUAL_NCR, "DEL_ATT", c.t_DEL_ATT, "DEL_DT", c.t_DEL_DT, "DEL_DTE", c.t_DEL_DTE, "COST_OEE", c.t_COST_OEE, "COST_SPEED", c.t_COST_SPEED, "PEO_CREW", c.t_PEO_CREW, "PEO_PC", c.t_PEO_PC)))
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =1464
+            Y: =2
+            Width: =200
+            Height: =36
+            Wrap: =false
+      - bkcY:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =With({c: LookUp(colMTD, G = ThisItem.G)}, If(IsBlank(c), RGBA(217, 217, 214, 1), Switch(Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.s_SAF_EVENTS, "SAF_HAZ", c.s_SAF_HAZ, "SAF_AUD", c.s_SAF_AUD, "QUAL_RW", c.s_QUAL_RW, "QUAL_SCRAP", c.s_QUAL_SCRAP, "QUAL_NCR", c.s_QUAL_NCR, "DEL_ATT", c.s_DEL_ATT, "DEL_DT", c.s_DEL_DT, "DEL_DTE", c.s_DEL_DTE, "COST_OEE", c.s_COST_OEE, "COST_SPEED", c.s_COST_SPEED, "PEO_CREW", c.s_PEO_CREW, "PEO_PC", c.s_PEO_PC), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(150, 152, 155, 1))))
+            BorderColor: =RGBA(7, 39, 45, 1)
+            BorderThickness: =3
+            X: =1668
+            Y: =2
+            Width: =200
+            Height: =36
+      - bktY:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({c: LookUp(colMTD, G = ThisItem.G)}, If(IsBlank(c), "", Switch(bDdMet.Selected.Code, "SAF_EVENTS", c.t_SAF_EVENTS, "SAF_HAZ", c.t_SAF_HAZ, "SAF_AUD", c.t_SAF_AUD, "QUAL_RW", c.t_QUAL_RW, "QUAL_SCRAP", c.t_QUAL_SCRAP, "QUAL_NCR", c.t_QUAL_NCR, "DEL_ATT", c.t_DEL_ATT, "DEL_DT", c.t_DEL_DT, "DEL_DTE", c.t_DEL_DTE, "COST_OEE", c.t_COST_OEE, "COST_SPEED", c.t_COST_SPEED, "PEO_CREW", c.t_PEO_CREW, "PEO_PC", c.t_PEO_PC)))
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =1668
+            Y: =2
+            Width: =200
+            Height: =36
+            Wrap: =false

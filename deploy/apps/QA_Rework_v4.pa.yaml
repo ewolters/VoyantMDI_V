@@ -1,0 +1,1227 @@
+- hdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =90
+- lblBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =34
+      Color: =RGBA(255, 255, 255, 1)
+      X: =24
+      Y: =6
+      Width: =170
+      Height: =52
+- lblBrandSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NEW ALBANY"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 178, 169, 1)
+      FontWeight: =FontWeight.Bold
+      X: =27
+      Y: =56
+      Width: =170
+      Height: =24
+- lblTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="QUALITY  ·  REWORK"
+      Font: =Font.Georgia
+      Size: =24
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =190
+      Y: =20
+      Width: =420
+      Height: =50
+- lblUser:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="Logged in: " & User().FullName
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(177, 179, 179, 1)
+      Align: =Align.Right
+      X: =1500
+      Y: =20
+      Width: =400
+      Height: =50
+- entryBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(248, 249, 249, 1)
+      X: =12
+      Y: =98
+      Width: =700
+      Height: =974
+- lblEntryT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LOG REWORK"
+      Font: =Font.Georgia
+      Size: =16
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =28
+      Y: =104
+      Width: =400
+      Height: =32
+- cQLine:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =28
+      Y: =142
+      Width: =120
+      Height: =20
+- ddQLine:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =Distinct(PLAYBOOK, Line)
+      Default: ="209"
+      OnChange: =Select(btnQCtx)
+      Font: =Font.Arial
+      Size: =20
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =28
+      Y: =164
+      Width: =130
+      Height: =52
+      Tooltip: ="Line the rework came from."
+- cQDate:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SHIFT DATE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =168
+      Y: =142
+      Width: =200
+      Height: =20
+- ddQDate:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =ForAll(Sequence(14, 0, -1), With({d: DateAdd(Today(), Value, TimeUnit.Days)}, {Value: Text(d, "ddd m/d"), D: d}))
+      OnChange: =Select(btnQCtx)
+      Font: =Font.Arial
+      Size: =18
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =168
+      Y: =164
+      Width: =200
+      Height: =52
+      Tooltip: ="Date the shift STARTED."
+- cQShift:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SHIFT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =378
+      Y: =142
+      Width: =100
+      Height: =20
+- ddQShift:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["1", "2", "3"]
+      OnChange: =Select(btnQCtx)
+      Font: =Font.Arial
+      Size: =20
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =378
+      Y: =164
+      Width: =100
+      Height: =52
+      Tooltip: ="Shift the product was made on."
+- lblQCtx:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(IsBlank(varQS), "No HxH board for this shift yet — pick product and job below.", "From HxH: " & varQS.ProductForm & "  ·  job " & Coalesce(varQS.Job1, "—"))
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      X: =488
+      Y: =150
+      Width: =208
+      Height: =70
+- cQProd:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PRODUCT  (SIZE | FORM)  — FROM PLAYBOOK"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =28
+      Y: =228
+      Width: =420
+      Height: =20
+- ddQProd:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =ForAll(Filter(PLAYBOOK, Line = ddQLine.Selected.Value), {Value: Size & " | " & Form, Size: Size, Form: Form})
+      Default: =Coalesce(varQS.ProductForm, "")
+      Font: =Font.Arial
+      Size: =17
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =28
+      Y: =250
+      Width: =440
+      Height: =52
+      Fill: =If(IsBlank(Self.Selected.Value), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      Tooltip: ="Product from the PLAYBOOK. Defaults to what the HxH board shows for this shift."
+- cQJob:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="JOB #"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =478
+      Y: =228
+      Width: =200
+      Height: =20
+- txtQJob:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(varQS.Job1, "")
+      HintText: |-
+        ="job #"
+      Font: =Font.Arial
+      Size: =18
+      Align: =Align.Center
+      BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      FontWeight: =FontWeight.Bold
+      X: =478
+      Y: =250
+      Width: =218
+      Height: =52
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderThickness: =If(IsBlank(Self.Text), 3, 1)
+      Tooltip: ="REQUIRED. Job number. Defaults to Job 1 from the HxH board for this shift."
+- cQReason:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="REWORK REASON  — TAP ONE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =28
+      Y: =316
+      Width: =400
+      Height: =20
+- galQReason:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colRR
+      WrapCount: =2
+      TemplateSize: =68
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      X: =20
+      Y: =338
+      Width: =684
+      Height: =210
+    Children:
+      - gQReason:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =ThisItem.Value
+            OnSelect: =Set(varReason, ThisItem.Value)
+            Font: =Font.Arial
+            Size: =15
+            FontWeight: =FontWeight.Bold
+            Fill: =If((!IsBlank(varReason) && varReason = ThisItem.Value), RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+            Color: =If((!IsBlank(varReason) && varReason = ThisItem.Value), RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =If((!IsBlank(varReason) && varReason = ThisItem.Value), RGBA(0, 72, 81, 1), RGBA(177, 179, 179, 1))
+            BorderThickness: =2
+            Tooltip: =Coalesce(ThisItem.Help, "Lookups list → Category Rework")
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            X: =4
+            Y: =4
+            Width: =320
+            Height: =60
+- lblQNoReasons:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No rework reasons loaded — press REFRESH, or add rows to Lookups (Category = Rework)."
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =CountRows(colRR) = 0
+      X: =28
+      Y: =350
+      Width: =668
+      Height: =40
+- cQQty:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="REWORK UNITS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =28
+      Y: =556
+      Width: =200
+      Height: =20
+- txtQQty:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="0"
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =26
+      Align: =Align.Center
+      BorderColor: =If(Coalesce(Value(Self.Text), 0) <= 0, RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      FontWeight: =FontWeight.Bold
+      X: =28
+      Y: =578
+      Width: =200
+      Height: =64
+      Fill: =If(Coalesce(Value(Self.Text), 0) <= 0, RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderThickness: =If(Coalesce(Value(Self.Text), 0) <= 0, 3, 1)
+      Tooltip: ="REQUIRED. Units reworked."
+- cQNotes:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NOTES  (OPTIONAL)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =240
+      Y: =556
+      Width: =300
+      Height: =20
+- txtQNotes:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: |-
+        ="what happened, lot #, where found"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =240
+      Y: =578
+      Width: =456
+      Height: =64
+      Tooltip: ="Optional detail."
+- btnQSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(!IsBlank(ddQProd.Selected.Value) && !IsBlank(txtQJob.Text) && !IsBlank(varReason) && Coalesce(Value(txtQQty.Text), 0) > 0, "SAVE REWORK", "PICK PRODUCT · JOB · REASON · UNITS")
+      OnSelect: |-
+        =IfError(
+         Patch(QA_Rework, Defaults(QA_Rework),
+         {Ref: ddQLine.Selected.Value & "-" & Text(ddQDate.Selected.D, "yyyymmdd") & "-S" & ddQShift.Selected.Value & "-" & Text(Now(), "hhmmss"),
+          Line: ddQLine.Selected.Value, ShiftDate: ddQDate.Selected.D, Shift: Value(ddQShift.Selected.Value),
+          ShiftKey: ddQLine.Selected.Value & "-" & Text(ddQDate.Selected.D, "yyyymmdd") & "-S" & ddQShift.Selected.Value,
+          Size: ddQProd.Selected.Size, Form: ddQProd.Selected.Form, ProductForm: ddQProd.Selected.Size & " " & ddQProd.Selected.Form,
+          PlaybookKey: ddQLine.Selected.Value & "|" & ddQProd.Selected.Size & "|" & ddQProd.Selected.Form,
+          Job: txtQJob.Text, Reason: varReason, ReworkQty: Value(txtQQty.Text), Notes: txtQNotes.Text, EnteredBy: User().Email}),
+         Notify("NOT SAVED — " & FirstError.Message & "  (check connection, try again)", NotificationType.Error),
+         Notify(Text(Value(txtQQty.Text)) & " units logged — " & varReason, NotificationType.Success);
+         Reset(txtQQty); Reset(txtQNotes); Set(varReason, Blank());
+         Select(btnQRefresh))
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsBlank(ddQProd.Selected.Value) && !IsBlank(txtQJob.Text) && !IsBlank(varReason) && Coalesce(Value(txtQQty.Text), 0) > 0, RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(!IsBlank(ddQProd.Selected.Value) && !IsBlank(txtQJob.Text) && !IsBlank(varReason) && Coalesce(Value(txtQQty.Text), 0) > 0, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(!IsBlank(ddQProd.Selected.Value) && !IsBlank(txtQJob.Text) && !IsBlank(varReason) && Coalesce(Value(txtQQty.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =28
+      Y: =656
+      Width: =668
+      Height: =64
+      Tooltip: ="Saves one rework entry. Log each reason separately."
+- lblQListT:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="THIS SHIFT  ·  " & ddQLine.Selected.Value & "  ·  " & ddQDate.Selected.Value & "  ·  S" & ddQShift.Selected.Value & "   —   " & Text(Coalesce(Sum(galQList.AllItems, ReworkQty), 0), "#,##0") & " units"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =28
+      Y: =732
+      Width: =668
+      Height: =28
+- galQList:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =SortByColumns(Filter(colQA, Line = ddQLine.Selected.Value && ShiftDate >= ddQDate.Selected.D && ShiftDate < DateAdd(ddQDate.Selected.D, 1, TimeUnit.Days) && Shift = Value(ddQShift.Selected.Value)), "Created", SortOrder.Descending)
+      TemplateSize: =48
+      TemplatePadding: =0
+      BorderColor: =RGBA(217, 217, 214, 1)
+      BorderThickness: =1
+      X: =20
+      Y: =762
+      Width: =684
+      Height: =300
+    Children:
+      - gLReason:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Reason
+            Font: =Font.Arial
+            Size: =13
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =8
+            Y: =4
+            Width: =220
+            Height: =40
+      - gLProd:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.ProductForm & "  ·  job " & ThisItem.Job
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            X: =230
+            Y: =4
+            Width: =260
+            Height: =40
+      - gLQty:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Text(ThisItem.ReworkQty, "#,##0")
+            Font: =Font.Arial
+            Size: =16
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Right
+            X: =490
+            Y: =4
+            Width: =80
+            Height: =40
+      - gLDel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="VOID"
+            OnSelect: |-
+              =IfError(Patch(QA_Rework, LookUp(QA_Rework, ID = ThisItem.ID), {Voided: true}),
+               Notify("NOT VOIDED — " & FirstError.Message, NotificationType.Error),
+               Notify("Entry voided. It no longer counts anywhere; an admin can remove it.", NotificationType.Information); Select(btnQRefresh))
+            Font: =Font.Arial
+            Size: =9
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(255, 255, 255, 1)
+            Color: =RGBA(117, 120, 123, 1)
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(217, 217, 214, 1)
+            DisplayMode: =If(ThisItem.EnteredBy = User().Email, DisplayMode.Edit, DisplayMode.Disabled)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(0, 0, 0, 0)
+            Tooltip: ="Void this entry if it was a mistake (only the person who entered it). Voided entries are kept for audit but excluded from every count."
+            X: =584
+            Y: =8
+            Width: =56
+            Height: =32
+- lblQEmpty:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No rework logged for this shift."
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(177, 179, 179, 1)
+      Visible: =CountRows(galQList.AllItems) = 0
+      X: =28
+      Y: =780
+      Width: =668
+      Height: =40
+- lblDashT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="QUALITY DASHBOARD"
+      Font: =Font.Georgia
+      Size: =16
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =724
+      Y: =104
+      Width: =400
+      Height: =32
+- cDPer:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PERIOD"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1144
+      Y: =98
+      Width: =200
+      Height: =20
+- ddDPer:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Table({Value: "Today", N: 0}, {Value: "Last 7 days", N: 6}, {Value: "Last 30 days", N: 29})
+      Default: ="Last 7 days"
+      OnChange: =Select(btnQRefresh)
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =1144
+      Y: =118
+      Width: =200
+      Height: =44
+- cDLine:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1354
+      Y: =98
+      Width: =200
+      Height: =20
+- ddDLine:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "All lines"})}, {t: Distinct(PLAYBOOK, Line)}), t)
+      Default: ="All lines"
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =1354
+      Y: =118
+      Width: =180
+      Height: =44
+- cDForm:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="FORM"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1544
+      Y: =98
+      Width: =200
+      Height: =20
+- ddDForm:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "All forms"})}, {t: Distinct(PLAYBOOK, Form)}), t)
+      Default: ="All forms"
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =1544
+      Y: =118
+      Width: =220
+      Height: =44
+- btnQRefresh:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="REFRESH"
+      OnSelect: |-
+        =IfError(ClearCollect(colLk, Filter(Lookups, Active = true)), Notify("Could not load Lookups — " & FirstError.Message, NotificationType.Error), true);
+        ClearCollect(colRR, ForAll(Sort(Filter(colLk, Category.Value = "Rework"), SortOrder), {Value: Label, Help: Help}));
+        Set(varFrom, DateAdd(Today(), -Coalesce(ddDPer.Selected.N, 6), TimeUnit.Days));
+        Set(varQFrom, Min(varFrom, DateAdd(Today(), -13, TimeUnit.Days)));
+        IfError(ClearCollect(colQA, Filter(QA_Rework, ShiftDate >= varQFrom && Voided = false)), Notify("Could not load QA_Rework — " & FirstError.Message, NotificationType.Error), true);
+        IfError(ClearCollect(colQS, Filter(HxH_Shift, ShiftDate >= varFrom)), Notify("Could not load HxH_Shift — " & FirstError.Message, NotificationType.Warning), true);
+        Set(varQLoaded, Now())
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1778
+      Y: =112
+      Width: =130
+      Height: =50
+      Tooltip: ="Reload rework entries, reasons and HxH units from SharePoint."
+- kQUnits:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Text(Coalesce(Sum(Filter(colQA, ShiftDate >= varFrom && (ddDLine.Selected.Value = "All lines" || Line = ddDLine.Selected.Value) && (ddDForm.Selected.Value = "All forms" || Form = ddDForm.Selected.Value)), ReworkQty), 0), "#,##0")
+      Font: =Font.Arial
+      Size: =34
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =14
+      X: =724
+      Y: =172
+      Width: =287
+      Height: =120
+      Tooltip: ="Total units reworked in the period (filters applied)."
+- kQUnitsC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="REWORK UNITS"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =724
+      Y: =178
+      Width: =287
+      Height: =24
+- kQRate:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =With({r: Coalesce(Sum(Filter(colQA, ShiftDate >= varFrom && (ddDLine.Selected.Value = "All lines" || Line = ddDLine.Selected.Value) && (ddDForm.Selected.Value = "All forms" || Form = ddDForm.Selected.Value)), ReworkQty), 0), m: Coalesce(Sum(Filter(colQS, (ddDLine.Selected.Value = "All lines" || Line = ddDLine.Selected.Value) && (ddDForm.Selected.Value = "All forms" || EndsWith(ProductForm, ddDForm.Selected.Value))), Coalesce(ActualUnits, 0)), 0)}, If(m <= 0, "—", Text(r / m * 100, "0.00") & "%"))
+      Font: =Font.Arial
+      Size: =34
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =14
+      X: =1023
+      Y: =172
+      Width: =287
+      Height: =120
+      Tooltip: ="Rework units / units produced on the HxH boards for the same period, line and form."
+- kQRateC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="REWORK % OF UNITS MADE"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1023
+      Y: =178
+      Width: =287
+      Height: =24
+- kQEntries:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(CountRows(Filter(colQA, ShiftDate >= varFrom && (ddDLine.Selected.Value = "All lines" || Line = ddDLine.Selected.Value) && (ddDForm.Selected.Value = "All forms" || Form = ddDForm.Selected.Value))))
+      Font: =Font.Arial
+      Size: =34
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =14
+      X: =1322
+      Y: =172
+      Width: =287
+      Height: =120
+      Tooltip: ="Number of rework entries logged."
+- kQEntriesC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ENTRIES"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1322
+      Y: =178
+      Width: =287
+      Height: =24
+- kQTop:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Coalesce(First(SortByColumns(AddColumns(GroupBy(Filter(colQA, ShiftDate >= varFrom && (ddDLine.Selected.Value = "All lines" || Line = ddDLine.Selected.Value) && (ddDForm.Selected.Value = "All forms" || Form = ddDForm.Selected.Value)), Reason, G), Qty, Sum(G, ReworkQty)), "Qty", SortOrder.Descending)).Reason, "—")
+      Font: =Font.Arial
+      Size: =20
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =14
+      X: =1621
+      Y: =172
+      Width: =287
+      Height: =120
+      Tooltip: ="Reason with the most rework units."
+- kQTopC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TOP REASON"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1621
+      Y: =178
+      Width: =287
+      Height: =24
+- bReasonBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =724
+      Y: =304
+      Width: =586
+      Height: =360
+- bReasonT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="BY REASON"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =736
+      Y: =310
+      Width: =562
+      Height: =28
+      Tooltip: ="Pareto of rework units by reason."
+- galbReason:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =With({t: SortByColumns(AddColumns(GroupBy(Filter(colQA, ShiftDate >= varFrom && (ddDLine.Selected.Value = "All lines" || Line = ddDLine.Selected.Value) && (ddDForm.Selected.Value = "All forms" || Form = ddDForm.Selected.Value)), Reason, G), Qty, Sum(G, ReworkQty)), "Qty", SortOrder.Descending)},
+         With({mx: Coalesce(Max(t, Qty), 0), tot: Coalesce(Sum(t, Qty), 0)}, AddColumns(t, Pct, If(mx > 0, Qty / mx, 0), Share, If(tot > 0, Qty / tot, 0))))
+      TemplateSize: =44
+      TemplatePadding: =0
+      X: =730
+      Y: =342
+      Width: =574
+      Height: =316
+    Children:
+      - bReasonK:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Reason
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =4
+            Y: =4
+            Width: =196
+            Height: =36
+      - bReasonBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(0, 72, 81, 1)
+            X: =204
+            Y: =10
+            Height: =24
+            Width: =Max(2, 252 * ThisItem.Pct)
+      - bReasonV:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Text(ThisItem.Qty, "#,##0") & "  (" & Text(ThisItem.Share * 100, "0") & "%)"
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            FontWeight: =FontWeight.Bold
+            X: =462
+            Y: =4
+            Width: =104
+            Height: =36
+- bReasonE:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No rework in this period."
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(177, 179, 179, 1)
+      Visible: =CountRows(Filter(colQA, ShiftDate >= varFrom && (ddDLine.Selected.Value = "All lines" || Line = ddDLine.Selected.Value) && (ddDForm.Selected.Value = "All forms" || Form = ddDForm.Selected.Value))) = 0
+      X: =736
+      Y: =348
+      Width: =562
+      Height: =30
+- bFormBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =1322
+      Y: =304
+      Width: =586
+      Height: =360
+- bFormT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="BY FORM"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1334
+      Y: =310
+      Width: =562
+      Height: =28
+      Tooltip: ="Rework units by product form (from the PLAYBOOK)."
+- galbForm:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =With({t: SortByColumns(AddColumns(GroupBy(Filter(colQA, ShiftDate >= varFrom && (ddDLine.Selected.Value = "All lines" || Line = ddDLine.Selected.Value) && (ddDForm.Selected.Value = "All forms" || Form = ddDForm.Selected.Value)), Form, G), Qty, Sum(G, ReworkQty)), "Qty", SortOrder.Descending)},
+         With({mx: Coalesce(Max(t, Qty), 0), tot: Coalesce(Sum(t, Qty), 0)}, AddColumns(t, Pct, If(mx > 0, Qty / mx, 0), Share, If(tot > 0, Qty / tot, 0))))
+      TemplateSize: =44
+      TemplatePadding: =0
+      X: =1328
+      Y: =342
+      Width: =574
+      Height: =316
+    Children:
+      - bFormK:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Form
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =4
+            Y: =4
+            Width: =196
+            Height: =36
+      - bFormBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(0, 72, 81, 1)
+            X: =204
+            Y: =10
+            Height: =24
+            Width: =Max(2, 252 * ThisItem.Pct)
+      - bFormV:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Text(ThisItem.Qty, "#,##0") & "  (" & Text(ThisItem.Share * 100, "0") & "%)"
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            FontWeight: =FontWeight.Bold
+            X: =462
+            Y: =4
+            Width: =104
+            Height: =36
+- bFormE:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No rework in this period."
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(177, 179, 179, 1)
+      Visible: =CountRows(Filter(colQA, ShiftDate >= varFrom && (ddDLine.Selected.Value = "All lines" || Line = ddDLine.Selected.Value) && (ddDForm.Selected.Value = "All forms" || Form = ddDForm.Selected.Value))) = 0
+      X: =1334
+      Y: =348
+      Width: =562
+      Height: =30
+- bLineBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =724
+      Y: =676
+      Width: =586
+      Height: =392
+- bLineT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="BY LINE"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =736
+      Y: =682
+      Width: =562
+      Height: =28
+      Tooltip: ="Rework units by line."
+- galbLine:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =With({t: SortByColumns(AddColumns(GroupBy(Filter(colQA, ShiftDate >= varFrom && (ddDLine.Selected.Value = "All lines" || Line = ddDLine.Selected.Value) && (ddDForm.Selected.Value = "All forms" || Form = ddDForm.Selected.Value)), Line, G), Qty, Sum(G, ReworkQty)), "Qty", SortOrder.Descending)},
+         With({mx: Coalesce(Max(t, Qty), 0), tot: Coalesce(Sum(t, Qty), 0)}, AddColumns(t, Pct, If(mx > 0, Qty / mx, 0), Share, If(tot > 0, Qty / tot, 0))))
+      TemplateSize: =44
+      TemplatePadding: =0
+      X: =730
+      Y: =714
+      Width: =574
+      Height: =348
+    Children:
+      - bLineK:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Line
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =4
+            Y: =4
+            Width: =196
+            Height: =36
+      - bLineBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(0, 72, 81, 1)
+            X: =204
+            Y: =10
+            Height: =24
+            Width: =Max(2, 252 * ThisItem.Pct)
+      - bLineV:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Text(ThisItem.Qty, "#,##0") & "  (" & Text(ThisItem.Share * 100, "0") & "%)"
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            FontWeight: =FontWeight.Bold
+            X: =462
+            Y: =4
+            Width: =104
+            Height: =36
+- bLineE:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No rework in this period."
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(177, 179, 179, 1)
+      Visible: =CountRows(Filter(colQA, ShiftDate >= varFrom && (ddDLine.Selected.Value = "All lines" || Line = ddDLine.Selected.Value) && (ddDForm.Selected.Value = "All forms" || Form = ddDForm.Selected.Value))) = 0
+      X: =736
+      Y: =720
+      Width: =562
+      Height: =30
+- jobsBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =1322
+      Y: =676
+      Width: =586
+      Height: =392
+- jobsT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TOP JOBS"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1334
+      Y: =682
+      Width: =300
+      Height: =28
+- jH1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="JOB"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1334
+      Y: =712
+      Width: =130
+      Height: =22
+- jH2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1468
+      Y: =712
+      Width: =60
+      Height: =22
+- jH3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="FORM"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1532
+      Y: =712
+      Width: =160
+      Height: =22
+- jH4:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TOP REASON"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1696
+      Y: =712
+      Width: =112
+      Height: =22
+- jH5:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="UNITS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Right
+      X: =1808
+      Y: =712
+      Width: =88
+      Height: =22
+- galJobs:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =FirstN(SortByColumns(AddColumns(GroupBy(Filter(colQA, ShiftDate >= varFrom && (ddDLine.Selected.Value = "All lines" || Line = ddDLine.Selected.Value) && (ddDForm.Selected.Value = "All forms" || Form = ddDForm.Selected.Value)), Job, Line, Form, G), Qty, Sum(G, ReworkQty),
+          TopR, First(SortByColumns(AddColumns(GroupBy(G, Reason, R), RQ, Sum(R, ReworkQty)), "RQ", SortOrder.Descending)).Reason), "Qty", SortOrder.Descending), 8)
+      TemplateSize: =40
+      TemplatePadding: =0
+      X: =1328
+      Y: =734
+      Width: =574
+      Height: =326
+    Children:
+      - jJob:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Job
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =6
+            Y: =2
+            Width: =130
+            Height: =36
+      - jLine:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Line
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            X: =140
+            Y: =2
+            Width: =60
+            Height: =36
+      - jForm:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Form
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            X: =204
+            Y: =2
+            Width: =160
+            Height: =36
+      - jTop:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.TopR
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            X: =368
+            Y: =2
+            Width: =106
+            Height: =36
+      - jQty:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Text(ThisItem.Qty, "#,##0")
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Right
+            X: =474
+            Y: =2
+            Width: =88
+            Height: =36
+- lblQLoaded:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varQLoaded), "Not loaded — press REFRESH", "Loaded " & Text(varQLoaded, "h:mm AM/PM"))
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Right
+      X: =1578
+      Y: =1050
+      Width: =200
+      Height: =22
+- btnQCtx:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =Set(varQS, LookUp(HxH_Shift, Title = ddQLine.Selected.Value & "-" & Text(ddQDate.Selected.D, "yyyymmdd") & "-S" & ddQShift.Selected.Value));
+        Reset(ddQProd); Reset(txtQJob)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =0
+      Y: =1079
+      Width: =1
+      Height: =1

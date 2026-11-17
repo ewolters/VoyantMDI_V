@@ -1,0 +1,260 @@
+{
+ "properties": {
+  "connectionReferences": {
+   "shared_sharepointonline": {
+    "runtimeSource": "invoker",
+    "connection": {
+     "connectionReferenceLogicalName": "craf4_sharedsharepointonline_17d15"
+    },
+    "api": {
+     "name": "shared_sharepointonline"
+    }
+   },
+   "shared_office365": {
+    "runtimeSource": "embedded",
+    "connection": {
+     "connectionReferenceLogicalName": "craf4_sharedoffice365_mdi"
+    },
+    "api": {
+     "name": "shared_office365"
+    }
+   }
+  },
+  "definition": {
+   "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+    "$connections": {
+     "defaultValue": {},
+     "type": "Object"
+    },
+    "$authentication": {
+     "defaultValue": {},
+     "type": "SecureObject"
+    }
+   },
+   "triggers": {
+    "manual": {
+     "type": "Request",
+     "kind": "PowerAppV2",
+     "inputs": {
+      "schema": {
+       "type": "object",
+       "properties": {
+        "file": {
+         "description": "Photo as base64 text (the apps send it this way)",
+         "title": "Photo",
+         "type": "string",
+         "x-ms-content-hint": "TEXT",
+         "x-ms-dynamically-added": true
+        },
+        "text": {
+         "description": "Please enter your input",
+         "title": "FileName",
+         "type": "string",
+         "x-ms-content-hint": "TEXT",
+         "x-ms-dynamically-added": true
+        },
+        "number": {
+         "description": "Please enter a number",
+         "title": "ProcID",
+         "type": "number",
+         "x-ms-content-hint": "NUMBER",
+         "x-ms-dynamically-added": true
+        },
+        "number_1": {
+         "description": "Please enter a number",
+         "title": "StepNo",
+         "type": "number",
+         "x-ms-content-hint": "NUMBER",
+         "x-ms-dynamically-added": true
+        },
+        "number_2": {
+         "description": "Please enter a number",
+         "title": "IssueID",
+         "type": "number",
+         "x-ms-content-hint": "NUMBER",
+         "x-ms-dynamically-added": true
+        },
+        "text_1": {
+         "description": "Please enter your input",
+         "title": "Kind",
+         "type": "string",
+         "x-ms-content-hint": "TEXT",
+         "x-ms-dynamically-added": true
+        },
+        "text_2": {
+         "description": "Please enter your input",
+         "title": "Caption",
+         "type": "string",
+         "x-ms-content-hint": "TEXT",
+         "x-ms-dynamically-added": true
+        },
+        "text_3": {
+         "description": "Please enter your input",
+         "title": "TakenBy",
+         "type": "string",
+         "x-ms-content-hint": "TEXT",
+         "x-ms-dynamically-added": true
+        }
+       },
+       "required": [
+        "file",
+        "text",
+        "number",
+        "number_1",
+        "number_2",
+        "text_1",
+        "text_2",
+        "text_3"
+       ]
+      }
+     }
+    }
+   },
+   "actions": {
+    "Create_file": {
+     "runAfter": {},
+     "type": "OpenApiConnection",
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "CreateFile"
+      },
+      "parameters": {
+       "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+       "folderPath": "/TS_Photos",
+       "name": "@{concat(utcNow('yyyyMMdd-HHmmss'),'_',triggerBody()?['text'])}",
+       "body": "@base64ToBinary(replace(last(split(string(triggerBody()?['file']), ',')), '\"', ''))"
+      },
+      "authentication": {
+       "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+       "type": "Raw"
+      }
+     },
+     "runtimeConfiguration": {
+      "contentTransfer": {
+       "transferMode": "Chunked"
+      }
+     }
+    },
+    "Update_file_properties": {
+     "runAfter": {
+      "Create_file": [
+       "Succeeded"
+      ]
+     },
+     "type": "OpenApiConnection",
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "PatchFileItem"
+      },
+      "parameters": {
+       "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+       "table": "606ed8b0-435f-4bb0-b9d8-c019af11f008",
+       "id": "@{outputs('Create_file')?['body/ItemId']}",
+       "item/Title": "@{triggerBody()?['text_2']}",
+       "item/Kind/Value": "@{triggerBody()?['text_1']}",
+       "item/ProcID": "@triggerBody()?['number']",
+       "item/StepNo": "@triggerBody()?['number_1']",
+       "item/IssueID": "@triggerBody()?['number_2']",
+       "item/Caption": "@{triggerBody()?['text_2']}",
+       "item/TakenBy": "@{triggerBody()?['text_3']}"
+      },
+      "authentication": {
+       "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+       "type": "Raw"
+      }
+     }
+    },
+    "Respond_to_a_Power_App_or_flow": {
+     "runAfter": {
+      "Update_file_properties": [
+       "Succeeded"
+      ]
+     },
+     "type": "Response",
+     "kind": "PowerApp",
+     "inputs": {
+      "schema": {
+       "type": "object",
+       "properties": {
+        "photoid": {
+         "title": "photoid",
+         "type": "string",
+         "x-ms-content-hint": "TEXT",
+         "x-ms-dynamically-added": true
+        }
+       },
+       "additionalProperties": {}
+      },
+      "statusCode": 200,
+      "body": {
+       "photoid": "@{outputs('Create_file')?['body/ItemId']}"
+      }
+     }
+    },
+    "Catch": {
+     "type": "Scope",
+     "runAfter": {
+      "Respond_to_a_Power_App_or_flow": [
+       "Failed",
+       "TimedOut",
+       "Skipped"
+      ]
+     },
+     "actions": {
+      "Catch_get_alert_email": {
+       "runAfter": {},
+       "type": "OpenApiConnection",
+       "inputs": {
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connectionName": "shared_sharepointonline",
+         "operationId": "GetItems"
+        },
+        "parameters": {
+         "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+         "table": "1ce134d3-335f-415c-8ae0-e8cf7c0d9e16",
+         "$filter": "Title eq 'Alert_Email'",
+         "$top": 1
+        },
+        "authentication": {
+         "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+         "type": "Raw"
+        }
+       }
+      },
+      "Catch_send_alert": {
+       "runAfter": {
+        "Catch_get_alert_email": [
+         "Succeeded"
+        ]
+       },
+       "type": "OpenApiConnection",
+       "inputs": {
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+         "connectionName": "shared_office365",
+         "operationId": "SendEmailV2"
+        },
+        "parameters": {
+         "emailMessage/To": "@{first(body('Catch_get_alert_email')?['value'])?['SettingValue']}",
+         "emailMessage/Subject": "MDI flow FAILED: @{workflow()?['tags']?['flowDisplayName']}",
+         "emailMessage/Body": "<p>An MDI flow failed and needs a look.</p><p><b>Flow:</b> @{workflow()?['tags']?['flowDisplayName']}<br><b>Run:</b> <a href=\"https://make.powerautomate.com/environments/@{workflow()?['tags']?['environmentName']}/flows/@{workflow()?['name']}/runs/@{workflow()?['run']?['name']}\">open the run history</a></p>",
+         "emailMessage/Importance": "Normal"
+        },
+        "authentication": "@parameters('$authentication')"
+       }
+      }
+     }
+    }
+   },
+   "outputs": {}
+  }
+ },
+ "schemaVersion": "1.0.0.0"
+}

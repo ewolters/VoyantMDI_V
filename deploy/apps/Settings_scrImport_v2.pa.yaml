@@ -1,0 +1,887 @@
+- iHdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =90
+- iBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =34
+      Color: =RGBA(255, 255, 255, 1)
+      X: =24
+      Y: =6
+      Width: =170
+      Height: =52
+- iBrandSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NEW ALBANY"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 178, 169, 1)
+      FontWeight: =FontWeight.Bold
+      X: =27
+      Y: =56
+      Width: =170
+      Height: =24
+- iTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="MDI SETTINGS"
+      Font: =Font.Georgia
+      Size: =26
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Wrap: =false
+      X: =190
+      Y: =20
+      Width: =420
+      Height: =50
+- iBadge:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varNoAdmin, "SETUP MODE: nobody is an MDI admin yet. Open PEOPLE and tick MDI ADMIN on yourself.", varCan, "EDITOR  ·  " & User().FullName, "VIEW ONLY  ·  ask an MDI admin to tick CAN EDIT SETTINGS for you")
+      Font: =Font.Arial
+      Size: =13
+      Color: =If(varNoAdmin, RGBA(210, 153, 34, 1), varCan, RGBA(176, 227, 228, 1), RGBA(177, 179, 179, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Right
+      X: =1000
+      Y: =10
+      Width: =900
+      Height: =70
+- iSubBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =0
+      Y: =90
+      Width: =1920
+      Height: =52
+- iTab0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="ESCALATION"
+      OnSelect: =Navigate(Screen1, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =12
+      Y: =96
+      Width: =304
+      Height: =40
+- iTab1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="DROPDOWN LISTS"
+      OnSelect: =Navigate(scrDrop, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =324
+      Y: =96
+      Width: =304
+      Height: =40
+- iTab2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="LINES & VALUE STREAMS"
+      OnSelect: =Navigate(scrLines, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =636
+      Y: =96
+      Width: =304
+      Height: =40
+- iTab3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="STANDARDS"
+      OnSelect: =Navigate(scrStd, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =948
+      Y: =96
+      Width: =304
+      Height: =40
+- iTab4:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="THRESHOLDS & LINKS"
+      OnSelect: =Navigate(scrCfg, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =1260
+      Y: =96
+      Width: =304
+      Height: =40
+- iTab5:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="PEOPLE"
+      OnSelect: =Navigate(scrPeople, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =1572
+      Y: =96
+      Width: =304
+      Height: =40
+- iLoad:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="↻"
+      OnSelect: |-
+        =Set(varMe, LookUp(People, Lower(Email) = Lower(User().Email)));
+        Set(varNoAdmin, CountRows(Filter(People, MDIAdmin = true)) = 0);
+        Set(varAdm, Coalesce(varMe.MDIAdmin, false) || varNoAdmin);
+        Set(varCan, Coalesce(varMe.CanEditConfig, false) || varAdm);
+        Set(varIBusy, true);
+        ClearCollect(colIPB, PLAYBOOK);
+        ClearCollect(colIDTL, Filter(Lookups, Category.Value = "Downtime"));
+        IfError(Set(varIL, 'MDI-ImportHistory'.Run("LIST", "")), Notify("Could not reach the import flow (MDI - Import History). Is it turned on and added to this app? " & FirstError.Message, NotificationType.Error), true);
+        If(!IsBlank(varIL.err), Notify(varIL.err, NotificationType.Error));
+        Clear(colIFiles);
+        If(!IsBlank(varIL.files), IfError(ClearCollect(colIFiles, ForAll(Table(ParseJSON(varIL.files)) As j, With({v: j.Value},
+          {Name: Text(v.Name), KB: RoundUp(Value(Text(v.Length), "en-US") / 1024, 0), At: Text(v.TimeLastModified)}))), Notify("File list unreadable: " & FirstError.Message, NotificationType.Error), true));
+        RemoveIf(colIFiles, !(EndsWith(Lower(Name), ".xlsx") || EndsWith(Lower(Name), ".xlsm")));
+        Set(varIBusy, false)
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Tooltip: ="Reload from SharePoint"
+      BorderThickness: =1
+      X: =1880
+      Y: =98
+      Width: =36
+      Height: =36
+- iIntro:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="Back-fill Hour x Hour and Tier 2 from the line data-entry workbooks (Line_209_Data_Entry and the like). Only the Log_Shift, Log_Production and Log_Downtime tabs are read. The newest copy of each line's workbook holds its whole history, so one upload per line is enough. Dim_ tabs are ignored: standards live in STANDARDS, reasons in DROPDOWN LISTS."
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      X: =16
+      Y: =148
+      Width: =1888
+      Height: =52
+- iLBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =16
+      Y: =206
+      Width: =640
+      Height: =864
+- iS1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="1  PUT WORKBOOKS IN THE IMPORT FOLDER"
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =32
+      Y: =214
+      Width: =600
+      Height: =30
+- iS1t:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Open the folder, drag the .xlsx files in, then tap ↻ LIST."
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      X: =32
+      Y: =244
+      Width: =600
+      Height: =26
+- iOpen:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="OPEN IMPORT FOLDER"
+      OnSelect: =Launch(varIL.folder)
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(IsBlank(varIL.folder), DisplayMode.Disabled, DisplayMode.Edit)
+      X: =32
+      Y: =276
+      Width: =290
+      Height: =48
+- iList:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="↻  LIST"
+      OnSelect: =Select(iLoad)
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =334
+      Y: =276
+      Width: =140
+      Height: =48
+- iS2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="2  SCAN A WORKBOOK"
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =32
+      Y: =340
+      Width: =600
+      Height: =30
+- galIF:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colIFiles
+      TemplateSize: =58
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      OnSelect: =false
+      TemplateFill: =If(ThisItem.Name = varIFile, RGBA(229, 243, 243, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =RGBA(217, 217, 214, 1)
+      BorderThickness: =1
+      X: =16
+      Y: =374
+      Width: =640
+      Height: =696
+    Children:
+      - giN:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Name
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =12
+            Y: =4
+            Width: =380
+            Height: =30
+      - giA:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.KB) & " KB  ·  added " & Text(DateTimeValue(ThisItem.At), "m/d/yyyy h:mm AM/PM")
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            X: =12
+            Y: =32
+            Width: =380
+            Height: =22
+      - giScan:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =If(varIBusy && varIFile = ThisItem.Name, "…", "SCAN")
+            OnSelect: |-
+              =Set(varIBusy, true); Set(varIFile, ThisItem.Name); Set(varIMsg, ""); Set(varIScanned, false);
+              Set(varIR, Blank());
+              IfError(Set(varIR, 'MDI-ImportHistory'.Run("READ", ThisItem.Name)), Notify("Could not reach the import flow: " & FirstError.Message, NotificationType.Error), true);
+              If(!IsBlank(varIR.err), Notify(varIR.err, NotificationType.Error); Set(varIMsg, varIR.err));
+              Clear(colIS); Clear(colIP); Clear(colIDr);
+              If(IsBlank(varIR.err) && !IsBlank(varIR.shift),
+               IfError(ClearCollect(colIS, ForAll(Table(ParseJSON(varIR.shift)) As j, With({v: j.Value}, {L: Trim(Text(v.Line)), D: IfError(With({t: Text(v.SnapshotDate)}, If(t = "", Blank(), IsNumeric(t), DateAdd(Date(1899, 12, 30), RoundDown(Value(t, "en-US"), 0), TimeUnit.Days), Date(Value(Left(t, 4)), Value(Mid(t, 6, 2)), Value(Mid(t, 9, 2))))), Blank()), Sh: IfError(Value(Text(v.Shift), "en-US"), Blank()), PF: Trim(Text(v.ProductForm)), J1: With({z: Trim(Text(v.Job1))}, If(z = "0", "", z)), J2: With({z: Trim(Text(v.Job2))}, If(z = "0", "", z)), PSH: IfError(Value(Text(v.PlannedShiftHrs), "en-US"), Blank()), ST: IfError(If(Trim(Text(v.ActualStartTime)) = "", "", With({m: With({t: Text(v.ActualStartTime)}, If(IsNumeric(t), RoundDown(Mod(Value(t, "en-US"), 1) * 1440 + 0.5, 0), With({p: Coalesce(Find("T", t), 0)}, IfError(Value(Mid(t, p + 1, 2)) * 60 + Value(Mid(t, p + 4, 2)), 0))))}, Text(Time(RoundDown(m / 60, 0), Mod(m, 60), 0), "h:mm AM/PM"))), ""), ET: IfError(If(Trim(Text(v.ActualEndTime)) = "", "", With({m: With({t: Text(v.ActualEndTime)}, If(IsNumeric(t), RoundDown(Mod(Value(t, "en-US"), 1) * 1440 + 0.5, 0), With({p: Coalesce(Find("T", t), 0)}, IfError(Value(Mid(t, p + 1, 2)) * 60 + Value(Mid(t, p + 4, 2)), 0))))}, Text(Time(RoundDown(m / 60, 0), Mod(m, 60), 0), "h:mm AM/PM"))), ""), LM: IfError(Value(Text(v.LunchMin), "en-US"), Blank()), BM: IfError(Value(Text(v.BreakMin), "en-US"), Blank()), TU: IfError(Value(Text(v.TargetUnits), "en-US"), Blank()), AU: IfError(Value(Text(v.ActualUnits), "en-US"), Blank()), AB: IfError(Value(Text(v.AvgBPM), "en-US"), Blank()), TB: IfError(Value(Text(v.TmaxBPM), "en-US"), Blank()), RD: IfError(Value(Text(v.ReportedDowntimeMin), "en-US"), Blank()), CD: IfError(Value(Text(v.CalculatedDowntimeMin), "en-US"), Blank()), MU: IfError(Value(Text(v.MachineUptimeMin), "en-US"), Blank()), AV: IfError(Value(Text(v.Availability), "en-US"), Blank()), PE: IfError(Value(Text(v.Performance), "en-US"), Blank()), FS: IfError(Value(Text(v.FGScrapQty), "en-US"), Blank()), QU: IfError(Value(Text(v.Quality), "en-US"), Blank()), OE: IfError(Value(Text(v.OEE), "en-US"), Blank()), SR: With({z: Trim(Text(v.ScrapReasonCode))}, If(z = "0", "", z)), SN: With({z: Trim(Text(v.ScrapNotes))}, If(z = "0", "", z)), SC: IfError(Value(Text(v.StdCrewSize), "en-US"), Blank()), AC: IfError(Value(Text(v.ActualCrewSize), "en-US"), Blank()), STR: With({z: Trim(Text(v.StaffingReasonCode))}, If(z = "0", "", z)), SLR: With({z: Trim(Text(v.SpeedLossReasonCode))}, If(z = "0", "", z))})));
+                ClearCollect(colIP, ForAll(Table(ParseJSON(varIR.prod)) As j, With({v: j.Value}, {L: Trim(Text(v.Line)), D: IfError(With({t: Text(v.SnapshotDate)}, If(t = "", Blank(), IsNumeric(t), DateAdd(Date(1899, 12, 30), RoundDown(Value(t, "en-US"), 0), TimeUnit.Days), Date(Value(Left(t, 4)), Value(Mid(t, 6, 2)), Value(Mid(t, 9, 2))))), Blank()), Sh: IfError(Value(Text(v.Shift), "en-US"), Blank()), HS: IfError(With({t: Text(v.HourStart)}, If(t = "", Blank(), IsNumeric(t), DateAdd(Date(1899, 12, 30), RoundDown(Value(t, "en-US") * 1440 + 0.5, 0), TimeUnit.Minutes), DateAdd(Date(Value(Left(t, 4)), Value(Mid(t, 6, 2)), Value(Mid(t, 9, 2))), With({t: Text(v.HourStart)}, If(IsNumeric(t), RoundDown(Mod(Value(t, "en-US"), 1) * 1440 + 0.5, 0), With({p: Coalesce(Find("T", t), 0)}, IfError(Value(Mid(t, p + 1, 2)) * 60 + Value(Mid(t, p + 4, 2)), 0)))), TimeUnit.Minutes))), Blank()), PF: Trim(Text(v.ProductForm)), Job: With({z: Trim(Text(v.Job))}, If(z = "0", "", z)), HT: IfError(Value(Text(v.HourlyTarget), "en-US"), Blank()), CT: IfError(Value(Text(v.CumulativeTarget), "en-US"), Blank()), CU: IfError(Value(Text(v.CumulativeUnits), "en-US"), Blank()), HA: IfError(Value(Text(v.HourlyActual), "en-US"), Blank()), BPM: IfError(Value(Text(v.BPM), "en-US"), Blank()), RR: IfError(Value(Text(v.RunRatePct), "en-US"), Blank())})));
+                ClearCollect(colIDr, ForAll(Table(ParseJSON(varIR.dt)) As j, With({v: j.Value}, {L: Trim(Text(v.Line)), D: IfError(With({t: Text(v.SnapshotDate)}, If(t = "", Blank(), IsNumeric(t), DateAdd(Date(1899, 12, 30), RoundDown(Value(t, "en-US"), 0), TimeUnit.Days), Date(Value(Left(t, 4)), Value(Mid(t, 6, 2)), Value(Mid(t, 9, 2))))), Blank()), Sh: IfError(Value(Text(v.Shift), "en-US"), Blank()), HS: IfError(With({t: Text(v.HourStart)}, If(t = "", Blank(), IsNumeric(t), DateAdd(Date(1899, 12, 30), RoundDown(Value(t, "en-US") * 1440 + 0.5, 0), TimeUnit.Minutes), DateAdd(Date(Value(Left(t, 4)), Value(Mid(t, 6, 2)), Value(Mid(t, 9, 2))), With({t: Text(v.HourStart)}, If(IsNumeric(t), RoundDown(Mod(Value(t, "en-US"), 1) * 1440 + 0.5, 0), With({p: Coalesce(Find("T", t), 0)}, IfError(Value(Mid(t, p + 1, 2)) * 60 + Value(Mid(t, p + 4, 2)), 0)))), TimeUnit.Minutes))), Blank()), R0: Trim(Text(v.ReasonCode)), Cat: Trim(Text(v.Category)), M: IfError(Value(Text(v.Minutes), "en-US"), Blank()), Nt: With({z: Trim(Text(v.Notes))}, If(z = "0", "", z))}))),
+                Notify("The workbook tables could not be read: " & FirstError.Message, NotificationType.Error), true));
+              RemoveIf(colIS, IsBlank(D) || L = "" || IsBlank(Sh)); RemoveIf(colIP, IsBlank(D) || L = "" || IsBlank(Sh) || IsBlank(HS));
+              RemoveIf(colIDr, IsBlank(D) || L = "" || IsBlank(Sh) || IsBlank(HS) || Coalesce(M, 0) <= 0);
+              ClearCollect(colIDt, ForAll(colIDr As d, With({s: Lower(d.R0)}, With({pl: Lower(d.Cat) = "planned" || "plan" in s || "plen" in s || "break" in s},
+                {L: d.L, D: d.D, Sh: d.Sh, HS: d.HS, M: d.M, Nt: d.Nt, R0: d.R0, P: pl, R: If(pl, d.R0, Coalesce(LookUp(colIDTL, Lower(Label) = s).Label,
+                 If(StartsWith(s, "machine"), With({rest: Trim(Substitute(Mid(s, 8), "-", " "))},
+                   Coalesce(LookUp(colIDTL, StartsWith(Lower(Label), "machine - ") && Left(Lower(Mid(Label, 11)), 6) = Left(rest, 6)).Label, "Machine - " & Proper(rest))),
+                 d.R0)))}))));
+              ClearCollect(colIShifts, ForAll(colIS As s, With({pb: LookUp(colIPB, Line = s.L && Size & " - " & Form = s.PF), k: s.L & "-" & Text(s.D, "yyyymmdd") & "-S" & Text(s.Sh)},
+                {Title: k, Line: s.L, ShiftDate: s.D, Shift: s.Sh, ProductForm: If(IsBlank(pb), Substitute(s.PF, " - ", " | ", 1), pb.Size & " | " & pb.Form), PlaybookKey: If(IsBlank(pb), "", pb.Title),
+                 Job1: s.J1, Job2: s.J2, PlannedShiftHrs: s.PSH, ActualStartTime: s.ST, ActualEndTime: s.ET, LunchMin: s.LM, BreakMin: s.BM, TargetUnits: s.TU, ActualUnits: s.AU,
+                 AvgBPM: s.AB, TmaxBPM: s.TB, ReportedDowntimeMin: s.RD, CalculatedDowntimeMin: s.CD, MachineUptimeMin: s.MU, Availability: s.AV, Performance: s.PE,
+                 FGScrapQty: s.FS, Quality: s.QU, OEE: s.OE, ScrapReasonCode: s.SR, ScrapNotes: s.SN, StdCrewSize: s.SC, ActualCrewSize: s.AC,
+                 StaffingReasonCode: s.STR, SpeedLossReasonCode: s.SLR, EnteredBy: "import · " & varIFile})));
+              ClearCollect(colIK, ForAll(colIP, {L: L, D: D, Sh: Sh, HS: HS}));
+              Collect(colIK, ForAll(Filter(colIDt As d, IsBlank(LookUp(colIP, L = d.L && D = d.D && Sh = d.Sh && HS = d.HS))), {L: L, D: D, Sh: Sh, HS: HS}));
+              ClearCollect(colIK2, ForAll(GroupBy(colIK, L, D, Sh, HS, G), {L: L, D: D, Sh: Sh, HS: HS}));
+              ClearCollect(colIHrs, ForAll(colIK2 As k,
+               With({p: LookUp(colIP, L = k.L && D = k.D && Sh = k.Sh && HS = k.HS), n: CountRows(Filter(colIK2, L = k.L && D = k.D && Sh = k.Sh && HS < k.HS)) + 1,
+                     dts: SortByColumns(Filter(colIDt, L = k.L && D = k.D && Sh = k.Sh && HS = k.HS && !P), "M", SortOrder.Descending), pls: Filter(colIDt, L = k.L && D = k.D && Sh = k.Sh && HS = k.HS && P)},
+                With({pb: LookUp(colIPB, Line = k.L && Size & " - " & Form = p.PF), sk: k.L & "-" & Text(k.D, "yyyymmdd") & "-S" & Text(k.Sh)},
+                 {Title: sk & "-H" & Text(n, "00"), ShiftKey: sk, Line: k.L, ShiftDate: k.D, Shift: k.Sh, HourNo: n, HourStart: k.HS, SlotMin: 60,
+                  ProductForm: If(IsBlank(pb), Substitute(p.PF, " - ", " ", 1), pb.Size & " " & pb.Form), PlaybookKey: If(IsBlank(pb), "", pb.Title), Job: p.Job,
+                  HourlyTarget: p.HT, CumTarget: p.CT, CumulativeUnits: p.CU, HourlyActual: p.HA, RunRatePct: p.RR, SpeedBPM: p.BPM,
+                  DT_Minutes: First(dts).M, DT_Reason: Coalesce(First(dts).R, ""),
+                  DT2_Minutes: If(CountRows(dts) > 1, Sum(dts, M) - First(dts).M, Blank()), DT2_Reason: If(CountRows(dts) > 1, Last(FirstN(dts, 2)).R, ""),
+                  PlannedMin: If(CountRows(pls) > 0, Sum(pls, M), Blank()),
+                  Notes: Concat(Filter(dts, Nt <> ""), Nt & "; ") & If(CountRows(pls) > 0, "Planned: " & Concat(pls, R0 & " " & Text(M) & "m", ", "), "") & If(CountRows(dts) > 2, " (" & Text(CountRows(dts) - 1) & " stops added into DT2)", ""),
+                  SafetyEvent: false, EnteredBy: "import · " & varIFile}))));
+              Set(varID0, Min(Min(colIShifts, ShiftDate), Min(colIHrs, ShiftDate))); Set(varID1, Max(Max(colIShifts, ShiftDate), Max(colIHrs, ShiftDate)));
+              Clear(colIExS); Clear(colIExH);
+              ForAll(Distinct(colIShifts, Line) As ln, Collect(colIExS, Filter(HxH_Shift, Line = ln.Value && ShiftDate >= varID0 && ShiftDate <= varID1)));
+              ForAll(Distinct(colIHrs, Line) As ln, ForAll(Sequence(RoundDown(DateDiff(varID0, varID1, TimeUnit.Days) / 7, 0) + 1, 0) As w,
+                Collect(colIExH, Filter(HxH_Hourly, Line = ln.Value && ShiftDate >= DateAdd(varID0, 7 * w.Value, TimeUnit.Days) && ShiftDate < DateAdd(varID0, 7 * w.Value + 7, TimeUnit.Days)))));
+              Set(varISOld, CountIf(colIShifts, Title in colIExS.Title)); Set(varIHOld, CountIf(colIHrs, Title in colIExH.Title));
+              ClearCollect(colIUnk, Distinct(Filter(colIShifts, PlaybookKey = ""), ProductForm));
+              ClearCollect(colIMap, ForAll(GroupBy(ForAll(Filter(colIDt, !P && R <> R0), {F: R0, T: R}), F, T, G), {F: F, T: T, N: CountRows(G)}));
+              Set(varIScanned, true); Set(varIBusy, false)
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 178, 169, 1)
+            Color: =RGBA(7, 39, 45, 1)
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =Self.Fill
+            DisplayMode: =If(varAdm && !varIBusy, DisplayMode.Edit, DisplayMode.Disabled)
+            X: =470
+            Y: =9
+            Width: =120
+            Height: =40
+- iNoFiles:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(varIBusy, "Working…", "No workbooks in the import folder yet.")
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =IsEmpty(colIFiles)
+      X: =32
+      Y: =400
+      Width: =600
+      Height: =40
+- iRBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      BorderColor: =RGBA(217, 217, 214, 1)
+      BorderThickness: =1
+      X: =676
+      Y: =206
+      Width: =1228
+      Height: =864
+- iS3:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varIScanned, "3  CHECK, THEN IMPORT:  " & varIFile, "3  CHECK, THEN IMPORT")
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =692
+      Y: =214
+      Width: =1196
+      Height: =30
+- iMsg:
+    Control: Label@2.5.1
+    Properties:
+      Text: =varIMsg
+      Font: =Font.Arial
+      Size: =12
+      Color: =If(StartsWith(varIMsg, "DONE"), RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+      FontWeight: =FontWeight.Bold
+      Visible: =!IsBlank(varIMsg)
+      X: =692
+      Y: =248
+      Width: =1196
+      Height: =40
+- iT0:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varIScanned
+      Fill: =RGBA(0, 72, 81, 1)
+      X: =692
+      Y: =296
+      Width: =232
+      Height: =104
+- iT0h:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(176, 227, 228, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =692
+      Y: =300
+      Width: =232
+      Height: =22
+- iT0v:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =Concat(Distinct(colIShifts, Line), Value, ", ")
+      Font: =Font.Arial
+      Size: =20
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =692
+      Y: =322
+      Width: =232
+      Height: =44
+- iT0s:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: ="line(s) in the file"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Center
+      X: =698
+      Y: =366
+      Width: =220
+      Height: =32
+- iT1:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varIScanned
+      Fill: =RGBA(0, 72, 81, 1)
+      X: =932
+      Y: =296
+      Width: =232
+      Height: =104
+- iT1h:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: ="DATES"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(176, 227, 228, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =932
+      Y: =300
+      Width: =232
+      Height: =22
+- iT1v:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =Text(varID0, "m/d/yy") & " – " & Text(varID1, "m/d/yy")
+      Font: =Font.Arial
+      Size: =20
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =932
+      Y: =322
+      Width: =232
+      Height: =44
+- iT1s:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =Text(DateDiff(varID0, varID1, TimeUnit.Days) + 1) & " days"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Center
+      X: =938
+      Y: =366
+      Width: =220
+      Height: =32
+- iT2:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varIScanned
+      Fill: =RGBA(0, 72, 81, 1)
+      X: =1172
+      Y: =296
+      Width: =232
+      Height: =104
+- iT2h:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: ="SHIFTS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(176, 227, 228, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1172
+      Y: =300
+      Width: =232
+      Height: =22
+- iT2v:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =Text(CountRows(colIShifts))
+      Font: =Font.Arial
+      Size: =20
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1172
+      Y: =322
+      Width: =232
+      Height: =44
+- iT2s:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =Text(CountRows(colIShifts) - varISOld) & " new  ·  " & Text(varISOld) & " already in MDI"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Center
+      X: =1178
+      Y: =366
+      Width: =220
+      Height: =32
+- iT3:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varIScanned
+      Fill: =RGBA(0, 72, 81, 1)
+      X: =1412
+      Y: =296
+      Width: =232
+      Height: =104
+- iT3h:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: ="HOURS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(176, 227, 228, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1412
+      Y: =300
+      Width: =232
+      Height: =22
+- iT3v:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =Text(CountRows(colIHrs))
+      Font: =Font.Arial
+      Size: =20
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1412
+      Y: =322
+      Width: =232
+      Height: =44
+- iT3s:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =Text(CountRows(colIHrs) - varIHOld) & " new  ·  " & Text(varIHOld) & " already in MDI"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Center
+      X: =1418
+      Y: =366
+      Width: =220
+      Height: =32
+- iT4:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varIScanned
+      Fill: =RGBA(0, 72, 81, 1)
+      X: =1652
+      Y: =296
+      Width: =232
+      Height: =104
+- iT4h:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: ="DOWNTIME"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(176, 227, 228, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1652
+      Y: =300
+      Width: =232
+      Height: =22
+- iT4v:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =Text(CountIf(colIDt, !P))
+      Font: =Font.Arial
+      Size: =20
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1652
+      Y: =322
+      Width: =232
+      Height: =44
+- iT4s:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =Text(Sum(Filter(colIDt, !P), M)) & " min unplanned  ·  " & Text(Sum(Filter(colIDt, P), M)) & " min planned"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Center
+      X: =1658
+      Y: =366
+      Width: =220
+      Height: =32
+- iUnkH:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =If(IsEmpty(colIUnk), "✓  Every product matches a PLAYBOOK row (targets and Tier 2 plan will line up).", "▲  " & Text(CountRows(colIUnk)) & " product(s) not in PLAYBOOK for this line. They import, but Tier 2 plan falls back to the workbook target. Add them in STANDARDS if needed:")
+      Font: =Font.Arial
+      Size: =11
+      Color: =If(IsEmpty(colIUnk), RGBA(46, 160, 67, 1), RGBA(210, 153, 34, 1))
+      FontWeight: =FontWeight.Bold
+      X: =692
+      Y: =412
+      Width: =1196
+      Height: =44
+- iUnk:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =Concat(colIUnk, Value, "   ·   ")
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(7, 39, 45, 1)
+      X: =692
+      Y: =456
+      Width: =1196
+      Height: =40
+- iMapH:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =If(IsEmpty(colIMap), "✓  Every downtime reason matches a DROPDOWN LISTS reason.", "Downtime reasons cleaned up to match DROPDOWN LISTS (typed variants in the workbook):")
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =692
+      Y: =504
+      Width: =1196
+      Height: =30
+- galIMap:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Visible: =varIScanned
+      Items: =SortByColumns(colIMap, "N", SortOrder.Descending)
+      TemplateSize: =34
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      OnSelect: =false
+      TemplateFill: =If(false, RGBA(229, 243, 243, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =RGBA(217, 217, 214, 1)
+      BorderThickness: =1
+      X: =692
+      Y: =536
+      Width: =980
+      Height: =250
+    Children:
+      - gmF:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.F
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            X: =12
+            Y: =0
+            Width: =380
+            Height: =34
+      - gmArrow:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="→"
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(117, 120, 123, 1)
+            X: =396
+            Y: =0
+            Width: =30
+            Height: =34
+      - gmT:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.T
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =430
+            Y: =0
+            Width: =380
+            Height: =34
+      - gmN2:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.N) & " stops"
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(117, 120, 123, 1)
+            X: =820
+            Y: =0
+            Width: =140
+            Height: =34
+- iPlan:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: ="Planned stops (breaks, changeovers, batch changes) go into PLANNED MIN for the hour, not downtime. Up to two unplanned stops per hour fill DT and DT2; more are added into DT2."
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      X: =692
+      Y: =792
+      Width: =1196
+      Height: =44
+- iUpd:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Visible: =varIScanned
+      Text: =If(varIUpd, "✓  " & "ALSO OVERWRITE ROWS ALREADY IN MDI", "ALSO OVERWRITE ROWS ALREADY IN MDI")
+      OnSelect: =Set(varIUpd, !varIUpd)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varIUpd, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varIUpd, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varAdm && !varIBusy, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =692
+      Y: =846
+      Width: =420
+      Height: =44
+- iUpdT:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =If(varIUpd, "Rows already in MDI are replaced with the workbook values.", "Rows already in MDI are left alone (safe to re-run the same workbook).")
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      X: =1124
+      Y: =846
+      Width: =760
+      Height: =44
+- iGo:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Visible: =varIScanned
+      Text: =If(varIBusy, "IMPORTING…  KEEP THIS OPEN", "IMPORT " & Text(CountRows(colIShifts) - If(varIUpd, 0, varISOld)) & " SHIFTS + " & Text(CountRows(colIHrs) - If(varIUpd, 0, varIHOld)) & " HOURS")
+      OnSelect: |-
+        =Set(varIBusy, true); Clear(colIErr);
+        ForAll(Filter(colIShifts, !(Title in colIExS.Title)) As r, IfError(Collect(HxH_Shift, r), Collect(colIErr, {T: r.Title, M: FirstError.Message}), true));
+        If(varIUpd, ForAll(Filter(colIShifts, Title in colIExS.Title) As r, IfError(Patch(HxH_Shift, LookUp(colIExS, Title = r.Title), r), Collect(colIErr, {T: r.Title, M: FirstError.Message}), true)));
+        ForAll(Filter(colIHrs, !(Title in colIExH.Title)) As r, IfError(Collect(HxH_Hourly, r), Collect(colIErr, {T: r.Title, M: FirstError.Message}), true));
+        If(varIUpd, ForAll(Filter(colIHrs, Title in colIExH.Title) As r, IfError(Patch(HxH_Hourly, LookUp(colIExH, Title = r.Title), r), Collect(colIErr, {T: r.Title, M: FirstError.Message}), true)));
+        Set(varIErrs, CountRows(colIErr)); Set(varIErr1, If(varIErrs > 0, First(colIErr).T & ": " & First(colIErr).M, ""));
+        Set(varIMsg, If(varIErrs = 0, "DONE: " & varIFile & " imported. " & Text(CountRows(colIShifts) - If(varIUpd, 0, varISOld)) & " shifts and " & Text(CountRows(colIHrs) - If(varIUpd, 0, varIHOld)) & " hours written.",
+          "FINISHED: " & Text(varIErrs) & " row(s) did not save, the rest did. First problem: " & varIErr1));
+        Notify(varIMsg, If(varIErrs = 0, NotificationType.Success, NotificationType.Warning));
+        Set(varIBusy, false); Set(varIScanned, false)
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(46, 160, 67, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(varAdm && !varIBusy, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =692
+      Y: =904
+      Width: =620
+      Height: =60
+- iGoT:
+    Control: Label@2.5.1
+    Properties:
+      Visible: =varIScanned
+      Text: =If(varAdm, "Large files take a few minutes. Boards pick it up on their next REFRESH.", "Only an MDI admin can import.")
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      X: =1328
+      Y: =904
+      Width: =560
+      Height: =60
+- iIdle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Scan a workbook on the left. Nothing is written until you tap IMPORT."
+      Font: =Font.Arial
+      Size: =14
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =!varIScanned
+      X: =692
+      Y: =320
+      Width: =1196
+      Height: =40

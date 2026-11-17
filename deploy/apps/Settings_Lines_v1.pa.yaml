@@ -1,0 +1,907 @@
+- lHdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =90
+- lBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =34
+      Color: =RGBA(255, 255, 255, 1)
+      X: =24
+      Y: =6
+      Width: =170
+      Height: =52
+- lBrandSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NEW ALBANY"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 178, 169, 1)
+      FontWeight: =FontWeight.Bold
+      X: =27
+      Y: =56
+      Width: =170
+      Height: =24
+- lTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="MDI SETTINGS"
+      Font: =Font.Georgia
+      Size: =26
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Wrap: =false
+      X: =190
+      Y: =20
+      Width: =420
+      Height: =50
+- lBadge:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varNoAdmin, "SETUP MODE: nobody is an MDI admin yet. Open PEOPLE and tick MDI ADMIN on yourself.", varCan, "EDITOR  ·  " & User().FullName, "VIEW ONLY  ·  ask an MDI admin to tick CAN EDIT SETTINGS for you")
+      Font: =Font.Arial
+      Size: =13
+      Color: =If(varNoAdmin, RGBA(210, 153, 34, 1), varCan, RGBA(176, 227, 228, 1), RGBA(177, 179, 179, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Right
+      X: =1000
+      Y: =10
+      Width: =900
+      Height: =70
+- lSubBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =0
+      Y: =90
+      Width: =1920
+      Height: =52
+- lTab0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="ESCALATION"
+      OnSelect: =Navigate(Screen1, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =12
+      Y: =96
+      Width: =304
+      Height: =40
+- lTab1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="DROPDOWN LISTS"
+      OnSelect: =Navigate(scrDrop, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =324
+      Y: =96
+      Width: =304
+      Height: =40
+- lTab2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="LINES & VALUE STREAMS"
+      OnSelect: =Navigate(scrLines, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =636
+      Y: =96
+      Width: =304
+      Height: =40
+- lTab3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="STANDARDS"
+      OnSelect: =Navigate(scrStd, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =948
+      Y: =96
+      Width: =304
+      Height: =40
+- lTab4:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="THRESHOLDS & LINKS"
+      OnSelect: =Navigate(scrCfg, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =1260
+      Y: =96
+      Width: =304
+      Height: =40
+- lTab5:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="PEOPLE"
+      OnSelect: =Navigate(scrPeople, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =1572
+      Y: =96
+      Width: =304
+      Height: =40
+- lLoad:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="↻"
+      OnSelect: |-
+        =Set(varMe, LookUp(People, Lower(Email) = Lower(User().Email)));
+        Set(varNoAdmin, CountRows(Filter(People, MDIAdmin = true)) = 0);
+        Set(varAdm, Coalesce(varMe.MDIAdmin, false) || varNoAdmin);
+        Set(varCan, Coalesce(varMe.CanEditConfig, false) || varAdm);
+        ClearCollect(colLn, Lines);
+        ClearCollect(colVS, ValueStreams)
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Tooltip: ="Reload from SharePoint"
+      BorderThickness: =1
+      X: =1880
+      Y: =98
+      Width: =36
+      Height: =36
+- lLnT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINES"
+      Font: =Font.Arial
+      Size: =16
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =148
+      Width: =300
+      Height: =36
+- lAll:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varLnAll, "✓  " & "SHOW RETIRED", "SHOW RETIRED")
+      OnSelect: =Set(varLnAll, !varLnAll)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varLnAll, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varLnAll, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =786
+      Y: =148
+      Width: =170
+      Height: =40
+- lh0:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =188
+      Width: =150
+      Height: =26
+- lh1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="VALUE STREAM"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =176
+      Y: =188
+      Width: =360
+      Height: =26
+- lh2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ORDER"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =546
+      Y: =188
+      Width: =100
+      Height: =26
+- lh3:
+    Control: Label@2.5.1
+    Properties:
+      Text: =""
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =656
+      Y: =188
+      Width: =100
+      Height: =26
+- galLn:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =SortByColumns(Filter(colLn, varLnAll || Active), "DisplayOrder", SortOrder.Ascending, "Title", SortOrder.Ascending)
+      TemplateSize: =44
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      OnSelect: =Set(varLn, ThisItem); Set(varLnA, Coalesce(ThisItem.Active, false))
+      TemplateFill: =If(ThisItem.ID = varLn.ID, RGBA(229, 243, 243, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =RGBA(217, 217, 214, 1)
+      BorderThickness: =1
+      X: =16
+      Y: =216
+      Width: =940
+      Height: =500
+    Children:
+      - glLn:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Title
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =0
+            Y: =0
+            Width: =150
+            Height: =44
+      - glVS:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Coalesce(ThisItem.ValueStream, "(none)")
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(117, 120, 123, 1)
+            X: =160
+            Y: =0
+            Width: =360
+            Height: =44
+      - glOrd:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.DisplayOrder)
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(117, 120, 123, 1)
+            X: =530
+            Y: =0
+            Width: =100
+            Height: =44
+      - glAct:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(ThisItem.Active, "", "retired")
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(207, 34, 46, 1)
+            X: =640
+            Y: =0
+            Width: =100
+            Height: =44
+- lLnFormBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =16
+      Y: =726
+      Width: =940
+      Height: =344
+- lLnFormT:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varLn.ID), "NEW LINE", "EDIT LINE " & varLn.Title)
+      Font: =Font.Arial
+      Size: =14
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =32
+      Y: =732
+      Width: =600
+      Height: =34
+- lLnNC:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="LINE (AS PEOPLE SAY IT: 209)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =32
+      Y: =772
+      Width: =300
+      Height: =20
+- lLnN:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(varLn.Title, "")
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =32
+      Y: =794
+      Width: =200
+      Height: =44
+- lLnVC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="VALUE STREAM"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =250
+      Y: =772
+      Width: =300
+      Height: =20
+- lLnV:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: ""})}, {t: ForAll(SortByColumns(Filter(colVS, Active), "DisplayOrder", SortOrder.Ascending), {Value: Title})}), t)
+      Default: =Coalesce(varLn.ValueStream, "")
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =250
+      Y: =794
+      Width: =400
+      Height: =44
+- lLnOC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ORDER ON BOARDS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =670
+      Y: =772
+      Width: =200
+      Height: =20
+- lLnO:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varLn.DisplayOrder), "", Text(varLn.DisplayOrder))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =670
+      Y: =794
+      Width: =140
+      Height: =44
+- lLnAct:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varLnA, "✓  " & "ACTIVE", "ACTIVE")
+      OnSelect: =Set(varLnA, !varLnA)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varLnA, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varLnA, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =32
+      Y: =852
+      Width: =160
+      Height: =40
+- lLnSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SAVE LINE"
+      OnSelect: |-
+        =If(IsBlank(Trim(lLnN.Text)), Notify("A line name is required.", NotificationType.Warning),
+         !IsBlank(LookUp(colLn, Title = Trim(lLnN.Text) && ID <> Coalesce(varLn.ID, -1))), Notify("That line already exists.", NotificationType.Warning),
+        IfError(Patch(Lines, If(IsBlank(varLn.ID), Defaults(Lines), LookUp(Lines, ID = varLn.ID)), {Title: Trim(lLnN.Text), ValueStream: lLnV.Selected.Value, DisplayOrder: If(IsNumeric(lLnO.Text), Value(lLnO.Text), Blank()), Active: varLnA}),
+         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+         Notify("Line saved", NotificationType.Success); Select(lLoad)))
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =32
+      Y: =906
+      Width: =200
+      Height: =48
+- lLnNew:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="+ NEW LINE"
+      OnSelect: =Set(varLn, Blank()); Set(varLnA, true); Reset(lLnN); Reset(lLnV); Reset(lLnO)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =248
+      Y: =906
+      Width: =180
+      Height: =48
+- lLnNote:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="Renaming a line does not rename it in past board entries or the PLAYBOOK: add a new line and retire the old one instead. Products and rates for a line are on STANDARDS."
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      X: =32
+      Y: =962
+      Width: =908
+      Height: =90
+- lVsT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="VALUE STREAMS  (TIER 3 ROWS)"
+      Font: =Font.Arial
+      Size: =16
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =964
+      Y: =148
+      Width: =500
+      Height: =36
+- lvh0:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="VALUE STREAM"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =964
+      Y: =188
+      Width: =260
+      Height: =26
+- lvh1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PART OF"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1234
+      Y: =188
+      Width: =220
+      Height: =26
+- lvh2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LEADER"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1464
+      Y: =188
+      Width: =250
+      Height: =26
+- lvh3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ORDER"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1724
+      Y: =188
+      Width: =80
+      Height: =26
+- lvh4:
+    Control: Label@2.5.1
+    Properties:
+      Text: =""
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1814
+      Y: =188
+      Width: =80
+      Height: =26
+- galVS:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =SortByColumns(colVS, "DisplayOrder", SortOrder.Ascending, "Title", SortOrder.Ascending)
+      TemplateSize: =44
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      OnSelect: =Set(varVs, ThisItem); Set(varVsA, Coalesce(ThisItem.Active, false))
+      TemplateFill: =If(ThisItem.ID = varVs.ID, RGBA(229, 243, 243, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =RGBA(217, 217, 214, 1)
+      BorderThickness: =1
+      X: =964
+      Y: =216
+      Width: =940
+      Height: =500
+    Children:
+      - gvN:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Title
+            Font: =Font.Arial
+            Size: =13
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =0
+            Y: =0
+            Width: =260
+            Height: =44
+      - gvP:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.ParentVS), "(top level)", ThisItem.ParentVS)
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(117, 120, 123, 1)
+            X: =270
+            Y: =0
+            Width: =220
+            Height: =44
+      - gvL:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Coalesce(ThisItem.Leader, "")
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(117, 120, 123, 1)
+            X: =500
+            Y: =0
+            Width: =250
+            Height: =44
+      - gvO:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.DisplayOrder)
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(117, 120, 123, 1)
+            X: =760
+            Y: =0
+            Width: =80
+            Height: =44
+      - gvA:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(ThisItem.Active, "", "retired")
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(207, 34, 46, 1)
+            X: =850
+            Y: =0
+            Width: =80
+            Height: =44
+- lVsFormBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =964
+      Y: =726
+      Width: =940
+      Height: =344
+- lVsFormT:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varVs.ID), "NEW VALUE STREAM", "EDIT " & Upper(varVs.Title))
+      Font: =Font.Arial
+      Size: =14
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =980
+      Y: =732
+      Width: =600
+      Height: =34
+- lVsNC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NAME (MATCHES THE LINES' VALUE STREAM)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =980
+      Y: =772
+      Width: =400
+      Height: =20
+- lVsN:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(varVs.Title, "")
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =980
+      Y: =794
+      Width: =300
+      Height: =44
+- lVsPC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PART OF (BLANK = TOP LEVEL)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1300
+      Y: =772
+      Width: =300
+      Height: =20
+- lVsP:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: ""})}, {t: ForAll(Filter(colVS, IsBlank(ParentVS) && Title <> Coalesce(varVs.Title, "") && Active), {Value: Title})}), t)
+      Default: =Coalesce(varVs.ParentVS, "")
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1300
+      Y: =794
+      Width: =300
+      Height: =44
+- lVsOC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ORDER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1620
+      Y: =772
+      Width: =120
+      Height: =20
+- lVsO:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varVs.DisplayOrder), "", Text(varVs.DisplayOrder))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1620
+      Y: =794
+      Width: =120
+      Height: =44
+- lVsLC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LEADER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =980
+      Y: =850
+      Width: =300
+      Height: =20
+- lVsL:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(varVs.Leader, "")
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =980
+      Y: =872
+      Width: =300
+      Height: =44
+- lVsEC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LEADER E-MAIL"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1300
+      Y: =850
+      Width: =300
+      Height: =20
+- lVsE:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(varVs.LeaderEmail, "")
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1300
+      Y: =872
+      Width: =440
+      Height: =44
+- lVsAct:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varVsA, "✓  " & "ACTIVE", "ACTIVE")
+      OnSelect: =Set(varVsA, !varVsA)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varVsA, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varVsA, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =980
+      Y: =930
+      Width: =160
+      Height: =40
+- lVsSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SAVE VALUE STREAM"
+      OnSelect: |-
+        =If(IsBlank(Trim(lVsN.Text)), Notify("A name is required.", NotificationType.Warning),
+        IfError(Patch(ValueStreams, If(IsBlank(varVs.ID), Defaults(ValueStreams), LookUp(ValueStreams, ID = varVs.ID)), {Title: Trim(lVsN.Text), ParentVS: lVsP.Selected.Value, Leader: lVsL.Text, LeaderEmail: Trim(lVsE.Text), DisplayOrder: If(IsNumeric(lVsO.Text), Value(lVsO.Text), Blank()), Active: varVsA}),
+         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+         Notify("Value stream saved", NotificationType.Success); Select(lLoad)))
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1164
+      Y: =926
+      Width: =240
+      Height: =48
+- lVsNew:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="+ NEW VALUE STREAM"
+      OnSelect: =Set(varVs, Blank()); Set(varVsA, true); Reset(lVsN); Reset(lVsP); Reset(lVsO); Reset(lVsL); Reset(lVsE)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1420
+      Y: =926
+      Width: =240
+      Height: =48
+- lVsNote:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="A value stream with PART OF set is a vertical under that value stream on Tier 3. Renaming does not rename it on the lines: change each line's VALUE STREAM too."
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      X: =980
+      Y: =982
+      Width: =908
+      Height: =70

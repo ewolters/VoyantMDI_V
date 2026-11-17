@@ -1,0 +1,14 @@
+# Voyant Virtual MDI (Microsoft 365 build)
+
+Virtual MDI boards for Voyant New Albany, built entirely on Microsoft 365: SharePoint lists, Power Apps canvas apps (pasted from `.pa.yaml`), and Power Automate flows, packaged as the **MDI** managed solution.
+
+| Folder | What's in it |
+|---|---|
+| `deploy/` | Everything needed to install: app screens (`apps/`, newest version of each), flow definitions (`flows/`), the site/list schema and provisioner (`mdi_package.json`, `provision_mdi.js`), the per-customer package builder (`package/`), console tools (`tools/`), and the install guide (`README.md`). |
+| `deploy/apps/APP_BUILD_GUIDE.md` | Which file goes on which app and screen. |
+| `generator/` | The Python generators that write the `.pa.yaml` screens and flow JSON, plus the lint checks (`generator/lint/`). |
+| `log.md` | Engineering log for the build. |
+
+Current app versions: Hour x Hour v22 · Tier 2 v19 + Weeks & Months v2 · Tier 3 Board v9 / Bowler v6 / Variances v7 · Quality v5 + NCR v2 · TS Maintenance v5 · TS Binder v2 · Newspaper v7 · SW Manager v4 · PC Audit v4 · QA Rework v4 · Frontier Audit v2 · MDI Settings (Escalation, Dropdowns, Lines, Standards, scrCfg v2, People, scrImport v2). Solution version 1.1.4.1.
+
+Customer setup codes (`deploy/customers/`) are deliberately not in this repo.

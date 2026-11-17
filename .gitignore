@@ -1,0 +1,4 @@
+deploy/customers/
+*.zip
+__pycache__/
+*.bak

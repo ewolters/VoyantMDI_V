@@ -1,0 +1,209 @@
+{
+ "properties": {
+  "connectionReferences": {
+   "shared_teams": {
+    "runtimeSource": "embedded",
+    "connection": {
+     "connectionReferenceLogicalName": "craf4_sharedteams_a7259"
+    },
+    "api": {
+     "name": "shared_teams"
+    }
+   },
+   "shared_sharepointonline": {
+    "runtimeSource": "embedded",
+    "connection": {
+     "connectionReferenceLogicalName": "craf4_sharedsharepointonline_17d15"
+    },
+    "api": {
+     "name": "shared_sharepointonline"
+    }
+   },
+   "shared_office365": {
+    "runtimeSource": "embedded",
+    "connection": {
+     "connectionReferenceLogicalName": "craf4_sharedoffice365_mdi"
+    },
+    "api": {
+     "name": "shared_office365"
+    }
+   }
+  },
+  "definition": {
+   "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+    "$connections": {
+     "defaultValue": {},
+     "type": "Object"
+    },
+    "$authentication": {
+     "defaultValue": {},
+     "type": "SecureObject"
+    }
+   },
+   "triggers": {
+    "When_a_Critical_finding_is_saved": {
+     "type": "OpenApiConnection",
+     "recurrence": {
+      "interval": 1,
+      "frequency": "Minute"
+     },
+     "splitOn": "@triggerOutputs()?['body/value']",
+     "conditions": [
+      {
+       "expression": "@equals(triggerBody()?['Severity']?['Value'], 'Critical')"
+      }
+     ],
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "GetOnNewItems"
+      },
+      "parameters": {
+       "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+       "table": "0f228237-bfa8-4f0d-bf1e-8d1fdc141367"
+      },
+      "authentication": "@parameters('$authentication')"
+     }
+    }
+   },
+   "actions": {
+    "Get_safety_email": {
+     "runAfter": {},
+     "type": "OpenApiConnection",
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "GetItems"
+      },
+      "parameters": {
+       "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+       "table": "1ce134d3-335f-415c-8ae0-e8cf7c0d9e16",
+       "$filter": "Title eq 'Safety_Email'",
+       "$top": 1
+      },
+      "authentication": "@parameters('$authentication')"
+     }
+    },
+    "All_recipients": {
+     "type": "Compose",
+     "runAfter": {
+      "Get_safety_email": [
+       "Succeeded"
+      ]
+     },
+     "inputs": "@split(replace(concat(coalesce(first(body('Get_safety_email')?['value'])?['SettingValue'], ''), ';', coalesce(triggerBody()?['ZoneOwnerEmail'], '')), ',', ';'), ';')"
+    },
+    "Valid_recipients": {
+     "type": "Query",
+     "runAfter": {
+      "All_recipients": [
+       "Succeeded"
+      ]
+     },
+     "inputs": {
+      "from": "@outputs('All_recipients')",
+      "where": "@contains(trim(item()), '@')"
+     }
+    },
+    "Clean_recipients": {
+     "type": "Select",
+     "runAfter": {
+      "Valid_recipients": [
+       "Succeeded"
+      ]
+     },
+     "inputs": {
+      "from": "@body('Valid_recipients')",
+      "select": "@toLower(trim(item()))"
+     }
+    },
+    "Alert_each": {
+     "type": "Foreach",
+     "foreach": "@union(body('Clean_recipients'), body('Clean_recipients'))",
+     "runAfter": {
+      "Clean_recipients": [
+       "Succeeded"
+      ]
+     },
+     "actions": {
+      "Teams_alert": {
+       "type": "OpenApiConnection",
+       "inputs": {
+        "parameters": {
+         "poster": "Flow bot",
+         "location": "Chat with Flow bot",
+         "body/recipient": "@{items('Alert_each')}",
+         "body/messageBody": "<p><b>&#9888; CRITICAL SAFETY FINDING (Frontier audit)</b></p><p><b>Zone:</b> @{triggerBody()?['ZoneID']}@{if(empty(coalesce(triggerBody()?['Line'], '')), '', concat(' (line ', triggerBody()?['Line'], ')'))}<br><b>What:</b> @{triggerBody()?['Item']} (@{triggerBody()?['Kind']?['Value']})<br><b>Finding:</b> @{triggerBody()?['Finding']}<br><b>Immediate action:</b> @{coalesce(triggerBody()?['ImmediateAction'], 'none recorded')}</p><p>Critical = stop work until the area is safe, and escalate to site leadership within the hour. The action is in NEWSPAPER (ref @{triggerBody()?['NewspaperRef']}).</p>"
+        },
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_teams",
+         "connectionName": "shared_teams",
+         "operationId": "PostMessageToConversation"
+        },
+        "authentication": "@parameters('$authentication')"
+       }
+      }
+     }
+    },
+    "Catch": {
+     "type": "Scope",
+     "runAfter": {
+      "Alert_each": [
+       "Failed",
+       "TimedOut",
+       "Skipped"
+      ]
+     },
+     "actions": {
+      "Catch_get_alert_email": {
+       "runAfter": {},
+       "type": "OpenApiConnection",
+       "inputs": {
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connectionName": "shared_sharepointonline",
+         "operationId": "GetItems"
+        },
+        "parameters": {
+         "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+         "table": "1ce134d3-335f-415c-8ae0-e8cf7c0d9e16",
+         "$filter": "Title eq 'Alert_Email'",
+         "$top": 1
+        },
+        "authentication": "@parameters('$authentication')"
+       }
+      },
+      "Catch_send_alert": {
+       "runAfter": {
+        "Catch_get_alert_email": [
+         "Succeeded"
+        ]
+       },
+       "type": "OpenApiConnection",
+       "inputs": {
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+         "connectionName": "shared_office365",
+         "operationId": "SendEmailV2"
+        },
+        "parameters": {
+         "emailMessage/To": "@{first(body('Catch_get_alert_email')?['value'])?['SettingValue']}",
+         "emailMessage/Subject": "MDI flow FAILED: @{workflow()?['tags']?['flowDisplayName']}",
+         "emailMessage/Body": "<p>An MDI flow failed and needs a look.</p><p><b>Flow:</b> @{workflow()?['tags']?['flowDisplayName']}<br><b>Run:</b> <a href=\"https://make.powerautomate.com/environments/@{workflow()?['tags']?['environmentName']}/flows/@{workflow()?['name']}/runs/@{workflow()?['run']?['name']}\">open the run history</a></p>",
+         "emailMessage/Importance": "Normal"
+        },
+        "authentication": "@parameters('$authentication')"
+       }
+      }
+     }
+    }
+   },
+   "outputs": {}
+  }
+ },
+ "schemaVersion": "1.0.0.0"
+}

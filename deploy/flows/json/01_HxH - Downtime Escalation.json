@@ -1,0 +1,248 @@
+{
+ "properties": {
+  "connectionReferences": {
+   "shared_teams": {
+    "runtimeSource": "embedded",
+    "connection": {
+     "connectionReferenceLogicalName": "craf4_sharedteams_a7259"
+    },
+    "api": {
+     "name": "shared_teams"
+    }
+   },
+   "shared_sharepointonline": {
+    "runtimeSource": "embedded",
+    "connection": {
+     "connectionReferenceLogicalName": "craf4_sharedsharepointonline_17d15"
+    },
+    "api": {
+     "name": "shared_sharepointonline"
+    }
+   },
+   "shared_office365": {
+    "runtimeSource": "embedded",
+    "connection": {
+     "connectionReferenceLogicalName": "craf4_sharedoffice365_mdi"
+    },
+    "api": {
+     "name": "shared_office365"
+    }
+   }
+  },
+  "definition": {
+   "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+    "$connections": {
+     "defaultValue": {},
+     "type": "Object"
+    },
+    "$authentication": {
+     "defaultValue": {},
+     "type": "SecureObject"
+    }
+   },
+   "triggers": {
+    "When_an_item_is_created_or_modified": {
+     "recurrence": {
+      "frequency": "Minute",
+      "interval": 1
+     },
+     "evaluatedRecurrence": {
+      "frequency": "Minute",
+      "interval": 1
+     },
+     "splitOn": "@triggerOutputs()?['body/value']",
+     "type": "OpenApiConnection",
+     "inputs": {
+      "parameters": {
+       "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+       "table": "afa6c071-4098-4a7f-b8a9-0277ce745c2d"
+      },
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "GetOnUpdatedItems"
+      },
+      "authentication": "@parameters('$authentication')"
+     },
+     "conditions": [
+      {
+       "expression": "@greaterOrEquals(coalesce(triggerBody()?['EscCumMin'],0),60)"
+      }
+     ],
+     "runtimeConfiguration": {
+      "concurrency": {
+       "runs": 1
+      }
+     }
+    }
+   },
+   "actions": {
+    "Get_contacts": {
+     "runAfter": {},
+     "type": "OpenApiConnection",
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "GetItems"
+      },
+      "parameters": {
+       "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+       "table": "ff7632ce-d24b-426b-b826-989760b9347b",
+       "$filter": "Active eq 1 and Level le @{triggerBody()?['EscCumMin']}"
+      },
+      "authentication": "@parameters('$authentication')"
+     }
+    },
+    "Get_log": {
+     "runAfter": {
+      "Get_contacts": [
+       "Succeeded"
+      ]
+     },
+     "type": "OpenApiConnection",
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "GetItems"
+      },
+      "parameters": {
+       "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+       "table": "ff327b68-5f04-4080-99f2-58aaf88082d6",
+       "$filter": "startswith(Title,'@{triggerBody()?['ShiftKey']}|@{triggerBody()?['EscReason']}|')"
+      },
+      "authentication": "@parameters('$authentication')"
+     }
+    },
+    "To_notify": {
+     "runAfter": {
+      "Get_log": [
+       "Succeeded"
+      ]
+     },
+     "type": "Query",
+     "inputs": {
+      "from": "@body('Get_contacts')?['value']",
+      "where": "@and(or(equals(item()?['ShiftSpecific'],false),contains(string(item()?['Shifts']),concat('\"Value\":\"',string(triggerBody()?['Shift']),'\"'))),not(contains(string(body('Get_log')?['value']),concat('|',string(item()?['Level']),'|',item()?['Email'],'\"'))))"
+     }
+    },
+    "Notify_each": {
+     "foreach": "@body('To_notify')",
+     "runAfter": {
+      "To_notify": [
+       "Succeeded"
+      ]
+     },
+     "type": "Foreach",
+     "actions": {
+      "Teams_alert": {
+       "type": "OpenApiConnection",
+       "inputs": {
+        "parameters": {
+         "poster": "Flow bot",
+         "location": "Chat with Flow bot",
+         "body/recipient": "@{items('Notify_each')?['Email']}",
+         "body/messageBody": "<p><b>DOWNTIME ESCALATION - @{items('Notify_each')?['Level']} MIN LEVEL</b></p><p>Line @{triggerBody()?['Line']} | Shift @{triggerBody()?['Shift']} | @{triggerBody()?['ProductForm']}</p><p><b>@{triggerBody()?['EscReason']}</b>: @{triggerBody()?['EscCumMin']} min cumulative this shift (through hour @{triggerBody()?['HourNo']})</p><p>You are notified as: @{items('Notify_each')?['Role']}. Per the New Albany escalation plan: communicate up to the next level and across to your peers.</p><p>Entered by @{triggerBody()?['EnteredBy']}</p>"
+        },
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_teams",
+         "connectionName": "shared_teams",
+         "operationId": "PostMessageToConversation"
+        },
+        "authentication": "@parameters('$authentication')"
+       }
+      },
+      "Log_notification": {
+       "runAfter": {
+        "Teams_alert": [
+         "Succeeded"
+        ]
+       },
+       "type": "OpenApiConnection",
+       "inputs": {
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connectionName": "shared_sharepointonline",
+         "operationId": "PostItem"
+        },
+        "parameters": {
+         "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+         "table": "ff327b68-5f04-4080-99f2-58aaf88082d6",
+         "item/Title": "@{triggerBody()?['ShiftKey']}|@{triggerBody()?['EscReason']}|@{items('Notify_each')?['Level']}|@{items('Notify_each')?['Email']}",
+         "item/ShiftKey": "@{triggerBody()?['ShiftKey']}",
+         "item/Line": "@{triggerBody()?['Line']}",
+         "item/Shift": "@triggerBody()?['Shift']",
+         "item/Reason": "@{triggerBody()?['EscReason']}",
+         "item/CumMin": "@triggerBody()?['EscCumMin']",
+         "item/Level": "@items('Notify_each')?['Level']",
+         "item/ContactName": "@{items('Notify_each')?['Title']}",
+         "item/ContactEmail": "@{items('Notify_each')?['Email']}",
+         "item/Role": "@{items('Notify_each')?['Role']}",
+         "item/NotifiedAt": "@utcNow()"
+        },
+        "authentication": "@parameters('$authentication')"
+       }
+      }
+     }
+    },
+    "Catch": {
+     "type": "Scope",
+     "runAfter": {
+      "Notify_each": [
+       "Failed",
+       "TimedOut",
+       "Skipped"
+      ]
+     },
+     "actions": {
+      "Catch_get_alert_email": {
+       "runAfter": {},
+       "type": "OpenApiConnection",
+       "inputs": {
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connectionName": "shared_sharepointonline",
+         "operationId": "GetItems"
+        },
+        "parameters": {
+         "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+         "table": "1ce134d3-335f-415c-8ae0-e8cf7c0d9e16",
+         "$filter": "Title eq 'Alert_Email'",
+         "$top": 1
+        },
+        "authentication": "@parameters('$authentication')"
+       }
+      },
+      "Catch_send_alert": {
+       "runAfter": {
+        "Catch_get_alert_email": [
+         "Succeeded"
+        ]
+       },
+       "type": "OpenApiConnection",
+       "inputs": {
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+         "connectionName": "shared_office365",
+         "operationId": "SendEmailV2"
+        },
+        "parameters": {
+         "emailMessage/To": "@{first(body('Catch_get_alert_email')?['value'])?['SettingValue']}",
+         "emailMessage/Subject": "MDI flow FAILED: @{workflow()?['tags']?['flowDisplayName']}",
+         "emailMessage/Body": "<p>An MDI flow failed and needs a look.</p><p><b>Flow:</b> @{workflow()?['tags']?['flowDisplayName']}<br><b>Run:</b> <a href=\"https://make.powerautomate.com/environments/@{workflow()?['tags']?['environmentName']}/flows/@{workflow()?['name']}/runs/@{workflow()?['run']?['name']}\">open the run history</a></p>",
+         "emailMessage/Importance": "Normal"
+        },
+        "authentication": "@parameters('$authentication')"
+       }
+      }
+     }
+    }
+   },
+   "outputs": {}
+  }
+ },
+ "schemaVersion": "1.0.0.0"
+}

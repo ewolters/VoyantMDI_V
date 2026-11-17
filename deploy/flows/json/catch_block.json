@@ -1,0 +1,54 @@
+{
+ "Catch": {
+  "type": "Scope",
+  "runAfter": {
+   "<LAST_STEP>": [
+    "Failed",
+    "TimedOut",
+    "Skipped"
+   ]
+  },
+  "actions": {
+   "Catch_get_alert_email": {
+    "runAfter": {},
+    "type": "OpenApiConnection",
+    "inputs": {
+     "host": {
+      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+      "connectionName": "shared_sharepointonline",
+      "operationId": "GetItems"
+     },
+     "parameters": {
+      "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+      "table": "1ce134d3-335f-415c-8ae0-e8cf7c0d9e16",
+      "$filter": "Title eq 'Alert_Email'",
+      "$top": 1
+     },
+     "authentication": "@parameters('$authentication')"
+    }
+   },
+   "Catch_send_alert": {
+    "runAfter": {
+     "Catch_get_alert_email": [
+      "Succeeded"
+     ]
+    },
+    "type": "OpenApiConnection",
+    "inputs": {
+     "host": {
+      "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+      "connectionName": "shared_office365",
+      "operationId": "SendEmailV2"
+     },
+     "parameters": {
+      "emailMessage/To": "@{first(body('Catch_get_alert_email')?['value'])?['SettingValue']}",
+      "emailMessage/Subject": "MDI flow FAILED: @{workflow()?['tags']?['flowDisplayName']}",
+      "emailMessage/Body": "<p>An MDI flow failed and needs a look.</p><p><b>Flow:</b> @{workflow()?['tags']?['flowDisplayName']}<br><b>Run:</b> <a href=\"https://make.powerautomate.com/environments/@{workflow()?['tags']?['environmentName']}/flows/@{workflow()?['name']}/runs/@{workflow()?['run']?['name']}\">open the run history</a></p>",
+      "emailMessage/Importance": "Normal"
+     },
+     "authentication": "@parameters('$authentication')"
+    }
+   }
+  }
+ }
+}

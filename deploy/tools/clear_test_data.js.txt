@@ -1,0 +1,100 @@
+/* MDI: CLEAR TEST DATA
+   Moves test/demo rows to the site recycle bin (restorable for 93 days). Nothing is hard-deleted.
+
+   HOW TO RUN
+   1. Open any page of the MDI site in Edge/Chrome → F12 → Console.
+   2. Paste this whole file → Enter. With DRY_RUN = true it only REPORTS what it would remove.
+   3. Read the report. Then change DRY_RUN to false, paste again → confirm the prompt.
+   Needs site Owner (MDIAdmin) rights. The person running it should be an admin.
+
+   MODES
+   'demo'  : the sandbox demo data only: rows tagged T2TEST, test waivers, TEST escalation contacts and every escalation
+             sent to them. Keeps the SAMPLE standard/card and hand-made test rows.
+   'reset' : go-live clean slate. Every TRANSACTION created before CUTOFF (board hours/shifts, QA, troubleshooting
+             occurrences, PC audits/results, Frontier audits/results, escalation log, Newspaper actions, PC/Newspaper/Frontier photos),
+             the SAMPLE Frontier zones, PLUS everything
+             'demo' removes. KEEPS all configuration: Lines, Lookups, PLAYBOOK, People, MDI_Config, real escalation
+             contacts, the troubleshooting guide, standards and cards (except the SAMPLE starter standard/card).
+*/
+(async () => {
+  const MODE = 'demo';            // 'demo' or 'reset'
+  const DRY_RUN = true;           // true = report only
+  const CUTOFF = new Date();      // 'reset' only: remove transactions created before this moment, e.g. new Date('2026-11-02T00:00:00')
+
+  const m = location.pathname.match(/^\/(sites|teams)\/[^/]+/);
+  const SITE = location.origin + (m ? m[0] : ''), API = SITE + '/_api';
+  const H = { Accept: 'application/json;odata=nometadata', 'Content-Type': 'application/json;odata=nometadata' };
+  const digest = async () => { H['X-RequestDigest'] = (await (await fetch(API + '/contextinfo', { method: 'POST', headers: H })).json()).FormDigestValue; };
+  const log = (...a) => console.log('%c[MDI clean]', 'color:#00B2A9;font-weight:bold', ...a);
+  // read every item of a list by paging (works past the 5,000-item threshold; no server-side filter needed)
+  async function all(list, sel) {
+    let u = API + `/web/lists/getbytitle('${list}')/items?$select=ID,Created,${sel}&$orderby=ID&$top=2000`, out = [];
+    while (u) { const r = await fetch(u, { headers: H }); if (!r.ok) { console.warn('[MDI clean] cannot read', list, r.status); return []; }
+      const j = await r.json(); out.push(...j.value); u = j['odata.nextLink'] || null; }
+    return out;
+  }
+  const has = (v, s) => (v || '').toString().includes(s);
+  const starts = (v, s) => (v || '').toString().startsWith(s);
+  const before = it => new Date(it.Created) < CUTOFF;
+  const RESET = MODE === 'reset';
+
+  // [list, fields to read, rule(item) → true = remove]
+  const RULES = [
+    ['HxH_Shift',        'EnteredBy',                 it => it.EnteredBy === 'T2TEST' || (RESET && before(it))],
+    ['HxH_Hourly',       'EnteredBy',                 it => it.EnteredBy === 'T2TEST' || (RESET && before(it))],
+    ['QA_Rework',        'EnteredBy',                 it => it.EnteredBy === 'T2TEST' || (RESET && before(it))],
+    ['TS_Occurrences',   'LoggedBy,Title',            it => it.LoggedBy === 'T2TEST' || (!RESET && starts(it.Title, 'WAIVE')) || (RESET && before(it))],   // demo: also test waivers
+    ['PC_Audits',        'AuditedBy',                 it => it.AuditedBy === 'T2TEST' || (RESET && before(it))],
+    ['PC_Results',       'Title',                     it => starts(it.Title, 'T2TEST') || (RESET && before(it))],
+    ['Escalation_Log',   'Title,ContactName',         it => starts(it.Title, 'T2TEST') || has(it.ContactName, '(TEST)') || (RESET && before(it))],
+    ['Newspaper',        'RefKey,Owner',              it => starts(it.RefKey, 'T2TEST') || (RESET && before(it))],
+    ['TS_Fixes',         'Author0',                   it => it.Author0 === 'T2TEST'],
+    ['TS_Issues',        'Author0',                   it => it.Author0 === 'T2TEST'],
+    ['Escalation_Contacts', 'Title',                  it => has(it.Title, '(TEST)')],
+    ['TS_Photos',        'Module,TakenBy',            it => RESET && ((before(it) && ['Process confirmation', 'Newspaper', 'Frontier audit'].includes(it.Module)) || it.TakenBy === 'SAMPLE')],
+    ['SAF_Audits',       'AuditedBy',                 it => it.AuditedBy === 'T2TEST' || (RESET && before(it))],
+    ['SAF_Results',      'Title',                     it => starts(it.Title, 'FA-T2TEST') || (RESET && before(it))],
+    ['SAF_Zones',        'Notes',                     it => RESET && starts(it.Notes, 'SAMPLE')],   // sample zones (reset only)
+  ];
+  // SAMPLE standard + card, with their children
+  const SAMPLE = [['SW_Standards', 'AddedBy', 'SW_Elements', 'StandardID'], ['PC_Cards', 'AddedBy', 'PC_CardItems', 'CardID']];
+
+  log(`Site: ${SITE}   MODE: ${MODE}   DRY_RUN: ${DRY_RUN}` + (RESET ? `   CUTOFF: ${CUTOFF.toLocaleString()}` : ''));
+  await digest();
+  const plan = [];
+  for (const [list, sel, rule] of RULES) {
+    const items = await all(list, sel);
+    const ids = items.filter(rule).map(i => i.ID);
+    plan.push({ list, total: items.length, remove: ids.length, ids });
+  }
+  for (const [list, sel, child, key] of (RESET ? SAMPLE : [])) {   // SAMPLE starter content: reset mode only
+    const items = await all(list, sel), ids = items.filter(i => i.AddedBy === 'SAMPLE').map(i => i.ID);
+    plan.push({ list, total: items.length, remove: ids.length, ids });
+    const kids = await all(child, key), kidIds = kids.filter(k => ids.includes(k[key])).map(k => k.ID);
+    plan.push({ list: child, total: kids.length, remove: kidIds.length, ids: kidIds });
+  }
+  console.table(plan.map(p => ({ list: p.list, rows: p.total, 'to recycle bin': p.remove, 'kept': p.total - p.remove })));
+  const n = plan.reduce((a, p) => a + p.remove, 0);
+  log(`${n} rows would be moved to the recycle bin.`);
+  if (DRY_RUN) { log('DRY RUN: nothing changed. Set DRY_RUN = false and paste again to do it.'); return; }
+  if (!n) { log('Nothing to remove.'); return; }
+  if (!window.confirm(`Move ${n} rows to the recycle bin on ${SITE}? (Restorable for 93 days.)`)) { log('Canceled.'); return; }
+
+  let done = 0, failed = 0; const jobs = [];
+  for (const p of plan) for (const id of p.ids) jobs.push([p.list, id]);
+  let k = 0;
+  async function worker() {
+    while (k < jobs.length) {
+      const [list, id] = jobs[k++];
+      if (done && done % 300 === 0) await digest();
+      for (let t = 0; t < 4; t++) {
+        const r = await fetch(API + `/web/lists/getbytitle('${list}')/items(${id})/recycle()`, { method: 'POST', headers: H });
+        if (r.ok) { done++; break; }
+        if (r.status === 429 || r.status >= 500) { await new Promise(z => setTimeout(z, 2000 * (t + 1))); continue; }
+        failed++; console.warn('[MDI clean] failed', list, id, r.status); break;
+      }
+    }
+  }
+  await Promise.all(Array.from({ length: 8 }, worker));
+  log(`DONE. ${done} rows moved to the recycle bin, ${failed} failed. Restore from Site contents → Recycle bin if needed.`);
+})();

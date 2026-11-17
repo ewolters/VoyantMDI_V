@@ -1,0 +1,1340 @@
+- hdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =90
+- lblBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =34
+      Color: =RGBA(255, 255, 255, 1)
+      X: =24
+      Y: =6
+      Width: =170
+      Height: =52
+- lblBrandSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NEW ALBANY"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 178, 169, 1)
+      FontWeight: =FontWeight.Bold
+      X: =27
+      Y: =56
+      Width: =170
+      Height: =24
+- lblTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NEWSPAPER"
+      Font: =Font.Georgia
+      Size: =26
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =190
+      Y: =20
+      Width: =260
+      Height: =50
+- lblSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="action register  ·  who · what · by when"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(177, 179, 179, 1)
+      X: =430
+      Y: =32
+      Width: =360
+      Height: =30
+- btnNRefresh:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="REFRESH"
+      OnSelect: |-
+        =IfError(ClearCollect(colNews, Filter(Newspaper, Status.Value = "Open" || Status.Value = "In progress" || ClosedDate >= DateAdd(Today(), -60, TimeUnit.Days))), Notify("Could not load Newspaper — " & FirstError.Message, NotificationType.Error), true);
+        IfError(ClearCollect(colPeople, Filter(People, Active = true)), Notify("Could not load People", NotificationType.Warning), true);
+        ClearCollect(colLines, Lines);
+        Set(varLoaded, Now())
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1500
+      Y: =22
+      Width: =130
+      Height: =48
+- btnNNew:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="+  NEW ACTION"
+      OnSelect: =Set(varNID, Blank()); Set(varNNew, true); Clear(colActPh); Select(btnNReset)
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 178, 169, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1640
+      Y: =22
+      Width: =200
+      Height: =48
+- lblNLoaded:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varLoaded), "Not loaded", Text(varLoaded, "h:mm AM/PM"))
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(177, 179, 179, 1)
+      X: =1846
+      Y: =30
+      Width: =70
+      Height: =30
+- ddFLine:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "All lines"})}, {t: ForAll(SortByColumns(colLines, "DisplayOrder"), {Value: Line})}), t)
+      Default: =Coalesce(Param("line"), "All lines")
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =12
+      Y: =98
+      Width: =170
+      Height: =44
+- ddFSrc:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["All sources", "Escalation", "Tier 2", "Board", "QA", "Maintenance", "Ops", "Troubleshooting", "Yellow tag", "Process confirmation", "HxH", "Other"]
+      Default: ="All sources"
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =190
+      Y: =98
+      Width: =210
+      Height: =44
+- ddFQ:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["All SQDCP", "Safety", "Quality", "Delivery", "Cost", "People"]
+      Default: ="All SQDCP"
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =408
+      Y: =98
+      Width: =170
+      Height: =44
+- ddFStat:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["Open + In progress", "All", "Open", "In progress", "Done", "Canceled"]
+      Default: ="Open + In progress"
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =586
+      Y: =98
+      Width: =210
+      Height: =44
+- txtFSearch:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="search action, owner, problem…"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =804
+      Y: =98
+      Width: =300
+      Height: =44
+- btnFOver:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varOverOnly, "● OVERDUE ONLY", "○ OVERDUE ONLY")
+      OnSelect: =Set(varOverOnly, !varOverOnly)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varOverOnly, RGBA(207, 34, 46, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varOverOnly, RGBA(255, 255, 255, 1), RGBA(207, 34, 46, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(207, 34, 46, 1)
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1112
+      Y: =98
+      Width: =190
+      Height: =44
+- btnFMine:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varMine, "● MINE", "○ MINE")
+      OnSelect: =Set(varMine, !varMine)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varMine, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varMine, RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1310
+      Y: =98
+      Width: =110
+      Height: =44
+- kNOpen:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(CountRows(Filter(Filter(colNews, ddFLine.Selected.Value = "All lines" || Line = ddFLine.Selected.Value), (Status.Value = "Open" || Status.Value = "In progress"))))
+      Font: =Font.Arial
+      Size: =30
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =8
+      X: =12
+      Y: =150
+      Width: =228
+      Height: =96
+- kNOpenC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OPEN"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =12
+      Y: =156
+      Width: =228
+      Height: =22
+- kNOver:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(CountRows(Filter(Filter(colNews, ddFLine.Selected.Value = "All lines" || Line = ddFLine.Selected.Value), ((Status.Value = "Open" || Status.Value = "In progress") && !IsBlank(DueDate) && DueDate < Today()))))
+      Font: =Font.Arial
+      Size: =30
+      Color: =If(CountRows(Filter(Filter(colNews, ddFLine.Selected.Value = "All lines" || Line = ddFLine.Selected.Value), ((Status.Value = "Open" || Status.Value = "In progress") && !IsBlank(DueDate) && DueDate < Today()))) > 0, RGBA(207, 34, 46, 1), RGBA(7, 39, 45, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =8
+      X: =248
+      Y: =150
+      Width: =228
+      Height: =96
+- kNOverC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OVERDUE"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =248
+      Y: =156
+      Width: =228
+      Height: =22
+- kNWeek:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(CountRows(Filter(Filter(colNews, ddFLine.Selected.Value = "All lines" || Line = ddFLine.Selected.Value), (Status.Value = "Open" || Status.Value = "In progress") && !IsBlank(DueDate) && DueDate >= Today() && DueDate <= DateAdd(Today(), 7, TimeUnit.Days))))
+      Font: =Font.Arial
+      Size: =30
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =8
+      X: =484
+      Y: =150
+      Width: =228
+      Height: =96
+- kNWeekC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DUE NEXT 7 DAYS"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =484
+      Y: =156
+      Width: =228
+      Height: =22
+- kNDone:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(CountRows(Filter(Filter(colNews, ddFLine.Selected.Value = "All lines" || Line = ddFLine.Selected.Value), Status.Value = "Done" && ClosedDate >= DateAdd(Today(), -7, TimeUnit.Days))))
+      Font: =Font.Arial
+      Size: =30
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =8
+      X: =720
+      Y: =150
+      Width: =228
+      Height: =96
+- kNDoneC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CLOSED LAST 7 DAYS"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =720
+      Y: =156
+      Width: =228
+      Height: =22
+- kNAge:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =With({c: Filter(Filter(colNews, ddFLine.Selected.Value = "All lines" || Line = ddFLine.Selected.Value), Status.Value = "Done" && ClosedDate >= DateAdd(Today(), -30, TimeUnit.Days) && !IsBlank(RaisedDate))}, If(CountRows(c) = 0, "—", Text(Average(c, DateDiff(RaisedDate, ClosedDate, TimeUnit.Days)), "0.0")))
+      Font: =Font.Arial
+      Size: =30
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =8
+      X: =956
+      Y: =150
+      Width: =228
+      Height: =96
+- kNAgeC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="AVG DAYS TO CLOSE (30d)"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =956
+      Y: =156
+      Width: =228
+      Height: =22
+- lHdr:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(0, 72, 81, 1)
+      X: =12
+      Y: =256
+      Width: =1180
+      Height: =30
+- lh0:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SQDCP"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =20
+      Y: =256
+      Width: =64
+      Height: =30
+- lh1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ACTION / PROBLEM"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =92
+      Y: =256
+      Width: =470
+      Height: =30
+- lh2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =568
+      Y: =256
+      Width: =70
+      Height: =30
+- lh3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SOURCE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =642
+      Y: =256
+      Width: =150
+      Height: =30
+- lh4:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OWNER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =796
+      Y: =256
+      Width: =150
+      Height: =30
+- lh5:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DUE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =950
+      Y: =256
+      Width: =110
+      Height: =30
+- lh6:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PROGRESS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1066
+      Y: =256
+      Width: =124
+      Height: =30
+- galNews:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =SortByColumns(AddColumns(Filter(colNews,
+         (ddFLine.Selected.Value = "All lines" || Line = ddFLine.Selected.Value) &&
+         (ddFSrc.Selected.Value = "All sources" || Source.Value = ddFSrc.Selected.Value) &&
+         (ddFQ.Selected.Value = "All SQDCP" || SQDCP.Value = ddFQ.Selected.Value) &&
+         (ddFStat.Selected.Value = "All" || (ddFStat.Selected.Value = "Open + In progress" && (Status.Value = "Open" || Status.Value = "In progress")) || Status.Value = ddFStat.Selected.Value) &&
+         (!varOverOnly || ((Status.Value = "Open" || Status.Value = "In progress") && !IsBlank(DueDate) && DueDate < Today())) && (!varMine || OwnerEmail = User().Email) &&
+         (IsBlank(txtFSearch.Text) || txtFSearch.Text in Action || txtFSearch.Text in Owner || txtFSearch.Text in Problem || txtFSearch.Text in RefKey)), Late, If(((Status.Value = "Open" || Status.Value = "In progress") && !IsBlank(DueDate) && DueDate < Today()), 0, 1), DueSort, Coalesce(DueDate, Date(2099, 1, 1))), "Late", SortOrder.Ascending, "DueSort", SortOrder.Ascending)
+      TemplateSize: =88
+      TemplatePadding: =0
+      X: =12
+      Y: =286
+      Width: =1180
+      Height: =780
+    Children:
+      - gNBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =If((ThisItem.ID = varNID), RGBA(229, 243, 243, 1), RGBA(255, 255, 255, 1))
+            X: =0
+            Y: =0
+            Width: =1180
+            Height: =84
+            BorderColor: =RGBA(217, 217, 214, 1)
+            BorderThickness: =1
+      - gNQ:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Left(Coalesce(ThisItem.SQDCP.Value, "?"), 1)
+            Font: =Font.Arial
+            Size: =24
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =RGBA(7, 39, 45, 1)
+            X: =8
+            Y: =12
+            Width: =56
+            Height: =56
+      - gNAct:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Action
+            Font: =Font.Arial
+            Size: =13
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =80
+            Y: =4
+            Width: =466
+            Height: =40
+      - gNProb:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Coalesce(ThisItem.Problem, "")
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(117, 120, 123, 1)
+            VerticalAlign: =VerticalAlign.Top
+            X: =80
+            Y: =42
+            Width: =466
+            Height: =38
+      - gNLine:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Line
+            Font: =Font.Arial
+            Size: =13
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =556
+            Y: =22
+            Width: =64
+            Height: =36
+      - gNSrc:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Source.Value
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            X: =630
+            Y: =22
+            Width: =146
+            Height: =36
+      - gNOwn:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.Owner), "— unassigned", ThisItem.Owner)
+            Font: =Font.Arial
+            Size: =12
+            Color: =If(IsBlank(ThisItem.Owner), RGBA(207, 34, 46, 1), RGBA(7, 39, 45, 1))
+            X: =784
+            Y: =22
+            Width: =146
+            Height: =36
+      - gNDue:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.DueDate), "—", Text(ThisItem.DueDate, "m/d") & If(ThisItem.DueDate < Today() && (ThisItem.Status.Value = "Open" || ThisItem.Status.Value = "In progress"), "  LATE", ""))
+            Font: =Font.Arial
+            Size: =13
+            Color: =If(!(ThisItem.Status.Value = "Open" || ThisItem.Status.Value = "In progress") || IsBlank(ThisItem.DueDate), RGBA(117, 120, 123, 1), ThisItem.DueDate < Today(), RGBA(207, 34, 46, 1), ThisItem.DueDate <= DateAdd(Today(), 2, TimeUnit.Days), RGBA(210, 153, 34, 1), RGBA(7, 39, 45, 1))
+            FontWeight: =FontWeight.Bold
+            X: =938
+            Y: =22
+            Width: =110
+            Height: =36
+      - gNSel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =""
+            OnSelect: =Set(varNID, ThisItem.ID); Set(varNNew, false); Select(btnNReset)
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 72, 81, 0.05)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(0, 72, 81, 0.1)
+            X: =0
+            Y: =0
+            Width: =1050
+            Height: =84
+      - gNHb:
+          Control: Image@2.2.3
+          Properties:
+            Image: =If(ThisItem.Status.Value = "Canceled", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23B1B3B3%27%20stroke-width%3D%273%27%2F%3E%3Cline%20x1%3D%279%27%20y1%3D%2731%27%20x2%3D%2731%27%20y2%3D%279%27%20stroke%3D%27%23B1B3B3%27%20stroke-width%3D%273%27%2F%3E%3C%2Fsvg%3E", Coalesce(ThisItem.Progress, Switch(ThisItem.Status.Value, "Done", 100, "In progress", 50, 0)) >= 100, "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%232EA043%27%20stroke-width%3D%273%27%2F%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2715.5%27%20fill%3D%27%232EA043%27%2F%3E%3C%2Fsvg%3E", ThisItem.DueDate < Today() && (ThisItem.Status.Value = "Open" || ThisItem.Status.Value = "In progress"), Switch(Coalesce(ThisItem.Progress, Switch(ThisItem.Status.Value, "Done", 100, "In progress", 50, 0)), 0, "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23CF222E%27%20stroke-width%3D%273%27%2F%3E%3C%2Fsvg%3E", 25, "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23CF222E%27%20stroke-width%3D%273%27%2F%3E%3Cpath%20d%3D%27M20%2C20%20L20%2C4.5%20A15.5%2C15.5%200%200%2C1%2035.5%2C20%20Z%27%20fill%3D%27%23004851%27%2F%3E%3C%2Fsvg%3E", 50, "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23CF222E%27%20stroke-width%3D%273%27%2F%3E%3Cpath%20d%3D%27M20%2C20%20L20%2C4.5%20A15.5%2C15.5%200%200%2C1%2020%2C35.5%20Z%27%20fill%3D%27%23004851%27%2F%3E%3C%2Fsvg%3E", 75, "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23CF222E%27%20stroke-width%3D%273%27%2F%3E%3Cpath%20d%3D%27M20%2C20%20L20%2C4.5%20A15.5%2C15.5%200%201%2C1%204.5%2C20%20Z%27%20fill%3D%27%23004851%27%2F%3E%3C%2Fsvg%3E", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23CF222E%27%20stroke-width%3D%273%27%2F%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2715.5%27%20fill%3D%27%23004851%27%2F%3E%3C%2Fsvg%3E"), Switch(Coalesce(ThisItem.Progress, Switch(ThisItem.Status.Value, "Done", 100, "In progress", 50, 0)), 0, "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23004851%27%20stroke-width%3D%273%27%2F%3E%3C%2Fsvg%3E", 25, "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23004851%27%20stroke-width%3D%273%27%2F%3E%3Cpath%20d%3D%27M20%2C20%20L20%2C4.5%20A15.5%2C15.5%200%200%2C1%2035.5%2C20%20Z%27%20fill%3D%27%23004851%27%2F%3E%3C%2Fsvg%3E", 50, "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23004851%27%20stroke-width%3D%273%27%2F%3E%3Cpath%20d%3D%27M20%2C20%20L20%2C4.5%20A15.5%2C15.5%200%200%2C1%2020%2C35.5%20Z%27%20fill%3D%27%23004851%27%2F%3E%3C%2Fsvg%3E", 75, "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23004851%27%20stroke-width%3D%273%27%2F%3E%3Cpath%20d%3D%27M20%2C20%20L20%2C4.5%20A15.5%2C15.5%200%201%2C1%204.5%2C20%20Z%27%20fill%3D%27%23004851%27%2F%3E%3C%2Fsvg%3E", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23004851%27%20stroke-width%3D%273%27%2F%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2715.5%27%20fill%3D%27%23004851%27%2F%3E%3C%2Fsvg%3E"))
+            ImagePosition: =ImagePosition.Fit
+            X: =1060
+            Y: =20
+            Width: =44
+            Height: =44
+      - gNPct:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(ThisItem.Status.Value = "Canceled", "canceled", Text(Coalesce(ThisItem.Progress, Switch(ThisItem.Status.Value, "Done", 100, "In progress", 50, 0))) & "%")
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =1108
+            Y: =20
+            Width: =66
+            Height: =44
+      - gNStat:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =""
+            OnSelect: |-
+              =If(ThisItem.Status.Value = "Canceled", Notify("Canceled action. Open it to change.", NotificationType.Information),
+               With({nx: Switch(Coalesce(ThisItem.Progress, Switch(ThisItem.Status.Value, "Done", 100, "In progress", 50, 0)), 0, 25, 25, 50, 50, 75, 75, 100, 0)}, With({st: If(nx = 0, "Open", nx = 100, "Done", "In progress")},
+                If(IsError(Patch(Newspaper, LookUp(Newspaper, ID = ThisItem.ID), {Progress: nx, Status: {Value: st}, ClosedDate: If(nx = 100, Now(), Blank())})),
+                 Notify("Not saved. Check your connection and try again.", NotificationType.Error),
+                 Patch(colNews, LookUp(colNews, ID = ThisItem.ID), {Progress: nx, Status: {Value: st}, ClosedDate: If(nx = 100, Now(), Blank())})))))
+            Font: =Font.Arial
+            Size: =11
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 72, 81, 0.08)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(0, 72, 81, 0.15)
+            Tooltip: |-
+              ="Tap to step progress: 0 → 25 → 50 → 75 → 100% (Done)"
+            X: =1054
+            Y: =14
+            Width: =120
+            Height: =56
+- lNone:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Nothing matches these filters."
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(177, 179, 179, 1)
+      Visible: =CountRows(galNews.AllItems) = 0
+      X: =24
+      Y: =306
+      Width: =1140
+      Height: =30
+- dBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(248, 249, 249, 1)
+      X: =1204
+      Y: =150
+      Width: =704
+      Height: =920
+- dT:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varNNew, "NEW ACTION", If(IsBlank(varNID), "← Pick an action to see or update it", "ACTION #" & varNID))
+      Font: =Font.Georgia
+      Size: =15
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1220
+      Y: =156
+      Width: =672
+      Height: =32
+- cNAct:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ACTION — what will be done *"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1220
+      Y: =192
+      Width: =672
+      Height: =20
+      Visible: =(varNNew || !IsBlank(varNID))
+- txtNAct:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varNNew, "", Coalesce(LookUp(colNews, ID = varNID).Action, ""))
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =1220
+      Y: =212
+      Width: =672
+      Height: =44
+      Visible: =(varNNew || !IsBlank(varNID))
+- cNProb:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PROBLEM — what happened"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1220
+      Y: =262
+      Width: =672
+      Height: =20
+      Visible: =(varNNew || !IsBlank(varNID))
+- txtNProb:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varNNew, "", Coalesce(LookUp(colNews, ID = varNID).Problem, ""))
+      HintText: =""
+      Font: =Font.Arial
+      Size: =12
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =1220
+      Y: =282
+      Width: =672
+      Height: =70
+      Visible: =(varNNew || !IsBlank(varNID))
+- cNCM:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="COUNTERMEASURE / RESULT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1220
+      Y: =358
+      Width: =672
+      Height: =20
+      Visible: =(varNNew || !IsBlank(varNID))
+- txtNCM:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varNNew, "", Coalesce(LookUp(colNews, ID = varNID).Countermeasure, ""))
+      HintText: =""
+      Font: =Font.Arial
+      Size: =12
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =1220
+      Y: =378
+      Width: =672
+      Height: =70
+      Visible: =(varNNew || !IsBlank(varNID))
+- cNOwn:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OWNER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1220
+      Y: =454
+      Width: =320
+      Height: =20
+      Visible: =(varNNew || !IsBlank(varNID))
+- ddNOwn:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "(unassigned)", Email: ""})}, {t: ForAll(SortByColumns(colPeople, "Title"), {Value: Title, Email: Email})}), t)
+      Default: =If(varNNew || IsBlank(LookUp(colNews, ID = varNID).Owner), "(unassigned)", LookUp(colNews, ID = varNID).Owner)
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =1220
+      Y: =474
+      Width: =320
+      Height: =44
+      Visible: =(varNNew || !IsBlank(varNID))
+- cNDue:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DUE (yyyy-mm-dd)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1550
+      Y: =454
+      Width: =170
+      Height: =20
+      Visible: =(varNNew || !IsBlank(varNID))
+- txtNDue:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varNNew, Text(DateAdd(Today(), 7, TimeUnit.Days), "yyyy-mm-dd"), If(IsBlank(LookUp(colNews, ID = varNID).DueDate), "", Text(LookUp(colNews, ID = varNID).DueDate, "yyyy-mm-dd")))
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =1550
+      Y: =474
+      Width: =170
+      Height: =44
+      Visible: =(varNNew || !IsBlank(varNID))
+- cNLine:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1730
+      Y: =454
+      Width: =162
+      Height: =20
+      Visible: =(varNNew || !IsBlank(varNID))
+- txtNLine:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varNNew, If(ddFLine.Selected.Value = "All lines", "", ddFLine.Selected.Value), Coalesce(LookUp(colNews, ID = varNID).Line, If(ddFLine.Selected.Value = "All lines", "", ddFLine.Selected.Value)))
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =1730
+      Y: =474
+      Width: =162
+      Height: =44
+      Visible: =(varNNew || !IsBlank(varNID))
+- cNQ:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SQDCP"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1220
+      Y: =524
+      Width: =220
+      Height: =20
+      Visible: =(varNNew || !IsBlank(varNID))
+- ddNQ:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["Safety", "Quality", "Delivery", "Cost", "People"]
+      Default: =If(varNNew, "Quality", LookUp(colNews, ID = varNID).SQDCP.Value)
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =1220
+      Y: =544
+      Width: =220
+      Height: =44
+      Visible: =(varNNew || !IsBlank(varNID))
+- cNSrc:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SOURCE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1450
+      Y: =524
+      Width: =260
+      Height: =20
+      Visible: =(varNNew || !IsBlank(varNID))
+- ddNSrc:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["Tier 2", "Board", "Escalation", "QA", "Maintenance", "Ops", "Troubleshooting", "Yellow tag", "Process confirmation", "HxH", "Other"]
+      Default: =If(varNNew, "Tier 2", LookUp(colNews, ID = varNID).Source.Value)
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =1450
+      Y: =544
+      Width: =260
+      Height: =44
+      Visible: =(varNNew || !IsBlank(varNID))
+- lNRef:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varNNew || IsBlank(LookUp(colNews, ID = varNID).RefKey), "", "Ref: " & LookUp(colNews, ID = varNID).RefKey)
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      X: =1720
+      Y: =544
+      Width: =172
+      Height: =44
+      Visible: =(varNNew || !IsBlank(varNID))
+- cNStat:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PROGRESS  (tap a ball)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1220
+      Y: =594
+      Width: =672
+      Height: =20
+      Visible: =(varNNew || !IsBlank(varNID))
+- imgNP0:
+    Control: Image@2.2.3
+    Properties:
+      Image: =If(varNProg = 0 && varNStat <> "Canceled", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23004851%27%20stroke-width%3D%273%27%2F%3E%3C%2Fsvg%3E", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23B1B3B3%27%20stroke-width%3D%273%27%2F%3E%3C%2Fsvg%3E")
+      ImagePosition: =ImagePosition.Fit
+      X: =1220
+      Y: =614
+      Width: =48
+      Height: =48
+      Visible: =(varNNew || !IsBlank(varNID))
+- lNP0:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="0%"
+      Font: =Font.Arial
+      Size: =11
+      Color: =If(varNProg = 0 && varNStat <> "Canceled", RGBA(7, 39, 45, 1), RGBA(177, 179, 179, 1))
+      FontWeight: =FontWeight.Bold
+      X: =1270
+      Y: =614
+      Width: =44
+      Height: =48
+      Visible: =(varNNew || !IsBlank(varNID))
+- btnNS0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: =Set(varNProg, 0); Set(varNStat, If(0 = 0, "Open", 0 = 100, "Done", "In progress"))
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 72, 81, 0.08)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      X: =1216
+      Y: =610
+      Width: =92
+      Height: =56
+      Visible: =(varNNew || !IsBlank(varNID))
+- imgNP1:
+    Control: Image@2.2.3
+    Properties:
+      Image: =If(varNProg = 25 && varNStat <> "Canceled", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23004851%27%20stroke-width%3D%273%27%2F%3E%3Cpath%20d%3D%27M20%2C20%20L20%2C4.5%20A15.5%2C15.5%200%200%2C1%2035.5%2C20%20Z%27%20fill%3D%27%23004851%27%2F%3E%3C%2Fsvg%3E", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23B1B3B3%27%20stroke-width%3D%273%27%2F%3E%3Cpath%20d%3D%27M20%2C20%20L20%2C4.5%20A15.5%2C15.5%200%200%2C1%2035.5%2C20%20Z%27%20fill%3D%27%23B1B3B3%27%2F%3E%3C%2Fsvg%3E")
+      ImagePosition: =ImagePosition.Fit
+      X: =1316
+      Y: =614
+      Width: =48
+      Height: =48
+      Visible: =(varNNew || !IsBlank(varNID))
+- lNP1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="25%"
+      Font: =Font.Arial
+      Size: =11
+      Color: =If(varNProg = 25 && varNStat <> "Canceled", RGBA(7, 39, 45, 1), RGBA(177, 179, 179, 1))
+      FontWeight: =FontWeight.Bold
+      X: =1366
+      Y: =614
+      Width: =44
+      Height: =48
+      Visible: =(varNNew || !IsBlank(varNID))
+- btnNS1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: =Set(varNProg, 25); Set(varNStat, If(25 = 0, "Open", 25 = 100, "Done", "In progress"))
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 72, 81, 0.08)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      X: =1312
+      Y: =610
+      Width: =92
+      Height: =56
+      Visible: =(varNNew || !IsBlank(varNID))
+- imgNP2:
+    Control: Image@2.2.3
+    Properties:
+      Image: =If(varNProg = 50 && varNStat <> "Canceled", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23004851%27%20stroke-width%3D%273%27%2F%3E%3Cpath%20d%3D%27M20%2C20%20L20%2C4.5%20A15.5%2C15.5%200%200%2C1%2020%2C35.5%20Z%27%20fill%3D%27%23004851%27%2F%3E%3C%2Fsvg%3E", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23B1B3B3%27%20stroke-width%3D%273%27%2F%3E%3Cpath%20d%3D%27M20%2C20%20L20%2C4.5%20A15.5%2C15.5%200%200%2C1%2020%2C35.5%20Z%27%20fill%3D%27%23B1B3B3%27%2F%3E%3C%2Fsvg%3E")
+      ImagePosition: =ImagePosition.Fit
+      X: =1412
+      Y: =614
+      Width: =48
+      Height: =48
+      Visible: =(varNNew || !IsBlank(varNID))
+- lNP2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="50%"
+      Font: =Font.Arial
+      Size: =11
+      Color: =If(varNProg = 50 && varNStat <> "Canceled", RGBA(7, 39, 45, 1), RGBA(177, 179, 179, 1))
+      FontWeight: =FontWeight.Bold
+      X: =1462
+      Y: =614
+      Width: =44
+      Height: =48
+      Visible: =(varNNew || !IsBlank(varNID))
+- btnNS2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: =Set(varNProg, 50); Set(varNStat, If(50 = 0, "Open", 50 = 100, "Done", "In progress"))
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 72, 81, 0.08)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      X: =1408
+      Y: =610
+      Width: =92
+      Height: =56
+      Visible: =(varNNew || !IsBlank(varNID))
+- imgNP3:
+    Control: Image@2.2.3
+    Properties:
+      Image: =If(varNProg = 75 && varNStat <> "Canceled", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23004851%27%20stroke-width%3D%273%27%2F%3E%3Cpath%20d%3D%27M20%2C20%20L20%2C4.5%20A15.5%2C15.5%200%201%2C1%204.5%2C20%20Z%27%20fill%3D%27%23004851%27%2F%3E%3C%2Fsvg%3E", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23B1B3B3%27%20stroke-width%3D%273%27%2F%3E%3Cpath%20d%3D%27M20%2C20%20L20%2C4.5%20A15.5%2C15.5%200%201%2C1%204.5%2C20%20Z%27%20fill%3D%27%23B1B3B3%27%2F%3E%3C%2Fsvg%3E")
+      ImagePosition: =ImagePosition.Fit
+      X: =1508
+      Y: =614
+      Width: =48
+      Height: =48
+      Visible: =(varNNew || !IsBlank(varNID))
+- lNP3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="75%"
+      Font: =Font.Arial
+      Size: =11
+      Color: =If(varNProg = 75 && varNStat <> "Canceled", RGBA(7, 39, 45, 1), RGBA(177, 179, 179, 1))
+      FontWeight: =FontWeight.Bold
+      X: =1558
+      Y: =614
+      Width: =44
+      Height: =48
+      Visible: =(varNNew || !IsBlank(varNID))
+- btnNS3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: =Set(varNProg, 75); Set(varNStat, If(75 = 0, "Open", 75 = 100, "Done", "In progress"))
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 72, 81, 0.08)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      X: =1504
+      Y: =610
+      Width: =92
+      Height: =56
+      Visible: =(varNNew || !IsBlank(varNID))
+- imgNP4:
+    Control: Image@2.2.3
+    Properties:
+      Image: =If(varNProg = 100 && varNStat <> "Canceled", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%232EA043%27%20stroke-width%3D%273%27%2F%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2715.5%27%20fill%3D%27%232EA043%27%2F%3E%3C%2Fsvg%3E", "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2740%27%20height%3D%2740%27%20viewBox%3D%270%200%2040%2040%27%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2717%27%20fill%3D%27white%27%20stroke%3D%27%23B1B3B3%27%20stroke-width%3D%273%27%2F%3E%3Ccircle%20cx%3D%2720%27%20cy%3D%2720%27%20r%3D%2715.5%27%20fill%3D%27%23B1B3B3%27%2F%3E%3C%2Fsvg%3E")
+      ImagePosition: =ImagePosition.Fit
+      X: =1604
+      Y: =614
+      Width: =48
+      Height: =48
+      Visible: =(varNNew || !IsBlank(varNID))
+- lNP4:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="100%"
+      Font: =Font.Arial
+      Size: =11
+      Color: =If(varNProg = 100 && varNStat <> "Canceled", RGBA(7, 39, 45, 1), RGBA(177, 179, 179, 1))
+      FontWeight: =FontWeight.Bold
+      X: =1654
+      Y: =614
+      Width: =44
+      Height: =48
+      Visible: =(varNNew || !IsBlank(varNID))
+- btnNS4:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: =Set(varNProg, 100); Set(varNStat, If(100 = 0, "Open", 100 = 100, "Done", "In progress"))
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 72, 81, 0.08)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      X: =1600
+      Y: =610
+      Width: =92
+      Height: =56
+      Visible: =(varNNew || !IsBlank(varNID))
+- btnNS5:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="Canceled"
+      OnSelect: =Set(varNStat, If(varNStat = "Canceled", If(varNProg = 0, "Open", varNProg = 100, "Done", "In progress"), "Canceled"))
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varNStat = "Canceled", RGBA(177, 179, 179, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varNStat = "Canceled", RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      Tooltip: ="Mark canceled (tap again to undo)"
+      X: =1738
+      Y: =614
+      Width: =154
+      Height: =48
+      Visible: =(varNNew || !IsBlank(varNID))
+- btnNSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(!IsBlank(txtNAct.Text) && (IsBlank(txtNDue.Text) || !IsError(DateValue(txtNDue.Text))), "SAVE", "ACTION REQUIRED")
+      OnSelect: |-
+        =IfError(
+         If(varNNew,
+          Set(varNID, Patch(Newspaper, Defaults(Newspaper), {Action: txtNAct.Text, Problem: txtNProb.Text, Countermeasure: txtNCM.Text,
+         Owner: If(ddNOwn.Selected.Value = "(unassigned)", "", ddNOwn.Selected.Value), OwnerEmail: ddNOwn.Selected.Email,
+         DueDate: If(IsBlank(txtNDue.Text), Blank(), DateValue(txtNDue.Text)), Line: txtNLine.Text,
+         ValueStream: Coalesce(LookUp(colLines, Line = txtNLine.Text).ValueStream, ""),
+         SQDCP: {Value: ddNQ.Selected.Value}, Source: {Value: ddNSrc.Selected.Value}, Status: {Value: varNStat}, Progress: varNProg,
+         ClosedDate: If(varNStat = "Done", Coalesce(LookUp(colNews, ID = varNID).ClosedDate, Now()), Blank())}, {RaisedDate: Now(), RefKey: "N" & Text(Now(), "yyyymmdd-hhmmss")}).ID); Set(varNNew, false),
+          Patch(Newspaper, LookUp(Newspaper, ID = varNID), {Action: txtNAct.Text, Problem: txtNProb.Text, Countermeasure: txtNCM.Text,
+         Owner: If(ddNOwn.Selected.Value = "(unassigned)", "", ddNOwn.Selected.Value), OwnerEmail: ddNOwn.Selected.Email,
+         DueDate: If(IsBlank(txtNDue.Text), Blank(), DateValue(txtNDue.Text)), Line: txtNLine.Text,
+         ValueStream: Coalesce(LookUp(colLines, Line = txtNLine.Text).ValueStream, ""),
+         SQDCP: {Value: ddNQ.Selected.Value}, Source: {Value: ddNSrc.Selected.Value}, Status: {Value: varNStat}, Progress: varNProg,
+         ClosedDate: If(varNStat = "Done", Coalesce(LookUp(colNews, ID = varNID).ClosedDate, Now()), Blank())}));
+         If(!IsBlank(addNPh.Media), Patch(TS_Photos, LookUp(TS_Photos, ID = Value('MDI-UploadPhoto'.Run(JSON(addNPh.Media, JSONFormat.IncludeBinaryData), "N" & varNID & ".jpg", varNID, 0, 0, "After", txtNAct.Text, User().Email).photoid)),
+           {Module: {Value: "Newspaper"}, RefID: varNID})),
+         Notify("NOT SAVED — " & FirstError.Message, NotificationType.Error),
+         Notify("Action saved", NotificationType.Success); Select(btnNRefresh); Select(btnNReset))
+      Font: =Font.Arial
+      Size: =15
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsBlank(txtNAct.Text) && (IsBlank(txtNDue.Text) || !IsError(DateValue(txtNDue.Text))), RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(!IsBlank(txtNAct.Text) && (IsBlank(txtNDue.Text) || !IsError(DateValue(txtNDue.Text))), RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(!IsBlank(txtNAct.Text) && (IsBlank(txtNDue.Text) || !IsError(DateValue(txtNDue.Text))), DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1220
+      Y: =676
+      Width: =320
+      Height: =58
+      Visible: =(varNNew || !IsBlank(varNID))
+- addNPh:
+    Control: AddMedia@2.2.1
+    Properties:
+      X: =1550
+      Y: =676
+      Width: =342
+      Height: =58
+      Size: =12
+      Text: =If(IsBlank(Self.Media), "📷  ADD PHOTO (saved with SAVE)", "✓  PHOTO READY — press SAVE")
+      Fill: =RGBA(243, 244, 244, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      Visible: =(varNNew || !IsBlank(varNID))
+- lNPhT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PHOTOS  (" & CountRows(colActPh) & ")"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1220
+      Y: =744
+      Width: =672
+      Height: =24
+      Visible: =(varNNew || !IsBlank(varNID))
+- galNPh:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =SortByColumns(colActPh, "Created", SortOrder.Descending)
+      WrapCount: =3
+      TemplateSize: =160
+      TemplatePadding: =0
+      X: =1214
+      Y: =768
+      Width: =684
+      Height: =296
+      Visible: =(varNNew || !IsBlank(varNID))
+    Children:
+      - gNPh:
+          Control: Image@2.2.3
+          Properties:
+            Image: =ThisItem.Thumbnail.Large
+            ImagePosition: =ImagePosition.Fit
+            Fill: =RGBA(243, 244, 244, 1)
+            X: =4
+            Y: =4
+            Width: =212
+            Height: =150
+- btnNReset:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =Reset(txtNAct); Reset(txtNProb); Reset(txtNCM); Reset(ddNOwn); Reset(txtNDue); Reset(txtNLine); Reset(ddNQ); Reset(ddNSrc); Reset(addNPh);
+        Set(varNStat, If(varNNew, "Open", LookUp(colNews, ID = varNID).Status.Value));
+        Set(varNProg, If(varNNew, 0, Coalesce(LookUp(colNews, ID = varNID).Progress, Switch(LookUp(colNews, ID = varNID).Status.Value, "Done", 100, "In progress", 50, 0))));
+        If(varNNew || IsBlank(varNID), Clear(colActPh),
+         With({k: Coalesce(LookUp(colNews, ID = varNID).RefKey, "")},
+          If(LookUp(colNews, ID = varNID).Source.Value = "Process confirmation" && "-I" in k,
+           With({p: Last(Split(k, "-I")).Value, r: Left(k, Len(k) - Len(Last(Split(k, "-I")).Value) - 2)},
+            ClearCollect(colActPh, Filter(TS_Photos, Module.Value = "Process confirmation" && RefID = LookUp(PC_Audits, Ref = r).ID && StepNo = Value(p)))),
+           Clear(colActPh));
+          Collect(colActPh, Filter(TS_Photos, Module.Value = "Newspaper" && RefID = varNID))))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =0
+      Y: =1079
+      Width: =1
+      Height: =1

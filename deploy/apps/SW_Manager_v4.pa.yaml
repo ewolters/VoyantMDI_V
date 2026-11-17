@@ -1,0 +1,2321 @@
+- hdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =90
+- lblBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =34
+      Color: =RGBA(255, 255, 255, 1)
+      X: =24
+      Y: =6
+      Width: =170
+      Height: =52
+- lblBrandSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NEW ALBANY"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 178, 169, 1)
+      FontWeight: =FontWeight.Bold
+      X: =27
+      Y: =56
+      Width: =170
+      Height: =24
+- lblTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="STANDARD WORK"
+      Font: =Font.Georgia
+      Size: =24
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =190
+      Y: =20
+      Width: =330
+      Height: =50
+- tab0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="STANDARDS"
+      OnSelect: =Set(varTab, "std")
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varTab = "std", RGBA(0, 178, 169, 1), RGBA(0, 72, 81, 1))
+      Color: =If(varTab = "std", RGBA(7, 39, 45, 1), RGBA(255, 255, 255, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =560
+      Y: =22
+      Width: =190
+      Height: =48
+- tab1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="PC CARDS"
+      OnSelect: =Set(varTab, "card")
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varTab = "card", RGBA(0, 178, 169, 1), RGBA(0, 72, 81, 1))
+      Color: =If(varTab = "card", RGBA(7, 39, 45, 1), RGBA(255, 255, 255, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =760
+      Y: =22
+      Width: =190
+      Height: =48
+- tab2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="RESULTS"
+      OnSelect: =Set(varTab, "res")
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varTab = "res", RGBA(0, 178, 169, 1), RGBA(0, 72, 81, 1))
+      Color: =If(varTab = "res", RGBA(7, 39, 45, 1), RGBA(255, 255, 255, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =960
+      Y: =22
+      Width: =190
+      Height: =48
+- btnSRefresh:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="REFRESH"
+      OnSelect: |-
+        =IfError(ClearCollect(colStd, SW_Standards), Notify("Could not load SW_Standards — " & FirstError.Message, NotificationType.Error), true);
+        IfError(ClearCollect(colAllEl, SW_Elements), Notify("Could not load SW_Elements", NotificationType.Error), true);
+        IfError(ClearCollect(colCards, PC_Cards), Notify("Could not load PC_Cards", NotificationType.Error), true);
+        IfError(ClearCollect(colStdPh, Filter(TS_Photos, Module.Value = "Standard work")), Notify("Could not load photos", NotificationType.Warning), true);
+        IfError(ClearCollect(colCfg, MDI_Config), Notify("Could not load MDI_Config", NotificationType.Warning), true);
+        IfError(ClearCollect(colLk, Filter(Lookups, Active = true)), Notify("Could not load Lookups", NotificationType.Warning), true);
+        ClearCollect(colEq, Ungroup(Table({t: Table({Value: ""})}, {t: ForAll(Sort(Filter(colLk, Category.Value = "Equipment"), SortOrder), {Value: Label})}), t));
+        Set(varFrom, DateAdd(Today(), -Coalesce(ddRPer.Selected.N, 30), TimeUnit.Days));
+        IfError(ClearCollect(colAud, Filter(PC_Audits, ShiftDate >= varFrom)), Notify("Could not load PC_Audits", NotificationType.Warning), true);
+        IfError(ClearCollect(colRes, Filter(PC_Results, Created >= varFrom)), Notify("Could not load PC_Results", NotificationType.Warning), true);
+        ClearCollect(colEl, Filter(colAllEl, StandardID = varStdID));
+        If(IsBlank(varTab), Set(varTab, "std"));
+        Set(varLoaded, Now())
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1640
+      Y: =22
+      Width: =130
+      Height: =48
+- lblSLoaded:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varLoaded), "Not loaded", "Loaded " & Text(varLoaded, "h:mm AM/PM"))
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(177, 179, 179, 1)
+      X: =1780
+      Y: =30
+      Width: =130
+      Height: =30
+- sListBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(248, 249, 249, 1)
+      X: =12
+      Y: =100
+      Width: =520
+      Height: =970
+      Visible: =varTab = "std"
+- txtSSearch:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="search standards…"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =22
+      Y: =108
+      Width: =300
+      Height: =44
+      Visible: =varTab = "std"
+- ddSStatus:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["All", "Active", "Draft", "Under review", "Retired"]
+      Default: ="All"
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =330
+      Y: =108
+      Width: =192
+      Height: =44
+      Visible: =varTab = "std"
+- galStd:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =SortByColumns(Filter(colStd, (ddSStatus.Selected.Value = "All" || Status.Value = ddSStatus.Selected.Value)
+          && (IsBlank(txtSSearch.Text) || txtSSearch.Text in Standard || txtSSearch.Text in DocNo || txtSSearch.Text in Area || txtSSearch.Text in EquipType)), "DocNo", SortOrder.Ascending)
+      TemplateSize: =112
+      TemplatePadding: =0
+      X: =16
+      Y: =160
+      Width: =512
+      Height: =840
+      Visible: =varTab = "std"
+    Children:
+      - gSBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            X: =0
+            Y: =0
+            Width: =500
+            Height: =106
+            BorderColor: =If((ThisItem.ID = varStdID), RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+            BorderThickness: =If((ThisItem.ID = varStdID), 3, 1)
+      - gSNo:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Coalesce(ThisItem.DocNo, "—") & "  rev " & Coalesce(ThisItem.Rev, "-")
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(0, 72, 81, 1)
+            FontWeight: =FontWeight.Bold
+            X: =12
+            Y: =4
+            Width: =300
+            Height: =26
+      - gSType:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.DocType.Value
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =RGBA(0, 72, 81, 1)
+            X: =320
+            Y: =6
+            Width: =80
+            Height: =22
+      - gSStat:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Status.Value
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =If(ThisItem.Status.Value = "Active", RGBA(46, 160, 67, 1), ThisItem.Status.Value = "Under review", RGBA(210, 153, 34, 1), ThisItem.Status.Value = "Draft", RGBA(177, 179, 179, 1), RGBA(117, 120, 123, 1))
+            X: =408
+            Y: =6
+            Width: =84
+            Height: =22
+      - gSName:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Standard
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =12
+            Y: =30
+            Width: =480
+            Height: =44
+      - gSSub:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Coalesce(ThisItem.Line, "") & If(IsBlank(ThisItem.Area), "", " · " & ThisItem.Area) & If(IsBlank(ThisItem.EquipType), "", " · " & ThisItem.EquipType) & "   ·   " & CountRows(Filter(colAllEl, StandardID = ThisItem.ID)) & " elements" & If(!IsBlank(ThisItem.ReviewDue) && ThisItem.ReviewDue <= Today(), "   ·   REVIEW DUE", "")
+            Font: =Font.Arial
+            Size: =10
+            Color: =If(!IsBlank(ThisItem.ReviewDue) && ThisItem.ReviewDue <= Today(), RGBA(207, 34, 46, 1), RGBA(117, 120, 123, 1))
+            X: =12
+            Y: =74
+            Width: =480
+            Height: =26
+      - gSSel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =""
+            OnSelect: =Set(varStdID, ThisItem.ID); Set(varStdNew, false); Set(varElID, Blank()); ClearCollect(colEl, Filter(colAllEl, StandardID = ThisItem.ID)); Select(btnSResetStd)
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 72, 81, 0.06)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(0, 72, 81, 0.12)
+            X: =0
+            Y: =0
+            Width: =500
+            Height: =106
+- btnSNew:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="+  NEW STANDARD"
+      OnSelect: =Set(varStdID, Blank()); Set(varStdNew, true); Set(varElID, Blank()); Clear(colEl); Select(btnSResetStd)
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =22
+      Y: =1008
+      Width: =500
+      Height: =54
+      Visible: =varTab = "std"
+- sEdT:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(varStdNew, "NEW STANDARD", If(IsBlank(varStdID), "← Pick a standard, or add a new one", "STANDARD  ·  " & LookUp(colStd, ID = varStdID).DocNo))
+      Font: =Font.Georgia
+      Size: =15
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =544
+      Y: =100
+      Width: =900
+      Height: =34
+      Visible: =varTab = "std"
+- ctxtStTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TITLE *"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =544
+      Y: =138
+      Width: =700
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- txtStTitle:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varStdNew, "", Coalesce(LookUp(colStd, ID = varStdID).Standard, ""))
+      HintText: ="e.g. Labeler changeover — 10 oz"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =544
+      Y: =158
+      Width: =700
+      Height: =44
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- ctxtStNo:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DOC NO"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1254
+      Y: =138
+      Width: =180
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- txtStNo:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varStdNew, "", Coalesce(LookUp(colStd, ID = varStdID).DocNo, ""))
+      HintText: ="SW-205-012"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =1254
+      Y: =158
+      Width: =180
+      Height: =44
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- ctxtStRev:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="REV"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1444
+      Y: =138
+      Width: =80
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- txtStRev:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varStdNew, "", Coalesce(LookUp(colStd, ID = varStdID).Rev, ""))
+      HintText: ="1"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =1444
+      Y: =158
+      Width: =80
+      Height: =44
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- cStType:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TYPE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1534
+      Y: =138
+      Width: =170
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- ddStType:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["SWIS", "JEL", "OPL", "Centerline", "Changeover", "Checklist", "5S", "Other"]
+      Default: =If(varStdNew, "SWIS", LookUp(colStd, ID = varStdID).DocType.Value)
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =1534
+      Y: =158
+      Width: =170
+      Height: =44
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+      Tooltip: |-
+        ="5S = a 5S standard page: one section per area, each with a standard-condition photo. Link it to a zone in SAF_Zones (StandardID); Frontier audits compare against it."
+- cStStat:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="STATUS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1714
+      Y: =138
+      Width: =190
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- ddStStat:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["Draft", "Active", "Under review", "Retired"]
+      Default: =If(varStdNew, "Draft", LookUp(colStd, ID = varStdID).Status.Value)
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =1714
+      Y: =158
+      Width: =190
+      Height: =44
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- ctxtStLine:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =544
+      Y: =208
+      Width: =140
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- txtStLine:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varStdNew, "", Coalesce(LookUp(colStd, ID = varStdID).Line, ""))
+      HintText: ="All / 205"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =544
+      Y: =228
+      Width: =140
+      Height: =44
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- ctxtStArea:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="AREA"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =694
+      Y: =208
+      Width: =200
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- txtStArea:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varStdNew, "", Coalesce(LookUp(colStd, ID = varStdID).Area, ""))
+      HintText: ="Labeling"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =694
+      Y: =228
+      Width: =200
+      Height: =44
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- cStEq:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="EQUIPMENT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =904
+      Y: =208
+      Width: =200
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- ddStEq:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =colEq
+      Default: =If(varStdNew, "", LookUp(colStd, ID = varStdID).EquipType)
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =904
+      Y: =228
+      Width: =200
+      Height: =44
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- ctxtStOwner:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OWNER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1114
+      Y: =208
+      Width: =220
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- txtStOwner:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varStdNew, "", Coalesce(LookUp(colStd, ID = varStdID).Owner, ""))
+      HintText: ="name"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =1114
+      Y: =228
+      Width: =220
+      Height: =44
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- ctxtStRev2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="REVIEW DUE (yyyy-mm-dd)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1344
+      Y: =208
+      Width: =190
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- txtStRev2:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varStdNew || IsBlank(LookUp(colStd, ID = varStdID).ReviewDue), "", Text(LookUp(colStd, ID = varStdID).ReviewDue, "yyyy-mm-dd"))
+      HintText: ="2027-04-30"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =1344
+      Y: =228
+      Width: =190
+      Height: =44
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- ctxtStLink:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINK TO CONTROLLED DOC (SharePoint)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1544
+      Y: =208
+      Width: =280
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- txtStLink:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varStdNew, "", Coalesce(LookUp(colStd, ID = varStdID).DocLink, ""))
+      HintText: ="paste URL"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =1544
+      Y: =228
+      Width: =280
+      Height: =44
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- btnStOpen:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="↗"
+      OnSelect: =Launch(txtStLink.Text)
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      DisplayMode: =If(IsBlank(txtStLink.Text), DisplayMode.Disabled, DisplayMode.Edit)
+      X: =1834
+      Y: =228
+      Width: =70
+      Height: =44
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- ctxtStPurp:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PURPOSE / SCOPE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =544
+      Y: =278
+      Width: =600
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- txtStPurp:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varStdNew, "", Coalesce(LookUp(colStd, ID = varStdID).Purpose, ""))
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =544
+      Y: =298
+      Width: =600
+      Height: =60
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- ctxtStSafe:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="KEY SAFETY POINTS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1154
+      Y: =278
+      Width: =560
+      Height: =20
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- txtStSafe:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varStdNew, "", Coalesce(LookUp(colStd, ID = varStdID).KeySafety, ""))
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =1154
+      Y: =298
+      Width: =560
+      Height: =60
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- btnStSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(IsBlank(txtStTitle.Text), "TITLE REQUIRED", "SAVE STANDARD")
+      OnSelect: |-
+        =IfError(
+         If(varStdNew,
+          Set(varStdID, Patch(SW_Standards, Defaults(SW_Standards), {Standard: txtStTitle.Text, DocNo: txtStNo.Text, Rev: txtStRev.Text, DocType: {Value: ddStType.Selected.Value}, Status: {Value: ddStStat.Selected.Value},
+         Line: txtStLine.Text, Area: txtStArea.Text, EquipType: ddStEq.Selected.Value, Owner: txtStOwner.Text,
+         ReviewDue: If(IsBlank(txtStRev2.Text), Blank(), DateValue(txtStRev2.Text)), DocLink: txtStLink.Text, Purpose: txtStPurp.Text, KeySafety: txtStSafe.Text}, {AddedBy: User().FullName}).ID); Set(varStdNew, false),
+          Patch(SW_Standards, LookUp(SW_Standards, ID = varStdID), {Standard: txtStTitle.Text, DocNo: txtStNo.Text, Rev: txtStRev.Text, DocType: {Value: ddStType.Selected.Value}, Status: {Value: ddStStat.Selected.Value},
+         Line: txtStLine.Text, Area: txtStArea.Text, EquipType: ddStEq.Selected.Value, Owner: txtStOwner.Text,
+         ReviewDue: If(IsBlank(txtStRev2.Text), Blank(), DateValue(txtStRev2.Text)), DocLink: txtStLink.Text, Purpose: txtStPurp.Text, KeySafety: txtStSafe.Text})),
+         Notify("NOT SAVED — " & FirstError.Message, NotificationType.Error),
+         Notify("Standard saved", NotificationType.Success); ClearCollect(colStd, SW_Standards))
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =If(IsBlank(txtStTitle.Text), RGBA(217, 217, 214, 1), RGBA(0, 72, 81, 1))
+      Color: =If(IsBlank(txtStTitle.Text), RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(IsBlank(txtStTitle.Text), DisplayMode.Disabled, DisplayMode.Edit)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1724
+      Y: =298
+      Width: =180
+      Height: =60
+      Visible: =varTab = "std" && (varStdNew || !IsBlank(varStdID))
+- eBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(248, 249, 249, 1)
+      X: =544
+      Y: =370
+      Width: =1364
+      Height: =700
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- eT:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(LookUp(colStd, ID = varStdID).DocType.Value = "5S", "5S SECTIONS (photo = the standard)  ·  STANDARD ID " & varStdID & ": put it in SAF_Zones → StandardID", "ELEMENTS  —  what GOOD looks like, step by step")
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+      X: =556
+      Y: =376
+      Width: =800
+      Height: =30
+- galEl:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =Sort(colEl, ElementNo)
+      TemplateSize: =158
+      TemplatePadding: =0
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+      X: =552
+      Y: =410
+      Width: =836
+      Height: =650
+    Children:
+      - gEBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            X: =0
+            Y: =0
+            Width: =820
+            Height: =150
+            BorderColor: =If((ThisItem.ID = varElID), RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+            BorderThickness: =If((ThisItem.ID = varElID), 3, 1)
+      - gENo:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.ElementNo)
+            Font: =Font.Arial
+            Size: =18
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =RGBA(0, 72, 81, 1)
+            X: =10
+            Y: =10
+            Width: =48
+            Height: =48
+      - gEName:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Element
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =70
+            Y: =6
+            Width: =500
+            Height: =32
+      - gEType:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.PointType.Value
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =If(ThisItem.PointType.Value = "Safety", RGBA(207, 34, 46, 1), ThisItem.PointType.Value = "Quality", RGBA(0, 72, 81, 1), RGBA(117, 120, 123, 1))
+            X: =480
+            Y: =10
+            Width: =80
+            Height: =22
+      - gEGood:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              ="GOOD: " & Coalesce(ThisItem.GoodLooksLike, "")
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            VerticalAlign: =VerticalAlign.Top
+            X: =70
+            Y: =40
+            Width: =500
+            Height: =64
+      - gEWhy:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(IsBlank(ThisItem.Why), "", "WHY: " & ThisItem.Why)
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(117, 120, 123, 1)
+            VerticalAlign: =VerticalAlign.Top
+            X: =70
+            Y: =104
+            Width: =500
+            Height: =40
+      - gEImg:
+          Control: Image@2.2.3
+          Properties:
+            Image: =First(SortByColumns(Filter(colStdPh, StepNo = ThisItem.ElementNo && RefID = varStdID), "Created", SortOrder.Descending)).Thumbnail.Large
+            ImagePosition: =ImagePosition.Fit
+            Fill: =RGBA(243, 244, 244, 1)
+            X: =580
+            Y: =6
+            Width: =230
+            Height: =138
+      - gESel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =""
+            OnSelect: =Set(varElID, ThisItem.ID); Select(btnSResetEl)
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 72, 81, 0.06)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(0, 72, 81, 0.12)
+            X: =0
+            Y: =0
+            Width: =570
+            Height: =150
+- eEdT:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varElID), "NEW ELEMENT", "EDIT ELEMENT " & LookUp(colEl, ID = varElID).ElementNo)
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1400
+      Y: =376
+      Width: =496
+      Height: =30
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- cElNo:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NO."
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1400
+      Y: =410
+      Width: =70
+      Height: =20
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- txtElNo:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varElID), Text(CountRows(colEl) + 1), Text(LookUp(colEl, ID = varElID).ElementNo))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Center
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      FontWeight: =FontWeight.Bold
+      X: =1400
+      Y: =430
+      Width: =70
+      Height: =44
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- cElName:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(LookUp(colStd, ID = varStdID).DocType.Value = "5S", "SECTION (board / bench / rack / floor area) *", "ELEMENT (major step / check point) *")
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1480
+      Y: =410
+      Width: =416
+      Height: =20
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- txtElName:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varElID), "", LookUp(colEl, ID = varElID).Element)
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =1480
+      Y: =430
+      Width: =416
+      Height: =44
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- cElGood:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(LookUp(colStd, ID = varStdID).DocType.Value = "5S", "STANDARD CONDITION (what an auditor should see) *", "WHAT GOOD LOOKS LIKE (key points) *")
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1400
+      Y: =480
+      Width: =496
+      Height: =20
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- txtElGood:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varElID), "", Coalesce(LookUp(colEl, ID = varElID).GoodLooksLike, ""))
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =1400
+      Y: =500
+      Width: =496
+      Height: =96
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- cElWhy:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHY (reason)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1400
+      Y: =602
+      Width: =496
+      Height: =20
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- txtElWhy:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varElID), "", Coalesce(LookUp(colEl, ID = varElID).Why, ""))
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =1400
+      Y: =622
+      Width: =496
+      Height: =56
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- cElType:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TYPE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1400
+      Y: =684
+      Width: =200
+      Height: =20
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- ddElType:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["Quality", "Safety", "Knack", "Ergo", "Info"]
+      Default: =If(IsBlank(varElID), "Quality", LookUp(colEl, ID = varElID).PointType.Value)
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =1400
+      Y: =704
+      Width: =200
+      Height: =44
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- imgElCur:
+    Control: Image@2.2.3
+    Properties:
+      Image: =If(!IsBlank(addElPh.Media), addElPh.Media, First(SortByColumns(Filter(colStdPh, StepNo = Value(txtElNo.Text) && RefID = varStdID), "Created", SortOrder.Descending)).Thumbnail.Large)
+      ImagePosition: =ImagePosition.Fit
+      Fill: =RGBA(243, 244, 244, 1)
+      X: =1400
+      Y: =756
+      Width: =496
+      Height: =200
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- addElPh:
+    Control: AddMedia@2.2.1
+    Properties:
+      X: =1610
+      Y: =704
+      Width: =286
+      Height: =44
+      Size: =12
+      Text: =If(IsBlank(Self.Media), "📷  ADD / REPLACE STANDARD PHOTO", "✓  NEW PHOTO READY — save element")
+      Fill: =RGBA(243, 244, 244, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- btnElSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(!IsBlank(txtElName.Text) && !IsBlank(txtElGood.Text) && !IsBlank(varStdID), "SAVE ELEMENT", "NAME + GOOD REQUIRED")
+      OnSelect: |-
+        =IfError(
+         If(IsBlank(varElID), Set(varElID, Patch(SW_Elements, Defaults(SW_Elements), {Element: txtElName.Text, StandardID: varStdID, ElementNo: Value(txtElNo.Text), GoodLooksLike: txtElGood.Text, Why: txtElWhy.Text, PointType: {Value: ddElType.Selected.Value}, Active: true}).ID), Patch(SW_Elements, LookUp(SW_Elements, ID = varElID), {Element: txtElName.Text, StandardID: varStdID, ElementNo: Value(txtElNo.Text), GoodLooksLike: txtElGood.Text, Why: txtElWhy.Text, PointType: {Value: ddElType.Selected.Value}, Active: true}));
+         If(!IsBlank(addElPh.Media), Patch(TS_Photos, LookUp(TS_Photos, ID = Value('MDI-UploadPhoto'.Run(JSON(addElPh.Media, JSONFormat.IncludeBinaryData), "SW" & varStdID & "-E" & txtElNo.Text & ".jpg", varStdID, Value(txtElNo.Text), 0, "Standard", txtElName.Text, User().Email).photoid)),
+           {Module: {Value: "Standard work"}, RefID: varStdID})),
+         Notify("ELEMENT NOT SAVED — " & FirstError.Message, NotificationType.Error),
+         Notify("Element saved", NotificationType.Success); ClearCollect(colAllEl, SW_Elements); ClearCollect(colEl, Filter(colAllEl, StandardID = varStdID));
+         ClearCollect(colStdPh, Filter(TS_Photos, Module.Value = "Standard work")); Reset(addElPh))
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsBlank(txtElName.Text) && !IsBlank(txtElGood.Text) && !IsBlank(varStdID), RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(!IsBlank(txtElName.Text) && !IsBlank(txtElGood.Text) && !IsBlank(varStdID), RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(!IsBlank(txtElName.Text) && !IsBlank(txtElGood.Text) && !IsBlank(varStdID), DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1400
+      Y: =964
+      Width: =326
+      Height: =56
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- btnElNew:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="+ NEW"
+      OnSelect: =Set(varElID, Blank()); Select(btnSResetEl)
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1736
+      Y: =964
+      Width: =160
+      Height: =56
+      Visible: =varTab = "std" && !IsBlank(varStdID)
+- cListBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(248, 249, 249, 1)
+      X: =12
+      Y: =100
+      Width: =520
+      Height: =970
+      Visible: =varTab = "card"
+- galCardsM:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =SortByColumns(colCards, "Tier", SortOrder.Ascending, "Title", SortOrder.Ascending)
+      TemplateSize: =102
+      TemplatePadding: =0
+      X: =16
+      Y: =108
+      Width: =512
+      Height: =890
+      Visible: =varTab = "card"
+    Children:
+      - gCBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            X: =0
+            Y: =0
+            Width: =500
+            Height: =96
+            BorderColor: =If((ThisItem.ID = varCardID), RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+            BorderThickness: =If((ThisItem.ID = varCardID), 3, 1)
+      - gCTab:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =If(ThisItem.Active, RGBA(46, 160, 67, 1), RGBA(177, 179, 179, 1))
+            X: =0
+            Y: =0
+            Width: =12
+            Height: =96
+      - gCName:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Card
+            Font: =Font.Arial
+            Size: =13
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =22
+            Y: =4
+            Width: =400
+            Height: =46
+      - gCTier:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="Tier " & ThisItem.Tier
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =RGBA(0, 178, 169, 1)
+            X: =420
+            Y: =8
+            Width: =70
+            Height: =22
+      - gCSub:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Frequency.Value & "  ·  " & Coalesce(ThisItem.Line, "") & "  ·  " & Coalesce(LookUp(colStd, ID = ThisItem.StandardID).DocNo, "no standard")
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(117, 120, 123, 1)
+            X: =22
+            Y: =52
+            Width: =470
+            Height: =36
+      - gCSel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =""
+            OnSelect: =Set(varCardID, ThisItem.ID); Set(varCardNew, false); Select(btnCLoad)
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 72, 81, 0.06)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(0, 72, 81, 0.12)
+            X: =0
+            Y: =0
+            Width: =500
+            Height: =96
+- btnCNew:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="+  NEW CARD"
+      OnSelect: =Set(varCardID, Blank()); Set(varCardNew, true); Select(btnCLoad)
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =22
+      Y: =1008
+      Width: =500
+      Height: =54
+      Visible: =varTab = "card"
+- cEdT:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(varCardNew, "NEW PROCESS CONFIRMATION CARD", If(IsBlank(varCardID), "← Pick a card, or build a new one from a standard", "CARD  ·  " & LookUp(colCards, ID = varCardID).Card))
+      Font: =Font.Georgia
+      Size: =15
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =544
+      Y: =100
+      Width: =1200
+      Height: =34
+      Visible: =varTab = "card"
+- cCName:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CARD TITLE *"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =544
+      Y: =138
+      Width: =560
+      Height: =20
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- txtCName:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varCardNew, "", Coalesce(LookUp(colCards, ID = varCardID).Card, ""))
+      HintText: ="e.g. MDI Accuracy & Completeness Audit"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =544
+      Y: =158
+      Width: =560
+      Height: =44
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- cCStd:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="STANDARD IT CONFIRMS *"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1114
+      Y: =138
+      Width: =520
+      Height: =20
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- ddCStd:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =ForAll(SortByColumns(Filter(colStd, Status.Value <> "Retired"), "DocNo"), {Value: Coalesce(DocNo, "") & "  —  " & Standard, ID: ID})
+      Default: |-
+        =If(varCardNew, "", With({s: LookUp(colStd, ID = LookUp(colCards, ID = varCardID).StandardID)}, Coalesce(s.DocNo, "") & "  —  " & s.Standard))
+      OnChange: |-
+        =ClearCollect(colPick, ForAll(Filter(colAllEl, StandardID = Self.Selected.ID), {EID: ID}))
+      Font: =Font.Arial
+      Size: =12
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =1114
+      Y: =158
+      Width: =520
+      Height: =44
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- cCTier:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TIER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1644
+      Y: =138
+      Width: =80
+      Height: =20
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- ddCTier:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["1", "2", "3", "4"]
+      Default: =If(varCardNew, "1", Text(LookUp(colCards, ID = varCardID).Tier))
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =1644
+      Y: =158
+      Width: =80
+      Height: =44
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- cCFreq:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="FREQUENCY"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1734
+      Y: =138
+      Width: =170
+      Height: =20
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- ddCFreq:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["Every shift", "Daily", "Weekly", "Monthly"]
+      Default: =If(varCardNew, "Every shift", LookUp(colCards, ID = varCardID).Frequency.Value)
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =1734
+      Y: =158
+      Width: =170
+      Height: =44
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- cCLine:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =544
+      Y: =208
+      Width: =140
+      Height: =20
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- txtCLine:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varCardNew, "All", Coalesce(LookUp(colCards, ID = varCardID).Line, "All"))
+      HintText: ="All / 205"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =544
+      Y: =228
+      Width: =140
+      Height: =44
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- cCArea:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="AREA"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =694
+      Y: =208
+      Width: =220
+      Height: =20
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- txtCArea:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varCardNew, "", Coalesce(LookUp(colCards, ID = varCardID).Area, ""))
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =694
+      Y: =228
+      Width: =220
+      Height: =44
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- cCSh:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SHIFTS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =924
+      Y: =208
+      Width: =200
+      Height: =20
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- btnCSh1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="1"
+      OnSelect: |-
+        =If(!IsEmpty(Filter(colShiftSel, Value = "1")), RemoveIf(colShiftSel, Value = "1"), Collect(colShiftSel, {Value: "1"}))
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsEmpty(Filter(colShiftSel, Value = "1")), RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(!IsEmpty(Filter(colShiftSel, Value = "1")), RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =924
+      Y: =228
+      Width: =60
+      Height: =44
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- btnCSh2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="2"
+      OnSelect: |-
+        =If(!IsEmpty(Filter(colShiftSel, Value = "2")), RemoveIf(colShiftSel, Value = "2"), Collect(colShiftSel, {Value: "2"}))
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsEmpty(Filter(colShiftSel, Value = "2")), RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(!IsEmpty(Filter(colShiftSel, Value = "2")), RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =990
+      Y: =228
+      Width: =60
+      Height: =44
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- btnCSh3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="3"
+      OnSelect: |-
+        =If(!IsEmpty(Filter(colShiftSel, Value = "3")), RemoveIf(colShiftSel, Value = "3"), Collect(colShiftSel, {Value: "3"}))
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsEmpty(Filter(colShiftSel, Value = "3")), RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(!IsEmpty(Filter(colShiftSel, Value = "3")), RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1056
+      Y: =228
+      Width: =60
+      Height: =44
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- btnCAct:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varCardActive, "● ACTIVE", "○ INACTIVE")
+      OnSelect: =Set(varCardActive, !varCardActive)
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varCardActive, RGBA(46, 160, 67, 1), RGBA(177, 179, 179, 1))
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1134
+      Y: =228
+      Width: =160
+      Height: =44
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- cCIns:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="AUDITOR INSTRUCTIONS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1304
+      Y: =208
+      Width: =600
+      Height: =20
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- txtCIns:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(varCardNew, "", Coalesce(LookUp(colCards, ID = varCardID).Instructions, ""))
+      HintText: =""
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =1304
+      Y: =228
+      Width: =600
+      Height: =44
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- cPickBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(248, 249, 249, 1)
+      X: =544
+      Y: =284
+      Width: =1364
+      Height: =620
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- cPickT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CARD ITEMS  —  tick the standard's elements this card checks (" & CountRows(colPick) & " selected)"
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =556
+      Y: =290
+      Width: =1000
+      Height: =30
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- galPick:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =Sort(Filter(colAllEl, StandardID = ddCStd.Selected.ID), ElementNo)
+      WrapCount: =2
+      TemplateSize: =148
+      TemplatePadding: =0
+      X: =552
+      Y: =324
+      Width: =1348
+      Height: =572
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+    Children:
+      - gPBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            X: =0
+            Y: =0
+            Width: =664
+            Height: =140
+            BorderColor: =If(!IsEmpty(Filter(colPick, EID = ThisItem.ID)), RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+            BorderThickness: =If(!IsEmpty(Filter(colPick, EID = ThisItem.ID)), 3, 1)
+      - gPChk:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =If(!IsEmpty(Filter(colPick, EID = ThisItem.ID)), "✓", "")
+            OnSelect: |-
+              =If(!IsEmpty(Filter(colPick, EID = ThisItem.ID)), RemoveIf(colPick, EID = ThisItem.ID), Collect(colPick, {EID: ThisItem.ID}))
+            Font: =Font.Arial
+            Size: =22
+            FontWeight: =FontWeight.Bold
+            Fill: =If(!IsEmpty(Filter(colPick, EID = ThisItem.ID)), RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+            Color: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(0, 72, 81, 1)
+            BorderThickness: =2
+            X: =10
+            Y: =44
+            Width: =52
+            Height: =52
+      - gPName:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.ElementNo & ".  " & ThisItem.Element
+            Font: =Font.Arial
+            Size: =13
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =74
+            Y: =6
+            Width: =360
+            Height: =40
+      - gPGood:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Coalesce(ThisItem.GoodLooksLike, "")
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(117, 120, 123, 1)
+            VerticalAlign: =VerticalAlign.Top
+            X: =74
+            Y: =46
+            Width: =360
+            Height: =88
+      - gPImg:
+          Control: Image@2.2.3
+          Properties:
+            Image: =First(SortByColumns(Filter(colStdPh, StepNo = ThisItem.ElementNo && RefID = ThisItem.StandardID), "Created", SortOrder.Descending)).Thumbnail.Large
+            ImagePosition: =ImagePosition.Fit
+            Fill: =RGBA(243, 244, 244, 1)
+            X: =444
+            Y: =6
+            Width: =210
+            Height: =128
+- cPickNone:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="This standard has no elements yet — add them on the STANDARDS tab (with photos), then come back."
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID)) && CountRows(galPick.AllItems) = 0
+      X: =564
+      Y: =340
+      Width: =1300
+      Height: =40
+- btnCSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(!IsBlank(txtCName.Text) && !IsBlank(ddCStd.Selected.ID) && CountRows(colPick) > 0, "SAVE CARD", "TITLE · STANDARD · ITEMS REQUIRED")
+      OnSelect: |-
+        =IfError(
+         If(varCardNew,
+          Set(varCardID, Patch(PC_Cards, Defaults(PC_Cards), {Card: txtCName.Text, StandardID: ddCStd.Selected.ID, Line: txtCLine.Text, Area: txtCArea.Text, Tier: Value(ddCTier.Selected.Value),
+         Frequency: {Value: ddCFreq.Selected.Value}, Shifts: colShiftSel, Instructions: txtCIns.Text, Active: varCardActive}, {AddedBy: User().FullName}).ID); Set(varCardNew, false),
+          Patch(PC_Cards, LookUp(PC_Cards, ID = varCardID), {Card: txtCName.Text, StandardID: ddCStd.Selected.ID, Line: txtCLine.Text, Area: txtCArea.Text, Tier: Value(ddCTier.Selected.Value),
+         Frequency: {Value: ddCFreq.Selected.Value}, Shifts: colShiftSel, Instructions: txtCIns.Text, Active: varCardActive}));
+         RemoveIf(PC_CardItems, CardID = varCardID);
+         ForAll(Sort(Filter(colAllEl, StandardID = ddCStd.Selected.ID && ID in colPick.EID), ElementNo) As e,
+          Patch(PC_CardItems, Defaults(PC_CardItems), {Check: e.Element, CardID: varCardID, ItemNo: e.ElementNo, ElementID: e.ID, GoodLooksLike: e.GoodLooksLike, PhotoOnNo: true, Active: true})),
+         Notify("CARD NOT SAVED — " & FirstError.Message, NotificationType.Error),
+         Notify("Card saved with " & CountRows(colPick) & " items", NotificationType.Success); ClearCollect(colCards, PC_Cards))
+      Font: =Font.Arial
+      Size: =15
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsBlank(txtCName.Text) && !IsBlank(ddCStd.Selected.ID) && CountRows(colPick) > 0, RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(!IsBlank(txtCName.Text) && !IsBlank(ddCStd.Selected.ID) && CountRows(colPick) > 0, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(!IsBlank(txtCName.Text) && !IsBlank(ddCStd.Selected.ID) && CountRows(colPick) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =544
+      Y: =914
+      Width: =500
+      Height: =64
+      Visible: =varTab = "card" && (varCardNew || !IsBlank(varCardID))
+- cCQR:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="QR LINK FOR THIS CARD (print with qr_labels.py)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1064
+      Y: =914
+      Width: =840
+      Height: =20
+      Visible: =varTab = "card" && !IsBlank(varCardID)
+- lblCQR:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =With({u: Coalesce(LookUp(colCfg, Setting = "App_PCAudit").SettingValue, "")},
+         If(IsBlank(u), "Set App_PCAudit (web link) in MDI_Config to get this card's QR link", u & If("?" in u, "&", "?") & "card=" & varCardID))
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 72, 81, 1)
+      Fill: =RGBA(255, 255, 255, 1)
+      PaddingLeft: =8
+      X: =1064
+      Y: =934
+      Width: =700
+      Height: =44
+      Visible: =varTab = "card" && !IsBlank(varCardID)
+- btnCCopy:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="COPY"
+      OnSelect: =Copy(lblCQR.Text); Notify("Link copied", NotificationType.Information)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1774
+      Y: =934
+      Width: =130
+      Height: =44
+      Visible: =varTab = "card" && !IsBlank(varCardID)
+- cRPer:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PERIOD"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =24
+      Y: =100
+      Width: =200
+      Height: =20
+      Visible: =varTab = "res"
+- ddRPer:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Table({Value: "Last 7 days", N: 7}, {Value: "Last 30 days", N: 30}, {Value: "Last 90 days", N: 90})
+      Default: ="Last 30 days"
+      OnChange: =Select(btnSRefresh)
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =24
+      Y: =120
+      Width: =200
+      Height: =44
+      Visible: =varTab = "res"
+- cRLine:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =234
+      Y: =100
+      Width: =160
+      Height: =20
+      Visible: =varTab = "res"
+- txtRLine:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="all"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =234
+      Y: =120
+      Width: =160
+      Height: =44
+      Visible: =varTab = "res"
+- kRAud:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(CountRows(Filter(colAud, IsBlank(txtRLine.Text) || Line = txtRLine.Text)))
+      Font: =Font.Arial
+      Size: =34
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =14
+      X: =24
+      Y: =176
+      Width: =366
+      Height: =120
+      Visible: =varTab = "res"
+- kRAudC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="AUDITS DONE"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =24
+      Y: =182
+      Width: =366
+      Height: =24
+      Visible: =varTab = "res"
+- kRPass:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =With({n: CountRows(Filter(colAud, IsBlank(txtRLine.Text) || Line = txtRLine.Text))}, If(n = 0, "—", Text(CountRows(Filter(Filter(colAud, IsBlank(txtRLine.Text) || Line = txtRLine.Text), Result.Value = "Pass")) / n * 100, "0") & "%"))
+      Font: =Font.Arial
+      Size: =34
+      Color: |-
+        =With({n: CountRows(Filter(colAud, IsBlank(txtRLine.Text) || Line = txtRLine.Text))}, If(n = 0, RGBA(117, 120, 123, 1), CountRows(Filter(Filter(colAud, IsBlank(txtRLine.Text) || Line = txtRLine.Text), Result.Value = "Pass")) / n >= 0.9, RGBA(46, 160, 67, 1), CountRows(Filter(Filter(colAud, IsBlank(txtRLine.Text) || Line = txtRLine.Text), Result.Value = "Pass")) / n >= 0.75, RGBA(210, 153, 34, 1), RGBA(207, 34, 46, 1)))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =14
+      X: =402
+      Y: =176
+      Width: =366
+      Height: =120
+      Visible: =varTab = "res"
+- kRPassC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PASS RATE"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =402
+      Y: =182
+      Width: =366
+      Height: =24
+      Visible: =varTab = "res"
+- kRScore:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(CountRows(Filter(colAud, IsBlank(txtRLine.Text) || Line = txtRLine.Text)) = 0, "—", Text(Average(Filter(colAud, IsBlank(txtRLine.Text) || Line = txtRLine.Text), Score) * 100, "0") & "%")
+      Font: =Font.Arial
+      Size: =34
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =14
+      X: =780
+      Y: =176
+      Width: =366
+      Height: =120
+      Visible: =varTab = "res"
+- kRScoreC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="AVG SCORE"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =780
+      Y: =182
+      Width: =366
+      Height: =24
+      Visible: =varTab = "res"
+- kRFind:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(CountRows(Filter(Filter(colRes, IsBlank(txtRLine.Text) || Line = txtRLine.Text), Answer.Value = "No")))
+      Font: =Font.Arial
+      Size: =34
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =14
+      X: =1158
+      Y: =176
+      Width: =366
+      Height: =120
+      Visible: =varTab = "res"
+- kRFindC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="FINDINGS (NO)"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1158
+      Y: =182
+      Width: =366
+      Height: =24
+      Visible: =varTab = "res"
+- kRAct:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(CountRows(Filter(Filter(colRes, IsBlank(txtRLine.Text) || Line = txtRLine.Text), ActionCreated)))
+      Font: =Font.Arial
+      Size: =34
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =14
+      X: =1536
+      Y: =176
+      Width: =366
+      Height: =120
+      Visible: =varTab = "res"
+- kRActC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ACTIONS RAISED"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1536
+      Y: =182
+      Width: =366
+      Height: =24
+      Visible: =varTab = "res"
+- rAdhBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =24
+      Y: =308
+      Width: =900
+      Height: =760
+      Visible: =varTab = "res"
+- rAdhT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ADHERENCE BY CARD  (done vs expected in period)"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =36
+      Y: =314
+      Width: =860
+      Height: =28
+      Visible: =varTab = "res"
+- galAdh:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =SortByColumns(ForAll(Filter(colCards, Active) As c, With({days: Coalesce(ddRPer.Selected.N, 30)},
+         With({exp: Switch(c.Frequency.Value, "Every shift", days * Max(1, CountRows(c.Shifts)), "Daily", days, "Weekly", RoundUp(days / 7, 0), RoundUp(days / 30, 0)),
+               done: CountRows(Filter(Filter(colAud, IsBlank(txtRLine.Text) || Line = txtRLine.Text), CardID = c.ID)), pass: CountRows(Filter(Filter(colAud, IsBlank(txtRLine.Text) || Line = txtRLine.Text), CardID = c.ID && Result.Value = "Pass"))},
+          {Card: c.Card, Tier: c.Tier, Exp: exp, Done: done, Pass: pass, Pct: If(exp = 0, 0, Min(1, done / exp))}))), "Pct", SortOrder.Ascending)
+      TemplateSize: =64
+      TemplatePadding: =0
+      X: =30
+      Y: =346
+      Width: =888
+      Height: =716
+      Visible: =varTab = "res"
+    Children:
+      - gAName:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Card
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =8
+            Y: =4
+            Width: =500
+            Height: =30
+      - gASub:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="Tier " & ThisItem.Tier & "  ·  " & ThisItem.Done & " of " & ThisItem.Exp & " done  ·  " & ThisItem.Pass & " passed"
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(117, 120, 123, 1)
+            X: =8
+            Y: =34
+            Width: =500
+            Height: =24
+      - gABarBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(217, 217, 214, 1)
+            X: =520
+            Y: =16
+            Width: =250
+            Height: =26
+      - gABar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =If(ThisItem.Pct >= 0.9, RGBA(46, 160, 67, 1), ThisItem.Pct >= 0.75, RGBA(210, 153, 34, 1), RGBA(207, 34, 46, 1))
+            X: =520
+            Y: =16
+            Width: =Max(2, 250 * ThisItem.Pct)
+            Height: =26
+      - gAPct:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.Pct * 100, "0") & "%"
+            Font: =Font.Arial
+            Size: =15
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Right
+            X: =780
+            Y: =10
+            Width: =90
+            Height: =36
+- rMisBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =936
+      Y: =308
+      Width: =960
+      Height: =760
+      Visible: =varTab = "res"
+- rMisT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="MOST MISSED ELEMENTS"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =948
+      Y: =314
+      Width: =900
+      Height: =28
+      Visible: =varTab = "res"
+- galMis:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =With({t: SortByColumns(AddColumns(GroupBy(Filter(Filter(colRes, IsBlank(txtRLine.Text) || Line = txtRLine.Text), Answer.Value = "No"), ElementID, G), N, CountRows(G)), "N", SortOrder.Descending)},
+         With({mx: Coalesce(Max(t, N), 0)}, AddColumns(t, Name, With({e: LookUp(colAllEl, ID = ElementID)}, Coalesce(LookUp(colStd, ID = e.StandardID).DocNo, "") & "  ·  " & Coalesce(e.Element, "(element " & ElementID & ")")),
+           Pct, If(mx > 0, N / mx, 0))))
+      TemplateSize: =52
+      TemplatePadding: =0
+      X: =942
+      Y: =346
+      Width: =948
+      Height: =716
+      Visible: =varTab = "res"
+    Children:
+      - gMName:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Name
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =8
+            Y: =4
+            Width: =520
+            Height: =40
+      - gMBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(207, 34, 46, 1)
+            X: =540
+            Y: =14
+            Width: =Max(2, 330 * ThisItem.Pct)
+            Height: =24
+      - gMN:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.N) & "×"
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Right
+            X: =880
+            Y: =8
+            Width: =60
+            Height: =36
+- rMisNone:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No findings in this period."
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(177, 179, 179, 1)
+      Visible: =varTab = "res" && CountRows(galMis.AllItems) = 0
+      X: =950
+      Y: =350
+      Width: =900
+      Height: =30
+- btnSResetStd:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: =Reset(txtStTitle); Reset(txtStNo); Reset(txtStRev); Reset(ddStType); Reset(ddStStat); Reset(txtStLine); Reset(txtStArea); Reset(ddStEq); Reset(txtStOwner); Reset(txtStRev2); Reset(txtStLink); Reset(txtStPurp); Reset(txtStSafe); Select(btnSResetEl)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =0
+      Y: =1079
+      Width: =1
+      Height: =1
+- btnSResetEl:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: =Reset(txtElNo); Reset(txtElName); Reset(txtElGood); Reset(txtElWhy); Reset(ddElType); Reset(addElPh)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =2
+      Y: =1079
+      Width: =1
+      Height: =1
+- btnCLoad:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =Reset(txtCName); Reset(ddCStd); Reset(ddCTier); Reset(ddCFreq); Reset(txtCLine); Reset(txtCArea); Reset(txtCIns);
+        Set(varCardActive, If(varCardNew, true, LookUp(colCards, ID = varCardID).Active));
+        ClearCollect(colShiftSel, If(varCardNew, Table({Value: "1"}, {Value: "2"}), ForAll(LookUp(colCards, ID = varCardID).Shifts, {Value: Value})));
+        IfError(ClearCollect(colPick, ForAll(Filter(PC_CardItems, CardID = varCardID && Active = true), {EID: ElementID})), Clear(colPick), true)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =4
+      Y: =1079
+      Width: =1
+      Height: =1

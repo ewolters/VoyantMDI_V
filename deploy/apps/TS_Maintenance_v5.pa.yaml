@@ -1,0 +1,1737 @@
+- hdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =640
+      Height: =118
+- lblBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =22
+      Color: =RGBA(255, 255, 255, 1)
+      X: =16
+      Y: =4
+      Width: =140
+      Height: =40
+- lblTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TROUBLESHOOT"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =150
+      Y: =8
+      Width: =330
+      Height: =36
+- lblCtx:
+    Control: Label@2.5.1
+    Properties:
+      Text: =ddMLine.Selected.Value & If(IsBlank(varEquip), "", "  ·  " & varEquip) & If(ddMAsset.Selected.Value = "(any)" || IsBlank(ddMAsset.Selected.Value), "", "  ·  " & ddMAsset.Selected.Value) & "  ·  S" & Text(If(Hour(Now()) * 60 + Minute(Now()) >= 360 && Hour(Now()) * 60 + Minute(Now()) < 990, 1, 2))
+      Font: =Font.Arial
+      Size: =14
+      Color: =RGBA(176, 227, 228, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =50
+      Width: =608
+      Height: =30
+- lblUser:
+    Control: Label@2.5.1
+    Properties:
+      Text: =User().FullName
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(177, 179, 179, 1)
+      X: =16
+      Y: =82
+      Width: =440
+      Height: =26
+- btnBack:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="‹ BACK"
+      OnSelect: =Switch(varStep, "event", Set(varStep, "where"), "issue", Set(varStep, "event"), "fix", Set(varStep, "issue"), "proc", Set(varStep, "fix"), "new", Set(varStep, If(varNewIssue, "issue", "fix")), "log", Set(varStep, If(varOutcome = "New fix added", "steps", "fix")), "steps", Set(varStep, "new"), Set(varStep, "where"))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      Visible: =varStep <> "where" && varStep <> "done"
+      X: =470
+      Y: =72
+      Width: =90
+      Height: =38
+- btnMRefresh:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="↻"
+      OnSelect: |-
+        =IfError(ClearCollect(colLk, Filter(Lookups, Active = true)), Notify("Could not load Lookups — " & FirstError.Message, NotificationType.Error), true);
+        ClearCollect(colEq, ForAll(Sort(Filter(colLk, Category.Value = "Equipment"), SortOrder), {Value: Label}));
+        ClearCollect(colLines, Lines);
+        IfError(ClearCollect(colAssets, Filter(Assets, Active = true)), Notify("Could not load Assets", NotificationType.Warning), true);
+        IfError(ClearCollect(colIss, Filter(TS_Issues, Active = true)), Notify("Could not load TS_Issues — " & FirstError.Message, NotificationType.Error), true);
+        IfError(ClearCollect(colFix, Filter(TS_Fixes, Active = true)), Notify("Could not load TS_Fixes — " & FirstError.Message, NotificationType.Error), true);
+        IfError(ClearCollect(colOcc, Filter(TS_Occurrences, OccurredAt >= DateAdd(Today(), -90, TimeUnit.Days))), Notify("Could not load TS_Occurrences", NotificationType.Warning), true);
+        If(!varParamUsed && !IsBlank(Param("equip")), Set(varEquip, Param("equip")); ClearCollect(colEv, With({hr: Filter(HxH_Hourly, Line = ddMLine.Selected.Value && HourStart >= DateAdd(Now(), -24, TimeUnit.Hours)),
+          rs: Filter(colLk, Category.Value = "Downtime" && EquipType = varEquip)},
+         SortByColumns(ForAll(GroupBy(Filter(Ungroup(Table(
+           {t: ForAll(hr, {SK: ShiftKey, R: DT_Reason, M: Coalesce(DT_Minutes, 0), H: HourNo, St: StillDown, HS: HourStart})},
+           {t: ForAll(hr, {SK: ShiftKey, R: DT2_Reason, M: Coalesce(DT2_Minutes, 0), H: HourNo, St: false, HS: HourStart})}), t),
+           M > 0 && R in rs.Label), SK, R, G),
+          {Key: SK & "|" & R, SK: SK, R: R, Mn: Sum(G, M), H1: Min(G, H), H2: Max(G, H), Still: CountIf(G, St) > 0, Last: Max(G, HS), First: Min(G, HS)}),
+          "Last", SortOrder.Descending))); Set(varStep, "event"));
+        Set(varParamUsed, true);
+        If(IsBlank(varStep), Set(varStep, "where"));
+        Set(varLoaded, Now())
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =570
+      Y: =72
+      Width: =54
+      Height: =38
+      Tooltip: ="Reload the guide from SharePoint."
+- wT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHERE ARE YOU?"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =608
+      Height: =40
+      Visible: =varStep = "where"
+- wCL:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =180
+      Width: =200
+      Height: =20
+      Visible: =varStep = "where"
+- ddMLine:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =ForAll(SortByColumns(colLines, "DisplayOrder"), {Value: Line})
+      Default: =Coalesce(Param("line"), "209")
+      Font: =Font.Arial
+      Size: =22
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =202
+      Width: =220
+      Height: =60
+      Visible: =varStep = "where"
+- wCA:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ASSET  (OPTIONAL)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =250
+      Y: =180
+      Width: =300
+      Height: =20
+      Visible: =varStep = "where"
+- ddMAsset:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "(any)"})}, {t: ForAll(Filter(colAssets, Line = ddMLine.Selected.Value && (IsBlank(varEquip) || EquipType = varEquip)), {Value: Asset})}), t)
+      Default: =Coalesce(Param("asset"), "(any)")
+      Font: =Font.Arial
+      Size: =16
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =250
+      Y: =202
+      Width: =374
+      Height: =60
+      Visible: =varStep = "where"
+- wTE:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHAT MACHINE?  (TAP)"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =280
+      Width: =608
+      Height: =30
+      Visible: =varStep = "where"
+- galEq:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colEq
+      WrapCount: =2
+      TemplateSize: =92
+      TemplatePadding: =0
+      X: =10
+      Y: =312
+      Width: =620
+      Height: =560
+      Visible: =varStep = "where"
+    Children:
+      - gEq:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =ThisItem.Value
+            OnSelect: |-
+              =Set(varEquip, ThisItem.Value); ClearCollect(colEv, With({hr: Filter(HxH_Hourly, Line = ddMLine.Selected.Value && HourStart >= DateAdd(Now(), -24, TimeUnit.Hours)),
+                rs: Filter(colLk, Category.Value = "Downtime" && EquipType = varEquip)},
+               SortByColumns(ForAll(GroupBy(Filter(Ungroup(Table(
+                 {t: ForAll(hr, {SK: ShiftKey, R: DT_Reason, M: Coalesce(DT_Minutes, 0), H: HourNo, St: StillDown, HS: HourStart})},
+                 {t: ForAll(hr, {SK: ShiftKey, R: DT2_Reason, M: Coalesce(DT2_Minutes, 0), H: HourNo, St: false, HS: HourStart})}), t),
+                 M > 0 && R in rs.Label), SK, R, G),
+                {Key: SK & "|" & R, SK: SK, R: R, Mn: Sum(G, M), H1: Min(G, H), H2: Max(G, H), Still: CountIf(G, St) > 0, Last: Max(G, HS), First: Min(G, HS)}),
+                "Last", SortOrder.Descending))); Set(varEventKey, Blank()); Set(varLinkStatus, ""); Set(varStep, "event")
+            Font: =Font.Arial
+            Size: =18
+            FontWeight: =FontWeight.Bold
+            Fill: =If(varEquip = ThisItem.Value, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+            Color: =If(varEquip = ThisItem.Value, RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(177, 179, 179, 1)
+            BorderThickness: =2
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            X: =6
+            Y: =6
+            Width: =296
+            Height: =80
+- wNoEq:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No equipment types loaded — tap ↻, or add rows to Lookups (Category = Equipment)."
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varStep = "where" && CountRows(colEq) = 0
+      X: =16
+      Y: =320
+      Width: =608
+      Height: =60
+- eT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHICH DOWNTIME IS THIS?"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =608
+      Height: =40
+      Visible: =varStep = "event"
+- eSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Downtime on the hour-by-hour board for " & ddMLine.Selected.Value & " · " & varEquip & ", last 24 h. The board owns the minutes."
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      X: =16
+      Y: =170
+      Width: =608
+      Height: =48
+      Visible: =varStep = "event"
+- galEv:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colEv
+      TemplateSize: =140
+      TemplatePadding: =0
+      X: =10
+      Y: =226
+      Width: =620
+      Height: =600
+      Visible: =varStep = "event"
+    Children:
+      - gEBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            X: =6
+            Y: =4
+            Width: =608
+            Height: =128
+      - gEStripe:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =If(ThisItem.Still, RGBA(207, 34, 46, 1), RGBA(210, 153, 34, 1))
+            X: =6
+            Y: =4
+            Width: =10
+            Height: =128
+      - gER:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Substitute(ThisItem.R, "Machine - ", "")
+            Font: =Font.Arial
+            Size: =18
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =28
+            Y: =10
+            Width: =380
+            Height: =40
+      - gEMin:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.Mn) & " min"
+            Font: =Font.Arial
+            Size: =22
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Right
+            X: =410
+            Y: =10
+            Width: =190
+            Height: =40
+      - gEWhen:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Right(ThisItem.SK, 2) & " · " & Text(ThisItem.First, "ddd h:mm AM/PM") & "  ·  hour " & ThisItem.H1 & If(ThisItem.H2 > ThisItem.H1, "–" & ThisItem.H2, "")
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(117, 120, 123, 1)
+            X: =28
+            Y: =54
+            Width: =560
+            Height: =30
+      - gEStill:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(ThisItem.Still, "STILL DOWN", "")
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(207, 34, 46, 1)
+            FontWeight: =FontWeight.Bold
+            X: =28
+            Y: =88
+            Width: =200
+            Height: =32
+      - gESel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =""
+            OnSelect: =Set(varEventKey, ThisItem.Key); Set(varLinkStatus, "Linked at fix"); Set(varStep, "issue")
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 178, 169, 0.10)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(0, 178, 169, 0.20)
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =136
+- eNone:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Nothing on the board for " & varEquip & " on line " & ddMLine.Selected.Value & " in the last 24 h."
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varStep = "event" && CountRows(colEv) = 0
+      X: =16
+      Y: =250
+      Width: =608
+      Height: =60
+- btnENot:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="NOT ON THE BOARD YET  ›"
+      OnSelect: =Set(varEventKey, Blank()); Set(varLinkStatus, "Not on board"); Set(varStep, "issue")
+      Font: =Font.Arial
+      Size: =15
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =842
+      Width: =608
+      Height: =70
+      Visible: =varStep = "event"
+- eNote:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Pick this if the line hasn't logged the stop yet. A supervisor links it to the board later."
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Center
+      X: =16
+      Y: =918
+      Width: =608
+      Height: =48
+      Visible: =varStep = "event"
+- iT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHAT'S HAPPENING?"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =608
+      Height: =40
+      Visible: =varStep = "issue"
+- txtISearch:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="search concerns…"
+      Font: =Font.Arial
+      Size: =15
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =16
+      Y: =176
+      Width: =608
+      Height: =52
+      Visible: =varStep = "issue"
+- galIss:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =SortByColumns(ForAll(Filter(colIss, EquipType = varEquip && (IsBlank(Line) || Line = ddMLine.Selected.Value) && (IsBlank(txtISearch.Text) || txtISearch.Text in Concern || txtISearch.Text in Appearance)) As i,
+         {ID: i.ID, Concern: i.Concern, Code: i.Code, Appearance: i.Appearance, N: CountIf(colOcc, IssueID = i.ID), NF: CountIf(colFix, IssueID = i.ID)}), "N", SortOrder.Descending)
+      TemplateSize: =118
+      TemplatePadding: =0
+      X: =10
+      Y: =236
+      Width: =620
+      Height: =750
+      Visible: =varStep = "issue"
+    Children:
+      - gIBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =112
+      - gIName:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Concern
+            Font: =Font.Arial
+            Size: =16
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =12
+            Y: =6
+            Width: =490
+            Height: =44
+      - gIApp:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Coalesce(ThisItem.Appearance, "")
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            VerticalAlign: =VerticalAlign.Top
+            X: =12
+            Y: =48
+            Width: =490
+            Height: =56
+      - gICnt:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.N) & "×" & Char(10) & "90 days"
+            Font: =Font.Arial
+            Size: =13
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =510
+            Y: =10
+            Width: =100
+            Height: =60
+      - gINF:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.NF) & If(ThisItem.NF = 1, " fix", " fixes")
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Center
+            X: =510
+            Y: =72
+            Width: =100
+            Height: =30
+      - gISel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =""
+            OnSelect: |-
+              =Set(varIssueID, ThisItem.ID); Set(varNewIssue, false);
+              ClearCollect(colIssPh, Filter(TS_Photos, IssueID = ThisItem.ID));
+              Set(varStep, "fix")
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 72, 81, 0.06)
+            BorderColor: =RGBA(217, 217, 214, 1)
+            PressedFill: =RGBA(0, 72, 81, 0.12)
+            BorderThickness: =1
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =112
+- iNone:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No concerns logged for " & varEquip & " yet."
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varStep = "issue" && CountRows(galIss.AllItems) = 0
+      X: =16
+      Y: =250
+      Width: =608
+      Height: =40
+- btnNewIss:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="+  NEW CONCERN  (not in the list)"
+      OnSelect: =Set(varNewIssue, true); Set(varIssueID, Blank()); Set(varDoneBy, ""); Set(varStep, "new")
+      Font: =Font.Arial
+      Size: =15
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =1000
+      Width: =608
+      Height: =70
+      Visible: =varStep = "issue"
+- fT:
+    Control: Label@2.5.1
+    Properties:
+      Text: =LookUp(colIss, ID = varIssueID).Concern
+      Font: =Font.Georgia
+      Size: =17
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =608
+      Height: =56
+      Visible: =varStep = "fix"
+- fImg:
+    Control: Image@2.2.3
+    Properties:
+      Image: =LookUp(colIssPh, Kind.Value = "Appearance").Thumbnail.Large
+      ImagePosition: =ImagePosition.Fit
+      Fill: =RGBA(243, 244, 244, 1)
+      X: =504
+      Y: =188
+      Width: =120
+      Height: =90
+      Visible: =varStep = "fix"
+- fApp:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Coalesce(LookUp(colIss, ID = varIssueID).Appearance, "")
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      VerticalAlign: =VerticalAlign.Top
+      X: =16
+      Y: =188
+      Width: =470
+      Height: =90
+      Visible: =varStep = "fix"
+- fHint:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Try in this order — ranked by what has actually fixed it."
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =280
+      Width: =608
+      Height: =26
+      Visible: =varStep = "fix"
+- galFix:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =SortByColumns(ForAll(Filter(colFix, IssueID = varIssueID) As f,
+         {ID: f.ID, Cause: f.Cause, CM: f.Countermeasure, Chk: f.Check, NR: f.NormalRange, By: f.DoneBy.Value, Seq: Coalesce(f.SeqOrder, 999), Proc: f.ProcID,
+          Uses: CountIf(colOcc, FixID = f.ID)}), "Uses", SortOrder.Descending, "Seq", SortOrder.Ascending)
+      TemplateSize: =296
+      TemplatePadding: =0
+      X: =10
+      Y: =310
+      Width: =620
+      Height: =620
+      Visible: =varStep = "fix"
+    Children:
+      - gFBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =286
+      - gFRank:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.Uses) & "×"
+            Font: =Font.Arial
+            Size: =16
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =RGBA(0, 72, 81, 1)
+            X: =8
+            Y: =10
+            Width: =70
+            Height: =40
+      - gFCause:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Cause
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =86
+            Y: =6
+            Width: =410
+            Height: =48
+      - gFBy:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.By
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =If(ThisItem.By = "Operator", RGBA(0, 178, 169, 1), ThisItem.By = "Maintenance", RGBA(0, 72, 81, 1), RGBA(117, 120, 123, 1))
+            X: =500
+            Y: =12
+            Width: =110
+            Height: =30
+      - gFCM:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.CM
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            VerticalAlign: =VerticalAlign.Top
+            X: =12
+            Y: =58
+            Width: =596
+            Height: =120
+      - gFNR:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(IsBlank(ThisItem.NR) || ThisItem.NR = "NA", "", "Normal range: " & ThisItem.NR) & If(IsBlank(ThisItem.Chk), "", "   ·   Check: " & ThisItem.Chk)
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(117, 120, 123, 1)
+            X: =12
+            Y: =178
+            Width: =596
+            Height: =40
+      - gFSteps:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="📷 STEPS"
+            OnSelect: =Set(varViewProc, ThisItem.Proc); ClearCollect(colPh, Filter(TS_Photos, ProcID = ThisItem.Proc)); ClearCollect(colPSteps, Sort(Filter(TS_Steps, ProcID = ThisItem.Proc), StepNo)); Set(varStep, "proc")
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(255, 255, 255, 1)
+            Color: =RGBA(0, 72, 81, 1)
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(0, 72, 81, 1)
+            BorderThickness: =1
+            Visible: =!IsBlank(ThisItem.Proc) && ThisItem.Proc > 0
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            X: =12
+            Y: =226
+            Width: =150
+            Height: =50
+      - gFUse:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="✓  THIS FIXED IT"
+            OnSelect: =Set(varFixID, ThisItem.ID); Set(varDoneBy, ThisItem.By); Set(varOutcome, "Existing fix"); Set(varStep, "log")
+            Font: =Font.Arial
+            Size: =14
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 72, 81, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =Self.Fill
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            X: =340
+            Y: =226
+            Width: =268
+            Height: =50
+- fNone:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No countermeasures yet for this concern."
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varStep = "fix" && CountRows(galFix.AllItems) = 0
+      X: =16
+      Y: =320
+      Width: =608
+      Height: =40
+- fEsc:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Coalesce(LookUp(colIss, ID = varIssueID).Escalation, "")
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      X: =16
+      Y: =932
+      Width: =608
+      Height: =30
+      Visible: =varStep = "fix"
+- btnNewFix:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="NONE OF THESE WORKED — ADD NEW FIX"
+      OnSelect: =Set(varNewIssue, false); Set(varDoneBy, ""); Set(varStep, "new")
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =966
+      Width: =608
+      Height: =64
+      Visible: =varStep = "fix"
+- btnEsc:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="NOT RESOLVED — ESCALATE"
+      OnSelect: =Set(varFixID, Blank()); Set(varDoneBy, ""); Set(varOutcome, "Not resolved - escalated"); Set(varStep, "log")
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(207, 34, 46, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(207, 34, 46, 1)
+      BorderThickness: =1
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =1038
+      Width: =608
+      Height: =52
+      Visible: =varStep = "fix"
+- pT:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Coalesce(LookUp(colFix, ProcID = varViewProc).Cause, "Procedure")
+      Font: =Font.Georgia
+      Size: =16
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =608
+      Height: =50
+      Visible: =varStep = "proc"
+- galProc:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colPSteps
+      TemplateSize: =340
+      TemplatePadding: =0
+      X: =10
+      Y: =186
+      Width: =620
+      Height: =900
+      Visible: =varStep = "proc"
+    Children:
+      - gPBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =330
+      - gPN:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.StepNo)
+            Font: =Font.Arial
+            Size: =20
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =RGBA(0, 72, 81, 1)
+            X: =8
+            Y: =8
+            Width: =52
+            Height: =52
+      - gPI:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Instruction
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =70
+            Y: =6
+            Width: =530
+            Height: =56
+      - gPK:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Coalesce(ThisItem.KeyPoint, "")
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            X: =70
+            Y: =60
+            Width: =530
+            Height: =40
+      - gPImg:
+          Control: Image@2.2.3
+          Properties:
+            Image: =LookUp(colPh, StepNo = ThisItem.StepNo).Thumbnail.Large
+            ImagePosition: =ImagePosition.Fit
+            Fill: =RGBA(243, 244, 244, 1)
+            X: =12
+            Y: =104
+            Width: =596
+            Height: =216
+- nT:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varNewIssue, "NEW CONCERN + FIX", "NEW FIX for: " & LookUp(colIss, ID = varIssueID).Concern)
+      Font: =Font.Georgia
+      Size: =15
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =608
+      Height: =46
+      Visible: =varStep = "new"
+- nC1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CONCERN — WHAT IS HAPPENING?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =180
+      Width: =608
+      Height: =20
+      Visible: =varStep = "new" && varNewIssue
+- txtNConcern:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="e.g. Labels wrinkling at wipe-down"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =16
+      Y: =200
+      Width: =608
+      Height: =50
+      Visible: =varStep = "new" && varNewIssue
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderThickness: =If(IsBlank(Self.Text), 3, 1)
+- nC2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHAT IT LOOKS LIKE  (optional photo)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =256
+      Width: =608
+      Height: =20
+      Visible: =varStep = "new" && varNewIssue
+- txtNApp:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="appearance / symptom detail"
+      Font: =Font.Arial
+      Size: =12
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =16
+      Y: =276
+      Width: =460
+      Height: =70
+      Visible: =varStep = "new" && varNewIssue
+- addNApp:
+    Control: AddMedia@2.2.1
+    Properties:
+      X: =484
+      Y: =276
+      Width: =140
+      Height: =70
+      Size: =11
+      Text: =If(IsBlank(Self.Media), "📷 photo", "✓ photo")
+      Fill: =RGBA(243, 244, 244, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      Visible: =varStep = "new" && varNewIssue
+- nC3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CAUSE — WHY IS IT HAPPENING?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =356
+      Width: =608
+      Height: =20
+      Visible: =varStep = "new"
+- txtNCause:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="e.g. Teflon pad worn"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =16
+      Y: =376
+      Width: =608
+      Height: =50
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderThickness: =If(IsBlank(Self.Text), 3, 1)
+      Visible: =varStep = "new"
+- nC4:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="COUNTERMEASURE — HOW DID YOU FIX IT?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =432
+      Width: =608
+      Height: =20
+      Visible: =varStep = "new"
+- txtNCM:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="what you did, settings, adjustments"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =16
+      Y: =452
+      Width: =608
+      Height: =110
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderThickness: =If(IsBlank(Self.Text), 3, 1)
+      Visible: =varStep = "new"
+- nC5:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CHECK — HOW DO WE KNOW IT'S FIXED?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =568
+      Width: =608
+      Height: =20
+      Visible: =varStep = "new"
+- txtNCheck:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="e.g. 10 bottles, no wrinkles"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =16
+      Y: =588
+      Width: =608
+      Height: =50
+      Visible: =varStep = "new"
+- nC6:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NORMAL RANGE  (optional)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =644
+      Width: =250
+      Height: =20
+      Visible: =varStep = "new"
+- txtNNR:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="e.g. 0.78 - 0.81"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =16
+      Y: =664
+      Width: =250
+      Height: =50
+      Visible: =varStep = "new"
+- nC7:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHO CAN DO THIS FIX?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =280
+      Y: =644
+      Width: =344
+      Height: =20
+      Visible: =varStep = "new"
+- btnWho0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="Operator"
+      OnSelect: =Set(varDoneBy, "Operator")
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varDoneBy = "Operator", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varDoneBy = "Operator", RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 178, 169, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =280
+      Y: =664
+      Width: =110
+      Height: =50
+      Visible: =varStep = "new"
+- btnWho1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="Maintenance"
+      OnSelect: =Set(varDoneBy, "Maintenance")
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varDoneBy = "Maintenance", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varDoneBy = "Maintenance", RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =396
+      Y: =664
+      Width: =110
+      Height: =50
+      Visible: =varStep = "new"
+- btnWho2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="Engineering"
+      OnSelect: =Set(varDoneBy, "Engineering")
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varDoneBy = "Engineering", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varDoneBy = "Engineering", RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(117, 120, 123, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =512
+      Y: =664
+      Width: =110
+      Height: =50
+      Visible: =varStep = "new"
+- btnNStart:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If((!varNewIssue || !IsBlank(txtNConcern.Text)) && !IsBlank(txtNCause.Text) && !IsBlank(txtNCM.Text) && !IsBlank(varDoneBy), "START STEP PHOTOS  ›", "FILL CONCERN · CAUSE · FIX · WHO")
+      OnSelect: |-
+        =IfError(
+         If(varNewIssue,
+          Set(varIssueID, Patch(TS_Issues, Defaults(TS_Issues), {Concern: txtNConcern.Text, EquipType: varEquip, Line: ddMLine.Selected.Value, Asset: If(ddMAsset.Selected.Value = "(any)", "", ddMAsset.Selected.Value),
+             Appearance: txtNApp.Text, Active: true, CreatedVia: {Value: "Maintenance phone"}, AddedBy: User().FullName}).ID);
+          If(!IsBlank(addNApp.Media), 'MDI-UploadPhoto'.Run(JSON(addNApp.Media, JSONFormat.IncludeBinaryData), "I" & varIssueID & "-appearance.jpg", 0, 0, varIssueID, "Appearance", txtNConcern.Text, User().Email))
+         );
+         Set(varProcID, Patch(TS_Procedures, Defaults(TS_Procedures), {Procedure: txtNCause.Text, DocType: {Value: "Quick fix"}, EquipType: varEquip, Line: ddMLine.Selected.Value,
+            Active: false, CreatedVia: {Value: "Maintenance phone"}, AddedBy: User().FullName}).ID);
+         Set(varFixID, Patch(TS_Fixes, Defaults(TS_Fixes), {Cause: txtNCause.Text, IssueID: varIssueID, Countermeasure: txtNCM.Text, Check: txtNCheck.Text, NormalRange: txtNNR.Text,
+            DoneBy: {Value: varDoneBy}, SeqOrder: CountIf(colFix, IssueID = varIssueID) * 10 + 10, ProcID: varProcID, Active: false, CreatedVia: {Value: "Maintenance phone"}, AddedBy: User().FullName}).ID),
+         Notify("NOT SAVED — " & FirstError.Message, NotificationType.Error),
+         Set(varOutcome, "New fix added"); Set(varStepNo, 1); Clear(colStepsDone); Set(varStep, "steps"))
+      Font: =Font.Arial
+      Size: =15
+      FontWeight: =FontWeight.Bold
+      Fill: =If((!varNewIssue || !IsBlank(txtNConcern.Text)) && !IsBlank(txtNCause.Text) && !IsBlank(txtNCM.Text) && !IsBlank(varDoneBy), RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If((!varNewIssue || !IsBlank(txtNConcern.Text)) && !IsBlank(txtNCause.Text) && !IsBlank(txtNCM.Text) && !IsBlank(varDoneBy), RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If((!varNewIssue || !IsBlank(txtNConcern.Text)) && !IsBlank(txtNCause.Text) && !IsBlank(txtNCM.Text) && !IsBlank(varDoneBy), DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =728
+      Width: =608
+      Height: =70
+      Visible: =varStep = "new"
+- sT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="STEP " & Text(varStepNo) & "  —  document as you go"
+      Font: =Font.Georgia
+      Size: =16
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =608
+      Height: =44
+      Visible: =varStep = "steps"
+- sC1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHAT DID YOU DO?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =180
+      Width: =608
+      Height: =20
+      Visible: =varStep = "steps"
+- txtSInstr:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: |-
+        ="e.g. Loosen handle #1, rotate #2 a quarter turn"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =16
+      Y: =200
+      Width: =608
+      Height: =80
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderThickness: =If(IsBlank(Self.Text), 3, 1)
+      Visible: =varStep = "steps"
+- sC2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="KEY POINT / WHY  (optional)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =286
+      Width: =608
+      Height: =20
+      Visible: =varStep = "steps"
+- txtSKey:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="e.g. 1/4 turns only"
+      Font: =Font.Arial
+      Size: =12
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =16
+      Y: =306
+      Width: =608
+      Height: =50
+      Visible: =varStep = "steps"
+- imgSPrev:
+    Control: Image@2.2.3
+    Properties:
+      Image: =If(IsBlank(addSPhoto.Media), SampleImage, addSPhoto.Media)
+      ImagePosition: =ImagePosition.Fit
+      X: =16
+      Y: =366
+      Width: =608
+      Height: =260
+      Fill: =RGBA(243, 244, 244, 1)
+      Visible: =varStep = "steps"
+- addSPhoto:
+    Control: AddMedia@2.2.1
+    Properties:
+      X: =16
+      Y: =366
+      Width: =608
+      Height: =260
+      Size: =16
+      Text: ="📷  TAP TO TAKE PHOTO OF THIS STEP"
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 72, 81, 1)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      Visible: =varStep = "steps"
+- btnSSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(!IsBlank(txtSInstr.Text), "SAVE STEP " & varStepNo & "  +  NEXT", "DESCRIBE THE STEP")
+      OnSelect: |-
+        =IfError(
+         Patch(TS_Steps, Defaults(TS_Steps), {Instruction: txtSInstr.Text, ProcID: varProcID, StepNo: varStepNo, KeyPoint: txtSKey.Text});
+         If(!IsBlank(addSPhoto.Media), 'MDI-UploadPhoto'.Run(JSON(addSPhoto.Media, JSONFormat.IncludeBinaryData), "P" & varProcID & "-S" & varStepNo & ".jpg", varProcID, varStepNo, varIssueID, "Step", txtSInstr.Text, User().Email)),
+         Notify("STEP NOT SAVED — " & FirstError.Message, NotificationType.Error),
+         Collect(colStepsDone, {N: varStepNo, T: txtSInstr.Text, Ph: !IsBlank(addSPhoto.Media)});
+         Notify("Step " & varStepNo & " saved", NotificationType.Success);
+         Set(varStepNo, varStepNo + 1); Reset(txtSInstr); Reset(txtSKey); Reset(addSPhoto))
+      Font: =Font.Arial
+      Size: =15
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsBlank(txtSInstr.Text), RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(!IsBlank(txtSInstr.Text), RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(!IsBlank(txtSInstr.Text), DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =636
+      Width: =608
+      Height: =66
+      Visible: =varStep = "steps"
+- galSDone:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colStepsDone
+      TemplateSize: =38
+      TemplatePadding: =0
+      BorderColor: =RGBA(217, 217, 214, 1)
+      BorderThickness: =1
+      X: =10
+      Y: =714
+      Width: =620
+      Height: =250
+      Visible: =varStep = "steps"
+    Children:
+      - gSD:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.N) & ".  " & ThisItem.T & If(ThisItem.Ph, "   📷", "")
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            X: =8
+            Y: =2
+            Width: =590
+            Height: =36
+- btnSDone:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="✓  DONE — FIX WORKED  ›"
+      OnSelect: =Set(varStep, "log")
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      DisplayMode: =If(CountRows(colStepsDone) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledColor: =RGBA(177, 179, 179, 1)
+      DisabledBorderColor: =RGBA(217, 217, 214, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =976
+      Width: =608
+      Height: =70
+      Visible: =varStep = "steps"
+- lT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LOG THIS OCCURRENCE"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =608
+      Height: =44
+      Visible: =varStep = "log"
+- lSum:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Coalesce(LookUp(colIss, ID = varIssueID).Concern, txtNConcern.Text) & Char(10) & Switch(varOutcome, "Existing fix", "Fix used: " & LookUp(colFix, ID = varFixID).Cause, "New fix added", "NEW fix: " & txtNCause.Text, "NOT RESOLVED — escalated")
+      Font: =Font.Arial
+      Size: =14
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(243, 244, 244, 1)
+      PaddingLeft: =12
+      PaddingRight: =12
+      X: =16
+      Y: =178
+      Width: =608
+      Height: =100
+      Visible: =varStep = "log"
+- lOp:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="⚠  OPERATOR-LEVEL FIX — this is in the guide for operators. It will be flagged 'operator could have fixed it'."
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(253, 236, 200, 1)
+      PaddingLeft: =12
+      PaddingRight: =12
+      Visible: =varStep = "log" && varOutcome = "Existing fix" && varDoneBy = "Operator"
+      X: =16
+      Y: =286
+      Width: =608
+      Height: =70
+- lC1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="REPAIR TIME  (min, hands-on)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =366
+      Width: =250
+      Height: =20
+      Visible: =varStep = "log"
+- txtLDT:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="min"
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =24
+      Align: =Align.Center
+      BorderColor: =If(Coalesce(Value(Self.Text), -1) < 0, RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =386
+      Width: =200
+      Height: =64
+      Fill: =If(Coalesce(Value(Self.Text), -1) < 0, RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderThickness: =If(Coalesce(Value(Self.Text), -1) < 0, 3, 1)
+      Visible: =varStep = "log"
+- lBoard:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(IsBlank(varEventKey), "Not on the board yet. A supervisor will link this to the board downtime.", "Board downtime: " & Text(LookUp(colEv, Key = varEventKey).Mn) & " min  ·  " & Substitute(LookUp(colEv, Key = varEventKey).R, "Machine - ", "") & "  ·  " & Right(LookUp(colEv, Key = varEventKey).SK, 2) & " hour " & LookUp(colEv, Key = varEventKey).H1 & If(LookUp(colEv, Key = varEventKey).H2 > LookUp(colEv, Key = varEventKey).H1, "–" & LookUp(colEv, Key = varEventKey).H2, ""))
+      Font: =Font.Arial
+      Size: =11
+      Color: =If(IsBlank(varEventKey), RGBA(210, 153, 34, 1), RGBA(0, 72, 81, 1))
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =318
+      Width: =608
+      Height: =44
+      Visible: =varStep = "log"
+- lC2:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="WORK ORDER #  (optional)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =230
+      Y: =366
+      Width: =394
+      Height: =20
+      Visible: =varStep = "log"
+- txtLWO:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: |-
+        ="WO #"
+      Font: =Font.Arial
+      Size: =16
+      Align: =Align.Center
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =230
+      Y: =386
+      Width: =394
+      Height: =64
+      Visible: =varStep = "log"
+- lC3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NOTES  (optional)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =460
+      Width: =608
+      Height: =20
+      Visible: =varStep = "log"
+- txtLNotes:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="anything the next person should know"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =16
+      Y: =480
+      Width: =608
+      Height: =100
+      Visible: =varStep = "log"
+- btnLYellow:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="🏷  YELLOW TAG A PART  (coming soon)"
+      OnSelect: =false
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(177, 179, 179, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(217, 217, 214, 1)
+      DisplayMode: =DisplayMode.Disabled
+      DisabledFill: =RGBA(255, 255, 255, 1)
+      DisabledColor: =RGBA(177, 179, 179, 1)
+      DisabledBorderColor: =RGBA(217, 217, 214, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =590
+      Width: =608
+      Height: =52
+      Visible: =varStep = "log"
+- btnLSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(!IsBlank(txtLDT.Text) && Coalesce(Value(txtLDT.Text), -1) >= 0, "SAVE", "ENTER REPAIR TIME")
+      OnSelect: |-
+        =If(varOutcome = "New fix added",
+         Patch(TS_Fixes, LookUp(TS_Fixes, ID = varFixID), {Active: true});
+         Patch(TS_Procedures, LookUp(TS_Procedures, ID = varProcID), {Active: true}));
+        IfError(
+         Patch(TS_Occurrences, Defaults(TS_Occurrences), {
+          Ref: ddMLine.Selected.Value & "-" & Text(Now(), "yyyymmdd-hhmmss"), OccurredAt: Now(), Line: ddMLine.Selected.Value,
+          Asset: If(ddMAsset.Selected.Value = "(any)", "", ddMAsset.Selected.Value), EquipType: varEquip,
+          ShiftDate: If(Hour(Now()) < 6, DateAdd(Today(), -1, TimeUnit.Days), Today()), Shift: If(Hour(Now()) * 60 + Minute(Now()) >= 360 && Hour(Now()) * 60 + Minute(Now()) < 990, 1, 2),
+          ShiftKey: ddMLine.Selected.Value & "-" & Text(If(Hour(Now()) < 6, DateAdd(Today(), -1, TimeUnit.Days), Today()), "yyyymmdd") & "-S" & Text(If(Hour(Now()) * 60 + Minute(Now()) >= 360 && Hour(Now()) * 60 + Minute(Now()) < 990, 1, 2)),
+          IssueID: varIssueID, FixID: varFixID, Outcome: {Value: varOutcome}, FixLevel: varDoneBy,
+          OperatorCouldFix: varOutcome = "Existing fix" && varDoneBy = "Operator",
+          RepairMin: Value(txtLDT.Text), EventKey: varEventKey, LinkStatus: {Value: If(IsBlank(varEventKey), "Not on board", "Linked at fix")},
+          LinkedBy: If(IsBlank(varEventKey), "", User().Email), LinkedAt: If(IsBlank(varEventKey), Blank(), Now()),
+          LoggedBy: User().Email, Notes: txtLNotes.Text, WorkOrder: txtLWO.Text}),
+         Notify("NOT SAVED — " & FirstError.Message & "  (try again)", NotificationType.Error),
+         Notify("Logged. Guide ranking updated.", NotificationType.Success);
+         Reset(txtLDT); Reset(txtLWO); Reset(txtLNotes); Reset(txtNConcern); Reset(txtNApp); Reset(txtNCause); Reset(txtNCM); Reset(txtNCheck); Reset(txtNNR); Reset(addNApp);
+         Set(varStep, "done"); Select(btnMRefresh))
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsBlank(txtLDT.Text) && Coalesce(Value(txtLDT.Text), -1) >= 0, RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(!IsBlank(txtLDT.Text) && Coalesce(Value(txtLDT.Text), -1) >= 0, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(!IsBlank(txtLDT.Text) && Coalesce(Value(txtLDT.Text), -1) >= 0, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =660
+      Width: =608
+      Height: =76
+      Visible: =varStep = "log"
+- dT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="✓"
+      Font: =Font.Arial
+      Size: =96
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =16
+      Y: =210
+      Width: =608
+      Height: =160
+      Visible: =varStep = "done"
+- dT2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LOGGED"
+      Font: =Font.Georgia
+      Size: =24
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =16
+      Y: =380
+      Width: =608
+      Height: =50
+      Visible: =varStep = "done"
+- dT3:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(varOutcome = "New fix added", "Your fix is live in the guide — operators can see it now.", "Occurrence counted. The guide re-ranks on the next refresh.")
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Center
+      X: =16
+      Y: =434
+      Width: =608
+      Height: =60
+      Visible: =varStep = "done"
+- btnDAgain:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="LOG ANOTHER"
+      OnSelect: =Set(varStep, "where"); Set(varEquip, Blank()); Set(varEventKey, Blank()); Set(varIssueID, Blank()); Set(varFixID, Blank()); Set(varDoneBy, ""); Reset(txtISearch)
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =530
+      Width: =608
+      Height: =70
+      Visible: =varStep = "done"
+- lblLoaded:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varLoaded), "Not loaded — tap ↻", "Loaded " & Text(varLoaded, "h:mm AM/PM"))
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(177, 179, 179, 1)
+      Align: =Align.Center
+      X: =16
+      Y: =1100
+      Width: =608
+      Height: =26

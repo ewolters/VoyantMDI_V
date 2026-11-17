@@ -1,0 +1,861 @@
+- hdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =640
+      Height: =118
+- lblBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =22
+      Color: =RGBA(255, 255, 255, 1)
+      X: =16
+      Y: =4
+      Width: =140
+      Height: =40
+- lblTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PROCESS CONFIRMATION"
+      Font: =Font.Georgia
+      Size: =17
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =150
+      Y: =8
+      Width: =400
+      Height: =36
+- lblCtx:
+    Control: Label@2.5.1
+    Properties:
+      Text: =ddPLine.Selected.Value & "  ·  S" & Text(If(Hour(Now()) * 60 + Minute(Now()) >= 360 && Hour(Now()) * 60 + Minute(Now()) < 990, 1, 2)) & "  ·  " & Text(If(Hour(Now()) < 6, DateAdd(Today(), -1, TimeUnit.Days), Today()), "ddd m/d") & If(IsBlank(varCardID), "", "  ·  Tier " & LookUp(colCards, ID = varCardID).Tier)
+      Font: =Font.Arial
+      Size: =14
+      Color: =RGBA(176, 227, 228, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =50
+      Width: =608
+      Height: =30
+- lblUser:
+    Control: Label@2.5.1
+    Properties:
+      Text: =User().FullName
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(177, 179, 179, 1)
+      X: =16
+      Y: =82
+      Width: =400
+      Height: =26
+- btnPRefresh:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="↻"
+      OnSelect: |-
+        =IfError(ClearCollect(colCards, Filter(PC_Cards, Active = true)), Notify("Could not load PC_Cards — " & FirstError.Message, NotificationType.Error), true);
+        ClearCollect(colLines, Lines);
+        IfError(ClearCollect(colDone, Filter(PC_Audits, ShiftDate >= DateAdd(Today(), -8, TimeUnit.Days))), Notify("Could not load PC_Audits", NotificationType.Warning), true);
+        If(!varParamUsed && !IsBlank(Param("card")), Set(varCardID, Value(Param("card"))); Select(btnPStart));
+        Set(varParamUsed, true);
+        If(IsBlank(varStep), Set(varStep, "pick"));
+        Set(varLoaded, Now())
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =570
+      Y: =72
+      Width: =54
+      Height: =38
+- btnPBack:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="‹ CARDS"
+      OnSelect: =Set(varStep, "pick")
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      Visible: =varStep = "audit" || varStep = "review"
+      X: =450
+      Y: =72
+      Width: =110
+      Height: =38
+- kT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHICH CARD?"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =300
+      Height: =40
+      Visible: =varStep = "pick"
+- ddPLine:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "All"})}, {t: ForAll(SortByColumns(colLines, "DisplayOrder"), {Value: Line})}), t)
+      Default: =Coalesce(Param("line"), "All")
+      Font: =Font.Arial
+      Size: =16
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =424
+      Y: =130
+      Width: =200
+      Height: =48
+      Visible: =varStep = "pick"
+- galCards:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =SortByColumns(ForAll(Filter(colCards, ddPLine.Selected.Value = "All" || Line = "All" || IsBlank(Line) || Line = ddPLine.Selected.Value) As c,
+         {ID: c.ID, Card: c.Card, Tier: c.Tier, Freq: c.Frequency.Value, Line: c.Line, Area: c.Area,
+          DoneNow: CountRows(Filter(colDone, CardID = c.ID && ShiftKey = ddPLine.Selected.Value & "-" & Text(If(Hour(Now()) < 6, DateAdd(Today(), -1, TimeUnit.Days), Today()), "yyyymmdd") & "-S" & Text(If(Hour(Now()) * 60 + Minute(Now()) >= 360 && Hour(Now()) * 60 + Minute(Now()) < 990, 1, 2)))) > 0}), "DoneNow", SortOrder.Ascending, "Tier", SortOrder.Ascending)
+      TemplateSize: =120
+      TemplatePadding: =0
+      X: =10
+      Y: =188
+      Width: =620
+      Height: =900
+      Visible: =varStep = "pick"
+    Children:
+      - gKBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =112
+            BorderColor: =RGBA(217, 217, 214, 1)
+            BorderThickness: =1
+      - gKTab:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =If(ThisItem.DoneNow, RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+            X: =0
+            Y: =0
+            Width: =14
+            Height: =112
+      - gKName:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Card
+            Font: =Font.Arial
+            Size: =15
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =26
+            Y: =6
+            Width: =440
+            Height: =52
+      - gKSub:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="Tier " & ThisItem.Tier & "  ·  " & ThisItem.Freq & "  ·  " & Coalesce(ThisItem.Line, "") & If(IsBlank(ThisItem.Area), "", " · " & ThisItem.Area)
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            X: =26
+            Y: =58
+            Width: =440
+            Height: =40
+      - gKState:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(ThisItem.DoneNow, "DONE ✓", "DUE")
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =If(ThisItem.DoneNow, RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+            X: =480
+            Y: =30
+            Width: =120
+            Height: =44
+      - gKSel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =""
+            OnSelect: =Set(varCardID, ThisItem.ID); Select(btnPStart)
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 72, 81, 0.06)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(0, 72, 81, 0.12)
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =112
+- kNone:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No cards for this line. Cards are built in the Standard Work app."
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varStep = "pick" && CountRows(galCards.AllItems) = 0
+      X: =16
+      Y: =200
+      Width: =608
+      Height: =60
+- aCard:
+    Control: Label@2.5.1
+    Properties:
+      Text: =LookUp(colCards, ID = varCardID).Card
+      Font: =Font.Arial
+      Size: =14
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =608
+      Height: =40
+      Visible: =varStep = "audit"
+- aBarBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(217, 217, 214, 1)
+      X: =16
+      Y: =172
+      Width: =608
+      Height: =10
+      Visible: =varStep = "audit"
+- aBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(0, 72, 81, 1)
+      X: =16
+      Y: =172
+      Width: =(640-32) * (varItem - 1) / Max(1, CountRows(colItems))
+      Height: =10
+      Visible: =varStep = "audit"
+- aCount:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ITEM " & varItem & " OF " & CountRows(colItems)
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =186
+      Width: =300
+      Height: =30
+      Visible: =varStep = "audit"
+- aType:
+    Control: Label@2.5.1
+    Properties:
+      Text: =LookUp(colItems, ItemNo = varItem).PType
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =If(LookUp(colItems, ItemNo = varItem).PType = "Safety", RGBA(207, 34, 46, 1), LookUp(colItems, ItemNo = varItem).PType = "Quality", RGBA(0, 72, 81, 1), RGBA(117, 120, 123, 1))
+      X: =480
+      Y: =186
+      Width: =144
+      Height: =28
+      Visible: =varStep = "audit"
+- aSection:
+    Control: Label@2.5.1
+    Properties:
+      Text: =LookUp(colItems, ItemNo = varItem).Section
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =218
+      Width: =608
+      Height: =52
+      Visible: =varStep = "audit"
+- aCheck:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(LookUp(colItems, ItemNo = varItem).Check = LookUp(colItems, ItemNo = varItem).Good, "", LookUp(colItems, ItemNo = varItem).Check)
+      Font: =Font.Arial
+      Size: =14
+      Color: =RGBA(7, 39, 45, 1)
+      X: =16
+      Y: =270
+      Width: =608
+      Height: =40
+      Visible: =varStep = "audit"
+- aRef:
+    Control: Image@2.2.3
+    Properties:
+      Image: =First(SortByColumns(Filter(colRefPh, StepNo = LookUp(colItems, ItemNo = varItem).ElNo), "Created", SortOrder.Descending)).Thumbnail.Large
+      ImagePosition: =ImagePosition.Fit
+      Fill: =RGBA(243, 244, 244, 1)
+      X: =16
+      Y: =312
+      Width: =608
+      Height: =250
+      Visible: =varStep = "audit"
+- aRefNone:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="(no standard photo yet)"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(177, 179, 179, 1)
+      Align: =Align.Center
+      Visible: =varStep = "audit" && IsBlank(LookUp(colRefPh, StepNo = LookUp(colItems, ItemNo = varItem).ElNo))
+      X: =16
+      Y: =420
+      Width: =608
+      Height: =30
+- aGood:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="GOOD:  " & LookUp(colItems, ItemNo = varItem).Good
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(220, 242, 225, 1)
+      PaddingLeft: =12
+      PaddingRight: =12
+      VerticalAlign: =VerticalAlign.Top
+      PaddingTop: =8
+      X: =16
+      Y: =568
+      Width: =608
+      Height: =92
+      Visible: =varStep = "audit"
+- btnYes:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="YES"
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Answer: "Yes"})
+      Font: =Font.Arial
+      Size: =22
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colAns, ItemNo = varItem).Answer = "Yes", RGBA(46, 160, 67, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colAns, ItemNo = varItem).Answer = "Yes", RGBA(255, 255, 255, 1), RGBA(46, 160, 67, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(46, 160, 67, 1)
+      BorderThickness: =3
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =670
+      Width: =250
+      Height: =84
+      Visible: =varStep = "audit"
+- btnNo:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="NO"
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Answer: "No"})
+      Font: =Font.Arial
+      Size: =22
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colAns, ItemNo = varItem).Answer = "No", RGBA(207, 34, 46, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colAns, ItemNo = varItem).Answer = "No", RGBA(255, 255, 255, 1), RGBA(207, 34, 46, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(207, 34, 46, 1)
+      BorderThickness: =3
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =276
+      Y: =670
+      Width: =230
+      Height: =84
+      Visible: =varStep = "audit"
+- btnNA:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="N/A"
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Answer: "N/A"})
+      Font: =Font.Arial
+      Size: =22
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colAns, ItemNo = varItem).Answer = "N/A", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colAns, ItemNo = varItem).Answer = "N/A", RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(117, 120, 123, 1)
+      BorderThickness: =3
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =516
+      Y: =670
+      Width: =108
+      Height: =84
+      Visible: =varStep = "audit"
+- aCMiss:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="IF NO — WHAT WAS MISSED?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(207, 34, 46, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =762
+      Width: =608
+      Height: =20
+      Visible: =varStep = "audit" && LookUp(colAns, ItemNo = varItem).Answer = "No"
+- txtMiss:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =LookUp(colAns, ItemNo = varItem).Missed
+      HintText: ="what was missing or wrong"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Missed: Self.Text})
+      Mode: =TextMode.MultiLine
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderThickness: =If(IsBlank(Self.Text), 3, 1)
+      X: =16
+      Y: =782
+      Width: =608
+      Height: =80
+      Visible: =varStep = "audit" && LookUp(colAns, ItemNo = varItem).Answer = "No"
+- addPh:
+    Control: AddMedia@2.2.1
+    Properties:
+      X: =16
+      Y: =870
+      Width: =300
+      Height: =60
+      Size: =13
+      Text: =If(IsEmpty(Filter(colPhotos, ItemNo = varItem)), "📷  PHOTO OF THE FINDING", "✓  PHOTO TAKEN (tap to retake)")
+      Fill: =RGBA(243, 244, 244, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      OnChange: |-
+        =RemoveIf(colPhotos, ItemNo = varItem); Collect(colPhotos, {ItemNo: varItem, Ph: Self.Media})
+      Visible: =varStep = "audit" && LookUp(colAns, ItemNo = varItem).Answer = "No"
+- btnAct:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(LookUp(colAns, ItemNo = varItem).Act, "☑  CREATE ACTION", "☐  CREATE ACTION")
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Act: !LookUp(colAns, ItemNo = varItem).Act})
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      Tooltip: ="Adds a NEWSPAPER action for this finding when the card is submitted."
+      X: =330
+      Y: =870
+      Width: =294
+      Height: =60
+      Visible: =varStep = "audit" && LookUp(colAns, ItemNo = varItem).Answer = "No"
+- btnPrev:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="‹ PREV"
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Missed: txtMiss.Text}); Set(varItem, Max(1, varItem - 1)); Reset(addPh); Reset(txtMiss)
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      DisplayMode: =If(varItem > 1, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledColor: =RGBA(177, 179, 179, 1)
+      DisabledBorderColor: =RGBA(217, 217, 214, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =950
+      Width: =180
+      Height: =74
+      Visible: =varStep = "audit"
+- btnNext:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varItem < CountRows(colItems), "NEXT ›", "REVIEW ›")
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Missed: txtMiss.Text}); If(varItem < CountRows(colItems), Set(varItem, varItem + 1), Set(varStep, "review")); Reset(addPh); Reset(txtMiss)
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsBlank(LookUp(colAns, ItemNo = varItem).Answer) && (LookUp(colAns, ItemNo = varItem).Answer <> "No" || !IsBlank(txtMiss.Text)), RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(!IsBlank(LookUp(colAns, ItemNo = varItem).Answer) && (LookUp(colAns, ItemNo = varItem).Answer <> "No" || !IsBlank(txtMiss.Text)), RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(!IsBlank(LookUp(colAns, ItemNo = varItem).Answer) && (LookUp(colAns, ItemNo = varItem).Answer <> "No" || !IsBlank(txtMiss.Text)), DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =210
+      Y: =950
+      Width: =414
+      Height: =74
+      Visible: =varStep = "audit"
+- rT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="REVIEW  ·  " & LookUp(colCards, ID = varCardID).Card
+      Font: =Font.Georgia
+      Size: =15
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =608
+      Height: =48
+      Visible: =varStep = "review"
+- rScore:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(CountRows(Filter(colAns, Answer = "No")) = 0, "PASS", "FAIL") & "   " & Text(If(CountRows(Filter(colAns, Answer = "Yes")) + CountRows(Filter(colAns, Answer = "No")) = 0, 1, CountRows(Filter(colAns, Answer = "Yes")) / (CountRows(Filter(colAns, Answer = "Yes")) + CountRows(Filter(colAns, Answer = "No")))) * 100, "0") & "%"
+      Font: =Font.Arial
+      Size: =28
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =If(CountRows(Filter(colAns, Answer = "No")) = 0, RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+      X: =16
+      Y: =182
+      Width: =608
+      Height: =70
+      Visible: =varStep = "review"
+- galRev:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colAns
+      TemplateSize: =68
+      TemplatePadding: =0
+      BorderColor: =RGBA(217, 217, 214, 1)
+      BorderThickness: =1
+      X: =10
+      Y: =262
+      Width: =620
+      Height: =430
+      Visible: =varStep = "review"
+    Children:
+      - gRN:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.ItemNo)
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(117, 120, 123, 1)
+            FontWeight: =FontWeight.Bold
+            X: =6
+            Y: =4
+            Width: =36
+            Height: =44
+      - gRS:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =LookUp(colItems, ItemNo = ThisItem.ItemNo).Section & If(IsBlank(ThisItem.Missed), "", Char(10) & "Missed: " & ThisItem.Missed)
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            X: =44
+            Y: =2
+            Width: =440
+            Height: =62
+      - gRA:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Answer
+            Font: =Font.Arial
+            Size: =13
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =If(ThisItem.Answer = "Yes", RGBA(46, 160, 67, 1), ThisItem.Answer = "No", RGBA(207, 34, 46, 1), RGBA(177, 179, 179, 1))
+            X: =490
+            Y: =12
+            Width: =90
+            Height: =36
+      - gRGo:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="✎"
+            OnSelect: =Set(varItem, ThisItem.ItemNo); Set(varStep, "audit")
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(255, 255, 255, 1)
+            Color: =RGBA(0, 72, 81, 1)
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(217, 217, 214, 1)
+            X: =584
+            Y: =12
+            Width: =36
+            Height: =36
+- rC1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHO / WHAT WAS OBSERVED  (crew, operator)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =702
+      Width: =608
+      Height: =20
+      Visible: =varStep = "review"
+- txtObs:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="e.g. Crew B, J. Smith"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =16
+      Y: =722
+      Width: =608
+      Height: =50
+      Visible: =varStep = "review"
+- rC2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NOTES  (optional)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =778
+      Width: =608
+      Height: =20
+      Visible: =varStep = "review"
+- txtPNotes:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="coaching given, context"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =16
+      Y: =798
+      Width: =608
+      Height: =70
+      Visible: =varStep = "review"
+- btnSubmit:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(CountRows(Filter(colAns, IsBlank(Answer) || (Answer = "No" && IsBlank(Missed)))) = 0, "SUBMIT CARD", "ANSWER EVERY ITEM")
+      OnSelect: |-
+        =IfError(
+         Set(varAud, Patch(PC_Audits, Defaults(PC_Audits), {
+           Ref: "PC" & varCardID & "-" & Text(Now(), "yyyymmdd-hhmmss"), CardID: varCardID, StandardID: LookUp(colCards, ID = varCardID).StandardID,
+           Line: If(ddPLine.Selected.Value = "All", LookUp(colCards, ID = varCardID).Line, ddPLine.Selected.Value), Area: LookUp(colCards, ID = varCardID).Area,
+           ShiftDate: If(Hour(Now()) < 6, DateAdd(Today(), -1, TimeUnit.Days), Today()), Shift: If(Hour(Now()) * 60 + Minute(Now()) >= 360 && Hour(Now()) * 60 + Minute(Now()) < 990, 1, 2), ShiftKey: ddPLine.Selected.Value & "-" & Text(If(Hour(Now()) < 6, DateAdd(Today(), -1, TimeUnit.Days), Today()), "yyyymmdd") & "-S" & Text(If(Hour(Now()) * 60 + Minute(Now()) >= 360 && Hour(Now()) * 60 + Minute(Now()) < 990, 1, 2)), Tier: LookUp(colCards, ID = varCardID).Tier,
+           AuditedBy: User().Email, AuditorName: User().FullName, Observed: txtObs.Text, StartedAt: varStart, CompletedAt: Now(),
+           Result: {Value: If(CountRows(Filter(colAns, Answer = "No")) = 0, "Pass", "Fail")}, Score: If(CountRows(Filter(colAns, Answer = "Yes")) + CountRows(Filter(colAns, Answer = "No")) = 0, 1, CountRows(Filter(colAns, Answer = "Yes")) / (CountRows(Filter(colAns, Answer = "Yes")) + CountRows(Filter(colAns, Answer = "No")))), NYes: CountRows(Filter(colAns, Answer = "Yes")), NNo: CountRows(Filter(colAns, Answer = "No")), NNA: CountRows(Filter(colAns, Answer = "N/A")), Notes: txtPNotes.Text}));
+         ForAll(colAns As a, Patch(PC_Results, Defaults(PC_Results), {Ref: varAud.Ref & "-I" & a.ItemNo, AuditID: varAud.ID, CardID: varCardID, ItemNo: a.ItemNo, ElementID: a.ElementID,
+           Answer: {Value: a.Answer}, Missed: a.Missed, ActionCreated: a.Answer = "No" && a.Act, NewspaperRef: If(a.Answer = "No" && a.Act, varAud.Ref & "-I" & a.ItemNo, ""), Line: varAud.Line, ShiftKey: varAud.ShiftKey}));
+         ForAll(Filter(colAns, Answer = "No" && Act) As a, Patch(Newspaper, Defaults(Newspaper), {
+           Action: Left("PC: " & LookUp(colItems, ItemNo = a.ItemNo).Section & " — " & a.Missed, 250), Line: varAud.Line,
+           SQDCP: {Value: If(LookUp(colItems, ItemNo = a.ItemNo).PType = "Safety", "Safety", "Quality")}, Source: {Value: "Process confirmation"},
+           Problem: "Process confirmation " & LookUp(colCards, ID = varCardID).Card & ", item " & a.ItemNo & ": " & a.Missed, RaisedDate: Today(), DueDate: DateAdd(Today(), 7, TimeUnit.Days),
+           Status: {Value: "Open"}, RefKey: varAud.Ref & "-I" & a.ItemNo}));
+         ForAll(colPhotos As p, Patch(TS_Photos, LookUp(TS_Photos, ID = Value('MDI-UploadPhoto'.Run(JSON(p.Ph, JSONFormat.IncludeBinaryData), varAud.Ref & "-I" & p.ItemNo & ".jpg",
+            varAud.ID, p.ItemNo, 0, If(LookUp(colAns, ItemNo = p.ItemNo).Answer = "No", "Finding", "Step"), LookUp(colAns, ItemNo = p.ItemNo).Missed, User().Email).photoid)),
+            {Module: {Value: "Process confirmation"}, RefID: varAud.ID})),
+         Notify("NOT SUBMITTED — " & FirstError.Message & "  (check signal, try again)", NotificationType.Error),
+         Set(varResult, If(CountRows(Filter(colAns, Answer = "No")) = 0, "Pass", "Fail")); Set(varStep, "done"); Reset(txtObs); Reset(txtPNotes); Select(btnPRefresh))
+      Font: =Font.Arial
+      Size: =20
+      FontWeight: =FontWeight.Bold
+      Fill: =If(CountRows(Filter(colAns, IsBlank(Answer) || (Answer = "No" && IsBlank(Missed)))) = 0, RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(CountRows(Filter(colAns, IsBlank(Answer) || (Answer = "No" && IsBlank(Missed)))) = 0, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(CountRows(Filter(colAns, IsBlank(Answer) || (Answer = "No" && IsBlank(Missed)))) = 0, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =880
+      Width: =608
+      Height: =80
+      Visible: =varStep = "review"
+- dCard:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =If(varResult = "Pass", RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+      X: =60
+      Y: =190
+      Width: =520
+      Height: =420
+      Visible: =varStep = "done"
+- dRes:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(varResult = "Pass", "PASS", "FAIL")
+      Font: =Font.Georgia
+      Size: =60
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =60
+      Y: =270
+      Width: =520
+      Height: =120
+      Visible: =varStep = "done"
+- dSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(varResult = "Pass", "Card flipped GREEN for this shift.", "Card flipped RED. " & CountRows(Filter(colAns, Answer = "No" && Act)) & " action(s) added to NEWSPAPER.")
+      Font: =Font.Arial
+      Size: =15
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =80
+      Y: =410
+      Width: =480
+      Height: =120
+      Visible: =varStep = "done"
+- btnDNext:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="NEXT CARD"
+      OnSelect: =Set(varStep, "pick"); Set(varCardID, Blank())
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =650
+      Width: =608
+      Height: =76
+      Visible: =varStep = "done"
+- btnPStart:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =Set(varCard, LookUp(colCards, ID = varCardID));
+        IfError(ClearCollect(colEl, Filter(SW_Elements, StandardID = varCard.StandardID)), Notify("Could not load SW_Elements", NotificationType.Warning), true);
+        ClearCollect(colItems, ForAll(Sort(Filter(PC_CardItems, CardID = varCardID && Active = true), ItemNo) As c,
+          With({e: LookUp(colEl, ID = c.ElementID)},
+           {ItemNo: c.ItemNo, ElementID: c.ElementID, ElNo: Coalesce(e.ElementNo, c.ItemNo), Section: Coalesce(e.Element, c.Check), Check: c.Check,
+            Good: Coalesce(c.GoodLooksLike, e.GoodLooksLike, ""), PType: Coalesce(e.PointType.Value, "Quality")})));
+        ClearCollect(colRefPh, Filter(TS_Photos, Module.Value = "Standard work" && RefID = varCard.StandardID));
+        ClearCollect(colAns, ForAll(colItems, {ItemNo: ItemNo, ElementID: ElementID, Answer: "", Missed: "", Act: true}));
+        Clear(colPhotos); Set(varItem, 1); Set(varStart, Now());
+        If(CountRows(colItems) = 0, Notify("This card has no items yet — build it in the Standard Work app.", NotificationType.Warning), Set(varStep, "audit"))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =0
+      Y: =1135
+      Width: =1
+      Height: =1
+- lblLoaded:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varLoaded), "Not loaded — tap ↻", "Loaded " & Text(varLoaded, "h:mm AM/PM"))
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(177, 179, 179, 1)
+      Align: =Align.Center
+      X: =16
+      Y: =1100
+      Width: =608
+      Height: =26

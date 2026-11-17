@@ -1,0 +1,1196 @@
+- sHdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =90
+- sBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =34
+      Color: =RGBA(255, 255, 255, 1)
+      X: =24
+      Y: =6
+      Width: =170
+      Height: =52
+- sBrandSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NEW ALBANY"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 178, 169, 1)
+      FontWeight: =FontWeight.Bold
+      X: =27
+      Y: =56
+      Width: =170
+      Height: =24
+- sTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="MDI SETTINGS"
+      Font: =Font.Georgia
+      Size: =26
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Wrap: =false
+      X: =190
+      Y: =20
+      Width: =420
+      Height: =50
+- sBadge:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varNoAdmin, "SETUP MODE: nobody is an MDI admin yet. Open PEOPLE and tick MDI ADMIN on yourself.", varCan, "EDITOR  ·  " & User().FullName, "VIEW ONLY  ·  ask an MDI admin to tick CAN EDIT SETTINGS for you")
+      Font: =Font.Arial
+      Size: =13
+      Color: =If(varNoAdmin, RGBA(210, 153, 34, 1), varCan, RGBA(176, 227, 228, 1), RGBA(177, 179, 179, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Right
+      X: =1000
+      Y: =10
+      Width: =900
+      Height: =70
+- sSubBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =0
+      Y: =90
+      Width: =1920
+      Height: =52
+- sTab0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="ESCALATION"
+      OnSelect: =Navigate(Screen1, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =12
+      Y: =96
+      Width: =304
+      Height: =40
+- sTab1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="DROPDOWN LISTS"
+      OnSelect: =Navigate(scrDrop, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =324
+      Y: =96
+      Width: =304
+      Height: =40
+- sTab2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="LINES & VALUE STREAMS"
+      OnSelect: =Navigate(scrLines, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =636
+      Y: =96
+      Width: =304
+      Height: =40
+- sTab3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="STANDARDS"
+      OnSelect: =Navigate(scrStd, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =948
+      Y: =96
+      Width: =304
+      Height: =40
+- sTab4:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="THRESHOLDS & LINKS"
+      OnSelect: =Navigate(scrCfg, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =1260
+      Y: =96
+      Width: =304
+      Height: =40
+- sTab5:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="PEOPLE"
+      OnSelect: =Navigate(scrPeople, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      X: =1572
+      Y: =96
+      Width: =304
+      Height: =40
+- sLoad:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="↻"
+      OnSelect: |-
+        =Set(varMe, LookUp(People, Lower(Email) = Lower(User().Email)));
+        Set(varNoAdmin, CountRows(Filter(People, MDIAdmin = true)) = 0);
+        Set(varAdm, Coalesce(varMe.MDIAdmin, false) || varNoAdmin);
+        Set(varCan, Coalesce(varMe.CanEditConfig, false) || varAdm);
+        ClearCollect(colPB, PLAYBOOK);
+        ClearCollect(colSLn, Lines)
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Tooltip: ="Reload from SharePoint"
+      BorderThickness: =1
+      X: =1880
+      Y: =98
+      Width: =36
+      Height: =36
+- sFLC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =150
+      Width: =160
+      Height: =20
+- sFL:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "All lines"})}, {t: Sort(Distinct(colPB, Line), Value)}), t)
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =16
+      Y: =172
+      Width: =200
+      Height: =44
+- sFSC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SEARCH SIZE OR FORM"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =232
+      Y: =150
+      Width: =300
+      Height: =20
+- sFS:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="10 oz, wash…"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      X: =232
+      Y: =172
+      Width: =300
+      Height: =44
+- sAll:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varSAll, "✓  " & "SHOW RETIRED", "SHOW RETIRED")
+      OnSelect: =Set(varSAll, !varSAll)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varSAll, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varSAll, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =946
+      Y: =174
+      Width: =170
+      Height: =40
+- sh0:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =222
+      Width: =80
+      Height: =26
+- sh1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SIZE"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =106
+      Y: =222
+      Width: =200
+      Height: =26
+- sh2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="FORM"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =316
+      Y: =222
+      Width: =240
+      Height: =26
+- sh3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="RATE BPM"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =566
+      Y: =222
+      Width: =110
+      Height: =26
+- sh4:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="UNITS / HR"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =686
+      Y: =222
+      Width: =130
+      Height: =26
+- sh5:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CREW"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =826
+      Y: =222
+      Width: =80
+      Height: =26
+- sh6:
+    Control: Label@2.5.1
+    Properties:
+      Text: =""
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =916
+      Y: =222
+      Width: =100
+      Height: =26
+- galS:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =SortByColumns(Filter(colPB, (sFL.Selected.Value = "All lines" || Line = sFL.Selected.Value) && (IsBlank(sFS.Text) || sFS.Text in Size || sFS.Text in Form) && (varSAll || Active)), "Line", SortOrder.Ascending, "Size", SortOrder.Ascending, "Form", SortOrder.Ascending)
+      TemplateSize: =42
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      OnSelect: =Set(varP, ThisItem); Set(varPA, Coalesce(ThisItem.Active, false))
+      TemplateFill: =If(ThisItem.ID = varP.ID, RGBA(229, 243, 243, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =RGBA(217, 217, 214, 1)
+      BorderThickness: =1
+      X: =16
+      Y: =250
+      Width: =1100
+      Height: =820
+    Children:
+      - gsL:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Line
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =0
+            Y: =0
+            Width: =80
+            Height: =44
+      - gsS:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Size
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            X: =90
+            Y: =0
+            Width: =200
+            Height: =44
+      - gsF:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Form
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            X: =300
+            Y: =0
+            Width: =240
+            Height: =44
+      - gsR:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.Rate)
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Right
+            X: =550
+            Y: =0
+            Width: =110
+            Height: =44
+      - gsU:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Text(Value(ThisItem.'Playbook Units per Hour'), "#,##0")
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Right
+            X: =670
+            Y: =0
+            Width: =130
+            Height: =44
+      - gsC:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(Value(ThisItem.'Total HC'))
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Right
+            X: =810
+            Y: =0
+            Width: =80
+            Height: =44
+      - gsA:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(ThisItem.Active, "", "retired")
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(207, 34, 46, 1)
+            X: =900
+            Y: =0
+            Width: =100
+            Height: =44
+- sFormBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =1132
+      Y: =150
+      Width: =772
+      Height: =920
+- sFormT:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varP.ID), "NEW PRODUCT STANDARD", "LINE " & varP.Line & "  ·  " & varP.Size & " | " & varP.Form)
+      Font: =Font.Arial
+      Size: =15
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =156
+      Width: =740
+      Height: =36
+- sLC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =198
+      Width: =140
+      Height: =20
+- sL:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =ForAll(SortByColumns(Filter(colSLn, Active), "DisplayOrder", SortOrder.Ascending), {Value: Title})
+      Default: =Coalesce(varP.Line, "")
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1148
+      Y: =220
+      Width: =140
+      Height: =44
+- sSC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SIZE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1304
+      Y: =198
+      Width: =200
+      Height: =20
+- sS:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(varP.Size, "")
+      HintText: ="10 oz"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1304
+      Y: =220
+      Width: =220
+      Height: =44
+- sFC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="FORM"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1540
+      Y: =198
+      Width: =300
+      Height: =20
+- sF:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(varP.Form, "")
+      HintText: ="Body Wash"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1540
+      Y: =220
+      Width: =348
+      Height: =44
+- sRateC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="RATE (BOTTLES / MIN)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =276
+      Width: =180
+      Height: =20
+- sRate:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.Rate), "", Text(varP.Rate))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1148
+      Y: =298
+      Width: =170
+      Height: =44
+- sEffC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="EFFICIENCY TARGET (0.75 = 75%)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1334
+      Y: =276
+      Width: =180
+      Height: =20
+- sEff:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.'Playbook Efficiency Target'), "", Text(varP.'Playbook Efficiency Target'))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1334
+      Y: =298
+      Width: =170
+      Height: =44
+- sHrsC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="AVAILABLE HRS / SHIFT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1520
+      Y: =276
+      Width: =180
+      Height: =20
+- sHrs:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.'Available Hrs/Shift'), "", Text(varP.'Available Hrs/Shift'))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1520
+      Y: =298
+      Width: =170
+      Height: =44
+- sUpsC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SCHEDULED UNITS / SHIFT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1706
+      Y: =276
+      Width: =180
+      Height: =20
+- sUps:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.units_per_shift), "", Text(varP.units_per_shift))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1706
+      Y: =298
+      Width: =170
+      Height: =44
+- sCalc:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="UNITS / HR " & If(IsBlank(varP.ID), "—", Text(Value(varP.'Playbook Units per Hour'), "#,##0")) & "   ·   TOTAL CREW " & If(IsBlank(varP.ID), "—", Text(Value(varP.'Total HC'))) & "   (calculated by SharePoint after save)"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =350
+      Width: =740
+      Height: =30
+- sHcT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CREW BY POSITION (PEOPLE)"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =384
+      Width: =400
+      Height: =26
+- sHc0C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE LEAD"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =414
+      Width: =180
+      Height: =20
+- sHc0:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.'Line Lead'), "", Text(varP.'Line Lead'))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1148
+      Y: =436
+      Width: =170
+      Height: =44
+- sHc1C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="FILLER OP"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1334
+      Y: =414
+      Width: =180
+      Height: =20
+- sHc1:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.'Filler Machine Operator'), "", Text(varP.'Filler Machine Operator'))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1334
+      Y: =436
+      Width: =170
+      Height: =44
+- sHc2C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CASE PACK OP"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1520
+      Y: =414
+      Width: =180
+      Height: =20
+- sHc2:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.'Case Pack Machine Operator'), "", Text(varP.'Case Pack Machine Operator'))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1520
+      Y: =436
+      Width: =170
+      Height: =44
+- sHc3C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="BOTTLE/CAP FEEDER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1706
+      Y: =414
+      Width: =180
+      Height: =20
+- sHc3:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.'Bottle / Cap Feeder'), "", Text(varP.'Bottle / Cap Feeder'))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1706
+      Y: =436
+      Width: =170
+      Height: =44
+- sHc4C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="BOX MAKER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =486
+      Width: =180
+      Height: =20
+- sHc4:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.'Box Maker'), "", Text(varP.'Box Maker'))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1148
+      Y: =508
+      Width: =170
+      Height: =44
+- sHc5C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PACKER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1334
+      Y: =486
+      Width: =180
+      Height: =20
+- sHc5:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.Packer), "", Text(varP.Packer))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1334
+      Y: =508
+      Width: =170
+      Height: =44
+- sHc6C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PALLETIZER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1520
+      Y: =486
+      Width: =180
+      Height: =20
+- sHc6:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.Palletizer), "", Text(varP.Palletizer))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1520
+      Y: =508
+      Width: =170
+      Height: =44
+- sHc7C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="INSPECTOR"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1706
+      Y: =486
+      Width: =180
+      Height: =20
+- sHc7:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.Inspector), "", Text(varP.Inspector))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1706
+      Y: =508
+      Width: =170
+      Height: =44
+- sHc8C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="BOTTLE FLIPPER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =558
+      Width: =180
+      Height: =20
+- sHc8:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.'Bottle Flipper'), "", Text(varP.'Bottle Flipper'))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1148
+      Y: =580
+      Width: =170
+      Height: =44
+- sHc9C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TUBE FEEDER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1334
+      Y: =558
+      Width: =180
+      Height: =20
+- sHc9:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.'Tube Feeder'), "", Text(varP.'Tube Feeder'))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1334
+      Y: =580
+      Width: =170
+      Height: =44
+- sHc10C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PARTITION PLACER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1520
+      Y: =558
+      Width: =180
+      Height: =20
+- sHc10:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.'Partition Placer (211 and 209)'), "", Text(varP.'Partition Placer (211 and 209)'))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1520
+      Y: =580
+      Width: =170
+      Height: =44
+- sHc11C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TAPER PUSHER"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1706
+      Y: =558
+      Width: =180
+      Height: =20
+- sHc11:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.'Taper Machine Pusher'), "", Text(varP.'Taper Machine Pusher'))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1706
+      Y: =580
+      Width: =170
+      Height: =44
+- sHc12C:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="UNSCRAMBLER INSP"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =630
+      Width: =180
+      Height: =20
+- sHc12:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varP.'Unscrambler Inspector'), "", Text(varP.'Unscrambler Inspector'))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1148
+      Y: =652
+      Width: =170
+      Height: =44
+- sAct:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varPA, "✓  " & "ACTIVE (SHOWS IN HOUR x HOUR)", "ACTIVE (SHOWS IN HOUR x HOUR)")
+      OnSelect: =Set(varPA, !varPA)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varPA, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varPA, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1148
+      Y: =710
+      Width: =320
+      Height: =40
+- sSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SAVE STANDARD"
+      OnSelect: |-
+        =If(IsBlank(sL.Selected.Value) || IsBlank(Trim(sS.Text)) || IsBlank(Trim(sF.Text)) || !IsNumeric(sRate.Text), Notify("Line, size, form and rate are required.", NotificationType.Warning),
+         !IsBlank(LookUp(colPB, Line = sL.Selected.Value && Size = Trim(sS.Text) && Form = Trim(sF.Text) && ID <> Coalesce(varP.ID, -1))), Notify("That line already has this size and form.", NotificationType.Warning),
+        IfError(Patch(PLAYBOOK, If(IsBlank(varP.ID), Defaults(PLAYBOOK), LookUp(PLAYBOOK, ID = varP.ID)), {Title: sL.Selected.Value & "|" & Trim(sS.Text) & "|" & Trim(sF.Text), Line: sL.Selected.Value, Size: Trim(sS.Text), Form: Trim(sF.Text), Active: varPA,
+          Rate: If(IsNumeric(sRate.Text), Value(sRate.Text), Blank()), 'Playbook Efficiency Target': If(IsNumeric(sEff.Text), Value(sEff.Text), Blank()), 'Available Hrs/Shift': If(IsNumeric(sHrs.Text), Value(sHrs.Text), Blank()), units_per_shift: If(IsNumeric(sUps.Text), Value(sUps.Text), Blank()),
+          'Line Lead': If(IsNumeric(sHc0.Text), Value(sHc0.Text), Blank()), 'Filler Machine Operator': If(IsNumeric(sHc1.Text), Value(sHc1.Text), Blank()), 'Case Pack Machine Operator': If(IsNumeric(sHc2.Text), Value(sHc2.Text), Blank()), 'Bottle / Cap Feeder': If(IsNumeric(sHc3.Text), Value(sHc3.Text), Blank()), 'Box Maker': If(IsNumeric(sHc4.Text), Value(sHc4.Text), Blank()), Packer: If(IsNumeric(sHc5.Text), Value(sHc5.Text), Blank()), Palletizer: If(IsNumeric(sHc6.Text), Value(sHc6.Text), Blank()), Inspector: If(IsNumeric(sHc7.Text), Value(sHc7.Text), Blank()), 'Bottle Flipper': If(IsNumeric(sHc8.Text), Value(sHc8.Text), Blank()), 'Tube Feeder': If(IsNumeric(sHc9.Text), Value(sHc9.Text), Blank()), 'Partition Placer (211 and 209)': If(IsNumeric(sHc10.Text), Value(sHc10.Text), Blank()), 'Taper Machine Pusher': If(IsNumeric(sHc11.Text), Value(sHc11.Text), Blank()), 'Unscrambler Inspector': If(IsNumeric(sHc12.Text), Value(sHc12.Text), Blank())}),
+         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+         Notify("Standard saved", NotificationType.Success); Select(sLoad)))
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1148
+      Y: =766
+      Width: =230
+      Height: =50
+- sCopy:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="COPY AS NEW"
+      OnSelect: |-
+        =Set(varP, Patch(varP, {ID: Blank()})); Notify("Copied: change size or form, then SAVE.", NotificationType.Information)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan && !IsBlank(varP.ID), DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1394
+      Y: =766
+      Width: =200
+      Height: =50
+- sNew:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="+ NEW"
+      OnSelect: =Set(varP, Blank()); Set(varPA, true); Reset(sL); Reset(sS); Reset(sF); Reset(sRate); Reset(sEff); Reset(sHrs); Reset(sUps); Reset(sHc0); Reset(sHc1); Reset(sHc2); Reset(sHc3); Reset(sHc4); Reset(sHc5); Reset(sHc6); Reset(sHc7); Reset(sHc8); Reset(sHc9); Reset(sHc10); Reset(sHc11); Reset(sHc12)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1610
+      Y: =766
+      Width: =140
+      Height: =50
+- sNote:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Hour x Hour reads RATE, UNITS / HR and TOTAL CREW for the product picked on the board. A rate change applies to hours entered after the next REFRESH; saved hours keep their target."
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      X: =1148
+      Y: =826
+      Width: =740
+      Height: =60

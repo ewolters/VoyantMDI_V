@@ -1,0 +1,2583 @@
+- hdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =640
+      Height: =118
+- lblBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =22
+      Color: =RGBA(255, 255, 255, 1)
+      X: =16
+      Y: =4
+      Width: =140
+      Height: =40
+- lblTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="FRONTIER AUDIT"
+      Font: =Font.Georgia
+      Size: =17
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =150
+      Y: =8
+      Width: =400
+      Height: =36
+- lblCtx:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varZone), "Safety + 5S observation  ·  STOP", varZone.ZoneID & "  ·  " & varZone.ZoneName)
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(176, 227, 228, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =50
+      Width: =608
+      Height: =30
+- lblUser:
+    Control: Label@2.5.1
+    Properties:
+      Text: =User().FullName & "  ·  S" & If(Hour(Now()) * 60 + Minute(Now()) >= 360 && Hour(Now()) * 60 + Minute(Now()) < 990, 1, 2)
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(177, 179, 179, 1)
+      X: =16
+      Y: =82
+      Width: =400
+      Height: =26
+- btnFRefresh:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="↻"
+      OnSelect: |-
+        =IfError(ClearCollect(colZoneRaw, Filter(SAF_Zones, Active = true)), Notify("Could not load SAF_Zones: " & FirstError.Message, NotificationType.Error), true);
+        IfError(ClearCollect(colRecent, Filter(SAF_Audits, AuditDate >= DateAdd(Today(), -120, TimeUnit.Days))), Notify("Could not load SAF_Audits", NotificationType.Warning), true);
+        IfError(ClearCollect(colItems, Sort(Filter(SAF_Items, Active = true), ItemNo)), Notify("Could not load SAF_Items", NotificationType.Error), true);
+        IfError(ClearCollect(colCfg, Filter(MDI_Config, StartsWith(Setting, "SAF_"))), Notify("Could not load MDI_Config", NotificationType.Warning), true);
+        ClearCollect(colZones, ForAll(colZoneRaw As z,
+          With({last: Max(Filter(colRecent, ZoneID = z.ZoneID), AuditDate), every: Switch(z.Frequency.Value, "Weekly", 7, "Biweekly", 14, "Quarterly", 92, 31)},
+           {ID: z.ID, ZoneID: z.ZoneID, ZoneName: z.ZoneName, ZoneType: z.ZoneType.Value, Line: z.Line, Area: z.Area, Risk: z.RiskLevel.Value,
+            Freq: z.Frequency.Value, PPE: z.RequiredPPE, Hazards: z.PrimaryHazards, StandardID: z.StandardID, Owner: z.Owner, OwnerEmail: z.OwnerEmail,
+            Last: last, Due: IsBlank(last) || DateDiff(last, Today(), TimeUnit.Days) >= every,
+            RiskN: Switch(z.RiskLevel.Value, "High", 1, "Medium", 2, 3)})));
+        If(!varParamUsed && !IsBlank(Param("zone")), Set(varZone, LookUp(colZones, ZoneID = Param("zone"))); If(!IsBlank(varZone), Select(btnFStart), Notify("Zone " & Param("zone") & " is not in SAF_Zones (or not Active).", NotificationType.Warning)));
+        Set(varParamUsed, true);
+        If(IsBlank(varStep), Set(varStep, "zone"));
+        Set(varLoaded, Now())
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =570
+      Y: =72
+      Width: =54
+      Height: =38
+- btnFZones:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="‹ ZONES"
+      OnSelect: =Set(varStep, "zone"); Set(varPanel, Blank())
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      Visible: =varStep <> "zone" && varStep <> "done" && IsBlank(varPanel)
+      X: =450
+      Y: =72
+      Width: =110
+      Height: =38
+- st0:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DECIDE"
+      Font: =Font.Arial
+      Size: =9
+      Color: |-
+        =If(With({now: Switch(varStep, "decide", 0, "safety", 1, "fives", 2, "interact", 3, "record", 4, -1)}, If(0 = now, 2, 0 < now, 1, 0)) = 0, RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: |-
+        =Switch(With({now: Switch(varStep, "decide", 0, "safety", 1, "fives", 2, "interact", 3, "record", 4, -1)}, If(0 = now, 2, 0 < now, 1, 0)), 2, RGBA(0, 72, 81, 1), 1, RGBA(0, 178, 169, 1), RGBA(217, 217, 214, 1))
+      Visible: =varStep <> "zone" && varStep <> "done" && IsBlank(varPanel)
+      X: =16
+      Y: =122
+      Width: =117
+      Height: =26
+- st1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SAFETY"
+      Font: =Font.Arial
+      Size: =9
+      Color: |-
+        =If(With({now: Switch(varStep, "decide", 0, "safety", 1, "fives", 2, "interact", 3, "record", 4, -1)}, If(1 = now, 2, 1 < now, 1, 0)) = 0, RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: |-
+        =Switch(With({now: Switch(varStep, "decide", 0, "safety", 1, "fives", 2, "interact", 3, "record", 4, -1)}, If(1 = now, 2, 1 < now, 1, 0)), 2, RGBA(0, 72, 81, 1), 1, RGBA(0, 178, 169, 1), RGBA(217, 217, 214, 1))
+      Visible: =varStep <> "zone" && varStep <> "done" && IsBlank(varPanel)
+      X: =137
+      Y: =122
+      Width: =117
+      Height: =26
+- st2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="5S"
+      Font: =Font.Arial
+      Size: =9
+      Color: |-
+        =If(With({now: Switch(varStep, "decide", 0, "safety", 1, "fives", 2, "interact", 3, "record", 4, -1)}, If(2 = now, 2, 2 < now, 1, 0)) = 0, RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: |-
+        =Switch(With({now: Switch(varStep, "decide", 0, "safety", 1, "fives", 2, "interact", 3, "record", 4, -1)}, If(2 = now, 2, 2 < now, 1, 0)), 2, RGBA(0, 72, 81, 1), 1, RGBA(0, 178, 169, 1), RGBA(217, 217, 214, 1))
+      Visible: =varStep <> "zone" && varStep <> "done" && IsBlank(varPanel)
+      X: =258
+      Y: =122
+      Width: =117
+      Height: =26
+- st3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="INTERACT"
+      Font: =Font.Arial
+      Size: =9
+      Color: |-
+        =If(With({now: Switch(varStep, "decide", 0, "safety", 1, "fives", 2, "interact", 3, "record", 4, -1)}, If(3 = now, 2, 3 < now, 1, 0)) = 0, RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: |-
+        =Switch(With({now: Switch(varStep, "decide", 0, "safety", 1, "fives", 2, "interact", 3, "record", 4, -1)}, If(3 = now, 2, 3 < now, 1, 0)), 2, RGBA(0, 72, 81, 1), 1, RGBA(0, 178, 169, 1), RGBA(217, 217, 214, 1))
+      Visible: =varStep <> "zone" && varStep <> "done" && IsBlank(varPanel)
+      X: =379
+      Y: =122
+      Width: =117
+      Height: =26
+- st4:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="RECORD"
+      Font: =Font.Arial
+      Size: =9
+      Color: |-
+        =If(With({now: Switch(varStep, "decide", 0, "safety", 1, "fives", 2, "interact", 3, "record", 4, -1)}, If(4 = now, 2, 4 < now, 1, 0)) = 0, RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: |-
+        =Switch(With({now: Switch(varStep, "decide", 0, "safety", 1, "fives", 2, "interact", 3, "record", 4, -1)}, If(4 = now, 2, 4 < now, 1, 0)), 2, RGBA(0, 72, 81, 1), 1, RGBA(0, 178, 169, 1), RGBA(217, 217, 214, 1))
+      Visible: =varStep <> "zone" && varStep <> "done" && IsBlank(varPanel)
+      X: =500
+      Y: =122
+      Width: =117
+      Height: =26
+- zT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHICH ZONE?"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =300
+      Height: =40
+      Visible: =varStep = "zone" && IsBlank(varPanel)
+- btnDueOnly:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =If(varAllZones, "SORT: A–Z", "SORT: DUE FIRST")
+      OnSelect: =Set(varAllZones, !varAllZones)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =424
+      Y: =130
+      Width: =200
+      Height: =40
+      Visible: =varStep = "zone" && IsBlank(varPanel)
+- galZones:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =If(varAllZones, SortByColumns(colZones, "ZoneID", SortOrder.Ascending), SortByColumns(colZones, "Due", SortOrder.Descending, "RiskN", SortOrder.Ascending, "ZoneID", SortOrder.Ascending))
+      TemplateSize: =128
+      TemplatePadding: =0
+      X: =10
+      Y: =180
+      Width: =620
+      Height: =900
+      Visible: =varStep = "zone" && IsBlank(varPanel)
+    Children:
+      - gZBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =120
+            BorderColor: =RGBA(217, 217, 214, 1)
+            BorderThickness: =1
+      - gZTab:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =If(ThisItem.Due, RGBA(207, 34, 46, 1), RGBA(46, 160, 67, 1))
+            X: =0
+            Y: =0
+            Width: =14
+            Height: =120
+      - gZName:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.ZoneName
+            Font: =Font.Arial
+            Size: =15
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =26
+            Y: =4
+            Width: =430
+            Height: =50
+      - gZSub:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.ZoneID & "  ·  " & ThisItem.ZoneType & "  ·  " & ThisItem.Risk & " risk"
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            X: =26
+            Y: =54
+            Width: =430
+            Height: =28
+      - gZLast:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.Last), "Never audited", "Last audit " & Text(ThisItem.Last, "m/d") & " (" & DateDiff(ThisItem.Last, Today(), TimeUnit.Days) & " d ago)") & "  ·  " & ThisItem.Freq
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            X: =26
+            Y: =82
+            Width: =430
+            Height: =28
+      - gZState:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(ThisItem.Due, "DUE", "OK")
+            Font: =Font.Arial
+            Size: =14
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =If(ThisItem.Due, RGBA(207, 34, 46, 1), RGBA(46, 160, 67, 1))
+            X: =480
+            Y: =38
+            Width: =120
+            Height: =44
+      - gZSel:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =""
+            OnSelect: =Set(varZone, ThisItem); Select(btnFStart)
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(0, 0, 0, 0)
+            HoverFill: =RGBA(0, 72, 81, 0.06)
+            BorderColor: =RGBA(0, 0, 0, 0)
+            PressedFill: =RGBA(0, 72, 81, 0.12)
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =120
+- zNone:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No zones yet. Add them to the SAF_Zones list (ZoneID, name, type, risk, frequency, 5S standard)."
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varStep = "zone" && CountRows(colZones) = 0
+      X: =16
+      Y: =190
+      Width: =608
+      Height: =80
+- dName:
+    Control: Label@2.5.1
+    Properties:
+      Text: =varZone.ZoneName
+      Font: =Font.Georgia
+      Size: =19
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =160
+      Width: =608
+      Height: =44
+      Visible: =varStep = "decide" && IsBlank(varPanel)
+- dInfo:
+    Control: Label@2.5.1
+    Properties:
+      Text: =varZone.ZoneID & "  ·  " & varZone.ZoneType & "  ·  " & varZone.Risk & " risk" & If(IsBlank(varZone.Line), "", "  ·  Line " & varZone.Line)
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      X: =16
+      Y: =204
+      Width: =608
+      Height: =28
+      Visible: =varStep = "decide" && IsBlank(varPanel)
+- dPPE:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="PPE:  " & Coalesce(varZone.PPE, "(not set)") & Char(10) & "HAZARDS:  " & Coalesce(varZone.Hazards, "(not set)")
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 242, 179, 1)
+      PaddingLeft: =12
+      PaddingRight: =12
+      VerticalAlign: =VerticalAlign.Top
+      PaddingTop: =8
+      X: =16
+      Y: =236
+      Width: =608
+      Height: =96
+      Visible: =varStep = "decide" && IsBlank(varPanel)
+- dC1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="AUDIT TYPE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =342
+      Width: =300
+      Height: =20
+      Visible: =varStep = "decide" && IsBlank(varPanel)
+- ddClass:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["Routine", "Deep dive", "Post-incident", "New process", "Seasonal"]
+      Default: ="Routine"
+      Font: =Font.Arial
+      Size: =15
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =16
+      Y: =362
+      Width: =300
+      Height: =48
+      Visible: =varStep = "decide" && IsBlank(varPanel)
+- dC2:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="DECIDE: WHY THIS ZONE, WHY NOW?  (required)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =422
+      Width: =608
+      Height: =20
+      Visible: =varStep = "decide" && IsBlank(varPanel)
+- txtWhy:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="e.g. due; near-miss reported; changeover this week; never audited"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =16
+      Y: =442
+      Width: =608
+      Height: =90
+      Visible: =varStep = "decide" && IsBlank(varPanel)
+- dC3:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="STOP: 60 SECONDS AT THE THRESHOLD. FIRST IMPRESSIONS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =544
+      Width: =608
+      Height: =20
+      Visible: =varStep = "decide" && IsBlank(varPanel)
+- dStopHint:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="Before you walk in: odors, lighting, noise, clutter, traffic, postures. Look up, look down, look behind."
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      X: =16
+      Y: =564
+      Width: =608
+      Height: =48
+      Visible: =varStep = "decide" && IsBlank(varPanel)
+- txtStop:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="what you notice before entering"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =16
+      Y: =612
+      Width: =608
+      Height: =110
+      Visible: =varStep = "decide" && IsBlank(varPanel)
+- btnDNext:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(!IsBlank(Trim(txtWhy.Text)), "START OBSERVING ›", "SAY WHY THIS ZONE")
+      OnSelect: =Set(varStep, "safety")
+      Font: =Font.Arial
+      Size: =20
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsBlank(Trim(txtWhy.Text)), RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(!IsBlank(Trim(txtWhy.Text)), RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(!IsBlank(Trim(txtWhy.Text)), DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =746
+      Width: =608
+      Height: =80
+      Visible: =varStep = "decide" && IsBlank(varPanel)
+- sT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OBSERVE · SAFETY"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =160
+      Width: =330
+      Height: =40
+      Visible: =varStep = "safety" && IsBlank(varPanel)
+- sCount:
+    Control: Label@2.5.1
+    Properties:
+      Text: =CountRows(Filter(colAns, !IsBlank(Rating))) & " / " & CountRows(colAns) & " rated"
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Right
+      X: =404
+      Y: =164
+      Width: =220
+      Height: =32
+      Visible: =varStep = "safety" && IsBlank(varPanel)
+- sHint:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="S = safe  ·  AR = at risk  ·  U = unsafe  ·  N/A = not here. AR/U needs severity, what you saw and a photo."
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      X: =16
+      Y: =202
+      Width: =608
+      Height: =44
+      Visible: =varStep = "safety" && IsBlank(varPanel)
+- galSafety:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colAns
+      TemplateSize: =184
+      TemplatePadding: =0
+      X: =10
+      Y: =248
+      Width: =620
+      Height: =760
+      Visible: =varStep = "safety" && IsBlank(varPanel)
+    Children:
+      - gSBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =If((ThisItem.Rating = "AR" || ThisItem.Rating = "U") && With({a: ThisItem}, (IsBlank(a.Rating) || ((a.Rating = "AR" || a.Rating = "U") && (IsBlank(a.Sev) || IsBlank(Trim(a.Finding)) || !a.HasPh || ((a.Sev = "Critical" || a.Sev = "High") && IsBlank(Trim(a.Imm))))))), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =178
+            BorderColor: =RGBA(217, 217, 214, 1)
+            BorderThickness: =1
+      - gSCat:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Upper(ThisItem.Category) & "  ·  " & ThisItem.ItemNo
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(0, 72, 81, 1)
+            FontWeight: =FontWeight.Bold
+            X: =12
+            Y: =2
+            Width: =580
+            Height: =22
+      - gSItem:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Item
+            Font: =Font.Arial
+            Size: =15
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =12
+            Y: =22
+            Width: =580
+            Height: =40
+      - gSs:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="S"
+            OnSelect: |-
+              =Patch(colAns, LookUp(colAns, ItemNo = ThisItem.ItemNo), {Rating: "S"}); Patch(colAns, LookUp(colAns, ItemNo = ThisItem.ItemNo), {Sev: "", Finding: "", Imm: "", HasPh: false}); RemoveIf(colPhotos, Key = "S" & ThisItem.ItemNo)
+            Font: =Font.Arial
+            Size: =15
+            FontWeight: =FontWeight.Bold
+            Fill: =If(ThisItem.Rating = "S", RGBA(46, 160, 67, 1), RGBA(255, 255, 255, 1))
+            Color: =If(ThisItem.Rating = "S", RGBA(255, 255, 255, 1), RGBA(46, 160, 67, 1))
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(46, 160, 67, 1)
+            BorderThickness: =2
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            X: =12
+            Y: =64
+            Width: =130
+            Height: =50
+      - gSar:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="AR"
+            OnSelect: |-
+              =Patch(colAns, LookUp(colAns, ItemNo = ThisItem.ItemNo), {Rating: "AR"}); Set(varItem, ThisItem.ItemNo); Reset(txtFind); Reset(txtImm); Reset(addF); Set(varPanel, "find")
+            Font: =Font.Arial
+            Size: =15
+            FontWeight: =FontWeight.Bold
+            Fill: =If(ThisItem.Rating = "AR", RGBA(210, 153, 34, 1), RGBA(255, 255, 255, 1))
+            Color: =If(ThisItem.Rating = "AR", RGBA(255, 255, 255, 1), RGBA(210, 153, 34, 1))
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(210, 153, 34, 1)
+            BorderThickness: =2
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            X: =152
+            Y: =64
+            Width: =130
+            Height: =50
+      - gSu:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="U"
+            OnSelect: |-
+              =Patch(colAns, LookUp(colAns, ItemNo = ThisItem.ItemNo), {Rating: "U"}); Set(varItem, ThisItem.ItemNo); Reset(txtFind); Reset(txtImm); Reset(addF); Set(varPanel, "find")
+            Font: =Font.Arial
+            Size: =15
+            FontWeight: =FontWeight.Bold
+            Fill: =If(ThisItem.Rating = "U", RGBA(207, 34, 46, 1), RGBA(255, 255, 255, 1))
+            Color: =If(ThisItem.Rating = "U", RGBA(255, 255, 255, 1), RGBA(207, 34, 46, 1))
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(207, 34, 46, 1)
+            BorderThickness: =2
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            X: =292
+            Y: =64
+            Width: =130
+            Height: =50
+      - gSna:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="N/A"
+            OnSelect: |-
+              =Patch(colAns, LookUp(colAns, ItemNo = ThisItem.ItemNo), {Rating: "N/A"}); Patch(colAns, LookUp(colAns, ItemNo = ThisItem.ItemNo), {Sev: "", Finding: "", Imm: "", HasPh: false}); RemoveIf(colPhotos, Key = "S" & ThisItem.ItemNo)
+            Font: =Font.Arial
+            Size: =15
+            FontWeight: =FontWeight.Bold
+            Fill: =If(ThisItem.Rating = "N/A", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Color: =If(ThisItem.Rating = "N/A", RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(117, 120, 123, 1)
+            BorderThickness: =2
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            X: =432
+            Y: =64
+            Width: =140
+            Height: =50
+      - gSFind:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If((ThisItem.Rating = "AR" || ThisItem.Rating = "U"), If(IsBlank(ThisItem.Sev), "Tap to add the finding", ThisItem.Sev & ":  " & Coalesce(ThisItem.Finding, "(describe it)")) & If(ThisItem.HasPh, "   📷", "   (no photo)"), "")
+            Font: =Font.Arial
+            Size: =11
+            Color: =If(IsBlank(ThisItem.Sev), RGBA(207, 34, 46, 1), RGBA(7, 39, 45, 1))
+            FontWeight: =FontWeight.Bold
+            X: =12
+            Y: =120
+            Width: =530
+            Height: =50
+      - gSEdit:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="✎"
+            OnSelect: =Set(varItem, ThisItem.ItemNo); Reset(txtFind); Reset(txtImm); Reset(addF); Set(varPanel, "find")
+            Font: =Font.Arial
+            Size: =16
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(255, 255, 255, 1)
+            Color: =RGBA(0, 72, 81, 1)
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(0, 72, 81, 1)
+            Visible: =(ThisItem.Rating = "AR" || ThisItem.Rating = "U")
+            BorderThickness: =2
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            X: =550
+            Y: =120
+            Width: =60
+            Height: =46
+- btnSNext:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(CountRows(Filter(colAns As a, (IsBlank(a.Rating) || ((a.Rating = "AR" || a.Rating = "U") && (IsBlank(a.Sev) || IsBlank(Trim(a.Finding)) || !a.HasPh || ((a.Sev = "Critical" || a.Sev = "High") && IsBlank(Trim(a.Imm)))))))) = 0, "5S ›", "RATE EVERY ITEM (" & CountRows(Filter(colAns As a, (IsBlank(a.Rating) || ((a.Rating = "AR" || a.Rating = "U") && (IsBlank(a.Sev) || IsBlank(Trim(a.Finding)) || !a.HasPh || ((a.Sev = "Critical" || a.Sev = "High") && IsBlank(Trim(a.Imm)))))))) & " LEFT)")
+      OnSelect: =Set(varStep, "fives")
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =If(CountRows(Filter(colAns As a, (IsBlank(a.Rating) || ((a.Rating = "AR" || a.Rating = "U") && (IsBlank(a.Sev) || IsBlank(Trim(a.Finding)) || !a.HasPh || ((a.Sev = "Critical" || a.Sev = "High") && IsBlank(Trim(a.Imm)))))))) = 0, RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(CountRows(Filter(colAns As a, (IsBlank(a.Rating) || ((a.Rating = "AR" || a.Rating = "U") && (IsBlank(a.Sev) || IsBlank(Trim(a.Finding)) || !a.HasPh || ((a.Sev = "Critical" || a.Sev = "High") && IsBlank(Trim(a.Imm)))))))) = 0, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(CountRows(Filter(colAns As a, (IsBlank(a.Rating) || ((a.Rating = "AR" || a.Rating = "U") && (IsBlank(a.Sev) || IsBlank(Trim(a.Finding)) || !a.HasPh || ((a.Sev = "Critical" || a.Sev = "High") && IsBlank(Trim(a.Imm)))))))) = 0, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =1018
+      Width: =608
+      Height: =76
+      Visible: =varStep = "safety" && IsBlank(varPanel)
+- fBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =0
+      Y: =118
+      Width: =640
+      Height: =1018
+      Visible: =varPanel = "find"
+- fItem:
+    Control: Label@2.5.1
+    Properties:
+      Text: =LookUp(colAns, ItemNo = varItem).Item
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =608
+      Height: =44
+      Visible: =varPanel = "find"
+- fLook:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="LOOK FOR:  " & LookUp(colAns, ItemNo = varItem).LookFor
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      X: =16
+      Y: =174
+      Width: =608
+      Height: =70
+      Visible: =varPanel = "find"
+- fAR:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="AT RISK"
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Rating: "AR"})
+      Font: =Font.Arial
+      Size: =15
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colAns, ItemNo = varItem).Rating = "AR", RGBA(210, 153, 34, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colAns, ItemNo = varItem).Rating = "AR", RGBA(255, 255, 255, 1), RGBA(210, 153, 34, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(210, 153, 34, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =248
+      Width: =296
+      Height: =50
+      Visible: =varPanel = "find"
+- fU:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="UNSAFE"
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Rating: "U"})
+      Font: =Font.Arial
+      Size: =15
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colAns, ItemNo = varItem).Rating = "U", RGBA(207, 34, 46, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colAns, ItemNo = varItem).Rating = "U", RGBA(255, 255, 255, 1), RGBA(207, 34, 46, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(207, 34, 46, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =328
+      Y: =248
+      Width: =296
+      Height: =50
+      Visible: =varPanel = "find"
+- fC1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SEVERITY  (required)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =308
+      Width: =608
+      Height: =20
+      Visible: =varPanel = "find"
+- fSevC:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="C"
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Sev: "Critical", Act: If("Critical" = "Critical" || "Critical" = "High", true, LookUp(colAns, ItemNo = varItem).Act)})
+      Font: =Font.Arial
+      Size: =22
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colAns, ItemNo = varItem).Sev = "Critical", RGBA(207, 34, 46, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colAns, ItemNo = varItem).Sev = "Critical", RGBA(255, 255, 255, 1), RGBA(207, 34, 46, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(207, 34, 46, 1)
+      BorderThickness: =3
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =328
+      Width: =144
+      Height: =56
+      Visible: =varPanel = "find"
+- fSevH:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="H"
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Sev: "High", Act: If("High" = "Critical" || "High" = "High", true, LookUp(colAns, ItemNo = varItem).Act)})
+      Font: =Font.Arial
+      Size: =22
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colAns, ItemNo = varItem).Sev = "High", RGBA(227, 98, 9, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colAns, ItemNo = varItem).Sev = "High", RGBA(255, 255, 255, 1), RGBA(227, 98, 9, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(227, 98, 9, 1)
+      BorderThickness: =3
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =168
+      Y: =328
+      Width: =144
+      Height: =56
+      Visible: =varPanel = "find"
+- fSevM:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="M"
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Sev: "Medium", Act: If("Medium" = "Critical" || "Medium" = "High", true, LookUp(colAns, ItemNo = varItem).Act)})
+      Font: =Font.Arial
+      Size: =22
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colAns, ItemNo = varItem).Sev = "Medium", RGBA(210, 153, 34, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colAns, ItemNo = varItem).Sev = "Medium", RGBA(255, 255, 255, 1), RGBA(210, 153, 34, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(210, 153, 34, 1)
+      BorderThickness: =3
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =320
+      Y: =328
+      Width: =144
+      Height: =56
+      Visible: =varPanel = "find"
+- fSevL:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="L"
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Sev: "Low", Act: If("Low" = "Critical" || "Low" = "High", true, LookUp(colAns, ItemNo = varItem).Act)})
+      Font: =Font.Arial
+      Size: =22
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colAns, ItemNo = varItem).Sev = "Low", RGBA(46, 160, 67, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colAns, ItemNo = varItem).Sev = "Low", RGBA(255, 255, 255, 1), RGBA(46, 160, 67, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(46, 160, 67, 1)
+      BorderThickness: =3
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =472
+      Y: =328
+      Width: =144
+      Height: =56
+      Visible: =varPanel = "find"
+- fSevHint:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Switch(LookUp(colAns, ItemNo = varItem).Sev, "Critical", "CRITICAL: Stop work. Teams alert now.", "High", "HIGH: Action within 24 hours", "Medium", "MEDIUM: Within 30 days", "Low", "LOW: Next maintenance window", "C critical · H high · M medium · L low")
+      Font: =Font.Arial
+      Size: =11
+      Color: =Switch(LookUp(colAns, ItemNo = varItem).Sev, "Critical", RGBA(207, 34, 46, 1), "High", RGBA(227, 98, 9, 1), "Medium", RGBA(210, 153, 34, 1), "Low", RGBA(46, 160, 67, 1), RGBA(177, 179, 179, 1))
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =388
+      Width: =608
+      Height: =28
+      Visible: =varPanel = "find"
+- fC2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHAT DID YOU SEE?  (required)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =422
+      Width: =608
+      Height: =20
+      Visible: =varPanel = "find"
+- txtFind:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =LookUp(colAns, ItemNo = varItem).Finding
+      HintText: ="condition or behavior, where exactly"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Finding: Self.Text})
+      Mode: =TextMode.MultiLine
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =16
+      Y: =442
+      Width: =608
+      Height: =100
+      Visible: =varPanel = "find"
+- fC3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="IMMEDIATE ACTION TAKEN" & If(LookUp(colAns, ItemNo = varItem).Sev = "Critical" || LookUp(colAns, ItemNo = varItem).Sev = "High", "  (required for C/H)", "  (optional)")
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =550
+      Width: =608
+      Height: =20
+      Visible: =varPanel = "find"
+- txtImm:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =LookUp(colAns, ItemNo = varItem).Imm
+      HintText: ="e.g. stopped the job, barricaded, told supervisor"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Imm: Self.Text})
+      Mode: =TextMode.MultiLine
+      Fill: =If(IsBlank(Self.Text) && (LookUp(colAns, ItemNo = varItem).Sev = "Critical" || LookUp(colAns, ItemNo = varItem).Sev = "High"), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =16
+      Y: =570
+      Width: =608
+      Height: =80
+      Visible: =varPanel = "find"
+- addF:
+    Control: AddMedia@2.2.1
+    Properties:
+      X: =16
+      Y: =662
+      Width: =300
+      Height: =150
+      Size: =13
+      Text: =If(LookUp(colAns, ItemNo = varItem).HasPh, "✓ PHOTO TAKEN (tap to retake)", "📷  PHOTO (required)")
+      Fill: =If(LookUp(colAns, ItemNo = varItem).HasPh, RGBA(243, 244, 244, 1), RGBA(255, 242, 179, 1))
+      Color: =RGBA(0, 72, 81, 1)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      OnChange: |-
+        =RemoveIf(colPhotos, Key = "S" & varItem); Collect(colPhotos, {Key: "S" & varItem, No: varItem, Kind: "Safety", Ph: Self.Media}); Patch(colAns, LookUp(colAns, ItemNo = varItem), {HasPh: true})
+      Visible: =varPanel = "find"
+- fPh:
+    Control: Image@2.2.3
+    Properties:
+      Image: =LookUp(colPhotos, Key = "S" & varItem).Ph
+      ImagePosition: =ImagePosition.Fit
+      Fill: =RGBA(243, 244, 244, 1)
+      X: =328
+      Y: =662
+      Width: =296
+      Height: =150
+      Visible: =varPanel = "find"
+- fAct:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(LookUp(colAns, ItemNo = varItem).Act, "☑  ADD TO NEWSPAPER", "☐  ADD TO NEWSPAPER")
+      OnSelect: |-
+        =If(LookUp(colAns, ItemNo = varItem).Sev = "Critical" || LookUp(colAns, ItemNo = varItem).Sev = "High", Notify("Critical and High findings always get an action.", NotificationType.Information), Patch(colAns, LookUp(colAns, ItemNo = varItem), {Act: !LookUp(colAns, ItemNo = varItem).Act}))
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      Tooltip: ="Creates a NEWSPAPER action with a due date set by severity."
+      X: =16
+      Y: =824
+      Width: =608
+      Height: =56
+      Visible: =varPanel = "find"
+- fDone:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =If(With({a: LookUp(colAns, ItemNo = varItem)}, !(IsBlank(a.Rating) || ((a.Rating = "AR" || a.Rating = "U") && (IsBlank(a.Sev) || IsBlank(Trim(txtFind.Text)) || !a.HasPh || ((a.Sev = "Critical" || a.Sev = "High") && IsBlank(Trim(txtImm.Text))))))), "DONE ›", "SEVERITY + WHAT YOU SAW + PHOTO")
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Finding: txtFind.Text, Imm: txtImm.Text}); Set(varPanel, Blank())
+      Font: =Font.Arial
+      Size: =17
+      FontWeight: =FontWeight.Bold
+      Fill: |-
+        =If(With({a: LookUp(colAns, ItemNo = varItem)}, !(IsBlank(a.Rating) || ((a.Rating = "AR" || a.Rating = "U") && (IsBlank(a.Sev) || IsBlank(Trim(txtFind.Text)) || !a.HasPh || ((a.Sev = "Critical" || a.Sev = "High") && IsBlank(Trim(txtImm.Text))))))), RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: |-
+        =If(With({a: LookUp(colAns, ItemNo = varItem)}, !(IsBlank(a.Rating) || ((a.Rating = "AR" || a.Rating = "U") && (IsBlank(a.Sev) || IsBlank(Trim(txtFind.Text)) || !a.HasPh || ((a.Sev = "Critical" || a.Sev = "High") && IsBlank(Trim(txtImm.Text))))))), RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: |-
+        =If(With({a: LookUp(colAns, ItemNo = varItem)}, !(IsBlank(a.Rating) || ((a.Rating = "AR" || a.Rating = "U") && (IsBlank(a.Sev) || IsBlank(Trim(txtFind.Text)) || !a.HasPh || ((a.Sev = "Critical" || a.Sev = "High") && IsBlank(Trim(txtImm.Text))))))), DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =892
+      Width: =608
+      Height: =76
+      Visible: =varPanel = "find"
+- fUndo:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="Not a finding: clear rating"
+      OnSelect: |-
+        =Patch(colAns, LookUp(colAns, ItemNo = varItem), {Rating: "", Sev: "", Finding: "", Imm: "", HasPh: false}); RemoveIf(colPhotos, Key = "S" & varItem); Set(varPanel, Blank())
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(117, 120, 123, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(255, 255, 255, 1)
+      X: =16
+      Y: =980
+      Width: =608
+      Height: =50
+      Visible: =varPanel = "find"
+- vT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OBSERVE · 5S"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =160
+      Width: =300
+      Height: =40
+      Visible: =varStep = "fives" && IsBlank(varPanel)
+- vStd:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(IsBlank(varStd), "No 5S standard linked to this zone: general 5S check. (Link one in SAF_Zones → StandardID.)", "Against: " & varStd.Standard & If(IsBlank(varStd.DocNo), "", "  (" & varStd.DocNo & " rev " & varStd.Rev & ")"))
+      Font: =Font.Arial
+      Size: =11
+      Color: =If(IsBlank(varStd), RGBA(210, 153, 34, 1), RGBA(0, 72, 81, 1))
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =202
+      Width: =608
+      Height: =48
+      Visible: =varStep = "fives" && IsBlank(varPanel)
+- galFive:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colSec
+      TemplateSize: =240
+      TemplatePadding: =0
+      X: =10
+      Y: =252
+      Width: =620
+      Height: =756
+      Visible: =varStep = "fives" && IsBlank(varPanel)
+    Children:
+      - gVBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =If(ThisItem.Rating = "Deficient" && With({s: ThisItem}, (IsBlank(s.Rating) || (s.Rating = "Deficient" && (IsBlank(s.Pillar) || IsBlank(Trim(s.Finding)) || !s.HasPh || (s.SafetyRel && IsBlank(s.Sev)))))), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+            X: =0
+            Y: =0
+            Width: =620
+            Height: =232
+            BorderColor: =RGBA(217, 217, 214, 1)
+            BorderThickness: =1
+      - gVPh:
+          Control: Image@2.2.3
+          Properties:
+            Image: =LookUp(colStdPh, StepNo = ThisItem.ElNo).Thumbnail.Large
+            ImagePosition: =ImagePosition.Fit
+            Fill: =RGBA(243, 244, 244, 1)
+            X: =8
+            Y: =8
+            Width: =170
+            Height: =108
+      - gVNo:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="STANDARD"
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =RGBA(0, 72, 81, 0.75)
+            Visible: =!IsBlank(LookUp(colStdPh, StepNo = ThisItem.ElNo))
+            X: =8
+            Y: =92
+            Width: =170
+            Height: =24
+      - gVNoPh:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="no standard photo"
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(177, 179, 179, 1)
+            Align: =Align.Center
+            Visible: =IsBlank(LookUp(colStdPh, StepNo = ThisItem.ElNo))
+            X: =8
+            Y: =50
+            Width: =170
+            Height: =24
+      - gVSec:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Section
+            Font: =Font.Arial
+            Size: =15
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =188
+            Y: =4
+            Width: =420
+            Height: =32
+      - gVGood:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Good
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            VerticalAlign: =VerticalAlign.Top
+            X: =188
+            Y: =36
+            Width: =420
+            Height: =82
+      - gVok:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="MEETS"
+            OnSelect: |-
+              =Patch(colSec, LookUp(colSec, ElNo = ThisItem.ElNo), {Rating: "OK"}); Patch(colSec, LookUp(colSec, ElNo = ThisItem.ElNo), {Pillar: If(varStdID = 0, ThisItem.Pillar, ""), Finding: "", HasPh: false, SafetyRel: false, Sev: ""}); RemoveIf(colPhotos, Key = "F" & ThisItem.ElNo)
+            Font: =Font.Arial
+            Size: =13
+            FontWeight: =FontWeight.Bold
+            Fill: =If(ThisItem.Rating = "OK", RGBA(46, 160, 67, 1), RGBA(255, 255, 255, 1))
+            Color: =If(ThisItem.Rating = "OK", RGBA(255, 255, 255, 1), RGBA(46, 160, 67, 1))
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(46, 160, 67, 1)
+            BorderThickness: =2
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            X: =8
+            Y: =122
+            Width: =190
+            Height: =48
+      - gVdef:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="DEFICIENT"
+            OnSelect: |-
+              =Patch(colSec, LookUp(colSec, ElNo = ThisItem.ElNo), {Rating: "Deficient"}); Set(varSec, ThisItem.ElNo); Reset(txtDef); Reset(addD); Set(varPanel, "def")
+            Font: =Font.Arial
+            Size: =13
+            FontWeight: =FontWeight.Bold
+            Fill: =If(ThisItem.Rating = "Deficient", RGBA(207, 34, 46, 1), RGBA(255, 255, 255, 1))
+            Color: =If(ThisItem.Rating = "Deficient", RGBA(255, 255, 255, 1), RGBA(207, 34, 46, 1))
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(207, 34, 46, 1)
+            BorderThickness: =2
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            X: =206
+            Y: =122
+            Width: =230
+            Height: =48
+      - gVna:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="N/A"
+            OnSelect: |-
+              =Patch(colSec, LookUp(colSec, ElNo = ThisItem.ElNo), {Rating: "N/A"}); Patch(colSec, LookUp(colSec, ElNo = ThisItem.ElNo), {Pillar: If(varStdID = 0, ThisItem.Pillar, ""), Finding: "", HasPh: false, SafetyRel: false, Sev: ""}); RemoveIf(colPhotos, Key = "F" & ThisItem.ElNo)
+            Font: =Font.Arial
+            Size: =13
+            FontWeight: =FontWeight.Bold
+            Fill: =If(ThisItem.Rating = "N/A", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Color: =If(ThisItem.Rating = "N/A", RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(117, 120, 123, 1)
+            BorderThickness: =2
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            X: =444
+            Y: =122
+            Width: =156
+            Height: =48
+      - gVFind:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(ThisItem.Rating = "Deficient", Coalesce(ThisItem.Pillar, "Pick the pillar") & ":  " & Coalesce(ThisItem.Finding, "(describe it)") & If(ThisItem.HasPh, "   📷", "   (no photo)") & If(ThisItem.SafetyRel, "   ⚠ " & ThisItem.Sev, ""), "")
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            X: =8
+            Y: =176
+            Width: =530
+            Height: =50
+      - gVEdit:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: ="✎"
+            OnSelect: =Set(varSec, ThisItem.ElNo); Reset(txtDef); Reset(addD); Set(varPanel, "def")
+            Font: =Font.Arial
+            Size: =16
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(255, 255, 255, 1)
+            Color: =RGBA(0, 72, 81, 1)
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =RGBA(0, 72, 81, 1)
+            Visible: =ThisItem.Rating = "Deficient"
+            BorderThickness: =2
+            RadiusTopLeft: =8
+            RadiusTopRight: =8
+            RadiusBottomLeft: =8
+            RadiusBottomRight: =8
+            X: =550
+            Y: =176
+            Width: =60
+            Height: =46
+- btnVNext:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(CountRows(Filter(colSec As s, (IsBlank(s.Rating) || (s.Rating = "Deficient" && (IsBlank(s.Pillar) || IsBlank(Trim(s.Finding)) || !s.HasPh || (s.SafetyRel && IsBlank(s.Sev))))))) = 0, "INTERACT ›", "RATE EVERY SECTION (" & CountRows(Filter(colSec As s, (IsBlank(s.Rating) || (s.Rating = "Deficient" && (IsBlank(s.Pillar) || IsBlank(Trim(s.Finding)) || !s.HasPh || (s.SafetyRel && IsBlank(s.Sev))))))) & " LEFT)")
+      OnSelect: =Set(varStep, "interact")
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =If(CountRows(Filter(colSec As s, (IsBlank(s.Rating) || (s.Rating = "Deficient" && (IsBlank(s.Pillar) || IsBlank(Trim(s.Finding)) || !s.HasPh || (s.SafetyRel && IsBlank(s.Sev))))))) = 0, RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(CountRows(Filter(colSec As s, (IsBlank(s.Rating) || (s.Rating = "Deficient" && (IsBlank(s.Pillar) || IsBlank(Trim(s.Finding)) || !s.HasPh || (s.SafetyRel && IsBlank(s.Sev))))))) = 0, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(CountRows(Filter(colSec As s, (IsBlank(s.Rating) || (s.Rating = "Deficient" && (IsBlank(s.Pillar) || IsBlank(Trim(s.Finding)) || !s.HasPh || (s.SafetyRel && IsBlank(s.Sev))))))) = 0, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =1018
+      Width: =608
+      Height: =76
+      Visible: =varStep = "fives" && IsBlank(varPanel)
+- xBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =0
+      Y: =118
+      Width: =640
+      Height: =1018
+      Visible: =varPanel = "def"
+- xSec:
+    Control: Label@2.5.1
+    Properties:
+      Text: =LookUp(colSec, ElNo = varSec).Section
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =130
+      Width: =608
+      Height: =40
+      Visible: =varPanel = "def"
+- xStd:
+    Control: Image@2.2.3
+    Properties:
+      Image: =LookUp(colStdPh, StepNo = varSec).Thumbnail.Large
+      ImagePosition: =ImagePosition.Fit
+      Fill: =RGBA(243, 244, 244, 1)
+      X: =16
+      Y: =174
+      Width: =296
+      Height: =190
+      Visible: =varPanel = "def"
+- xStdL:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="STANDARD"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(0, 72, 81, 0.75)
+      X: =16
+      Y: =340
+      Width: =296
+      Height: =24
+      Visible: =varPanel = "def"
+- xPh:
+    Control: Image@2.2.3
+    Properties:
+      Image: =LookUp(colPhotos, Key = "F" & varSec).Ph
+      ImagePosition: =ImagePosition.Fit
+      Fill: =RGBA(0, 0, 0, 0)
+      X: =328
+      Y: =174
+      Width: =296
+      Height: =190
+      Visible: =varPanel = "def" && LookUp(colSec, ElNo = varSec).HasPh
+- addD:
+    Control: AddMedia@2.2.1
+    Properties:
+      X: =328
+      Y: =174
+      Width: =296
+      Height: =190
+      Size: =13
+      Text: =If(LookUp(colSec, ElNo = varSec).HasPh, "", "📷  PHOTO OF WHAT YOU SEE (required)")
+      Fill: =If(LookUp(colSec, ElNo = varSec).HasPh, RGBA(0, 0, 0, 0), RGBA(255, 242, 179, 1))
+      Color: =RGBA(0, 72, 81, 1)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      OnChange: |-
+        =RemoveIf(colPhotos, Key = "F" & varSec); Collect(colPhotos, {Key: "F" & varSec, No: varSec, Kind: "5S", Ph: Self.Media}); Patch(colSec, LookUp(colSec, ElNo = varSec), {HasPh: true})
+      Visible: =varPanel = "def"
+- xNow:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NOW (tap to retake)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(207, 34, 46, 0.8)
+      Visible: =varPanel = "def" && LookUp(colSec, ElNo = varSec).HasPh
+      X: =328
+      Y: =340
+      Width: =296
+      Height: =24
+- xGood:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="GOOD LOOKS LIKE:  " & LookUp(colSec, ElNo = varSec).Good
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(220, 242, 225, 1)
+      PaddingLeft: =10
+      PaddingRight: =10
+      X: =16
+      Y: =370
+      Width: =608
+      Height: =70
+      Visible: =varPanel = "def"
+- xC1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHICH 5S PILLAR FAILED?  (required)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =448
+      Width: =608
+      Height: =20
+      Visible: =varPanel = "def"
+- xP0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SORT"
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Pillar: "Sort"})
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colSec, ElNo = varSec).Pillar = "Sort", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colSec, ElNo = varSec).Pillar = "Sort", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =468
+      Width: =114
+      Height: =50
+      Visible: =varPanel = "def"
+- xP1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SET"
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Pillar: "Set in order"})
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colSec, ElNo = varSec).Pillar = "Set in order", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colSec, ElNo = varSec).Pillar = "Set in order", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =138
+      Y: =468
+      Width: =114
+      Height: =50
+      Visible: =varPanel = "def"
+- xP2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SHINE"
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Pillar: "Shine"})
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colSec, ElNo = varSec).Pillar = "Shine", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colSec, ElNo = varSec).Pillar = "Shine", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =260
+      Y: =468
+      Width: =114
+      Height: =50
+      Visible: =varPanel = "def"
+- xP3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="STD"
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Pillar: "Standardize"})
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colSec, ElNo = varSec).Pillar = "Standardize", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colSec, ElNo = varSec).Pillar = "Standardize", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =382
+      Y: =468
+      Width: =114
+      Height: =50
+      Visible: =varPanel = "def"
+- xP4:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SUST"
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Pillar: "Sustain"})
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colSec, ElNo = varSec).Pillar = "Sustain", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colSec, ElNo = varSec).Pillar = "Sustain", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =504
+      Y: =468
+      Width: =114
+      Height: =50
+      Visible: =varPanel = "def"
+- xPHint:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Switch(LookUp(colSec, ElNo = varSec).Pillar, "Sort", "Unneeded items, red-tag candidates, hoarding, broken or expired items", "Set in order", "No home or label, shadow board gaps, no FIFO, wrong height, no min/max, unclear return", "Shine", "Dirt or build-up, no cleaning schedule, blocked drains/vents, pests, hidden inspection points", "Standardize", "No visual instruction, inconsistent colors, no standard photo, unclear ownership, abnormal not obvious", "Sustain", "No sign of prior checks, operator can't explain the standard, no improvement tracking, does not recover", "")
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      X: =16
+      Y: =522
+      Width: =608
+      Height: =44
+      Visible: =varPanel = "def"
+- xC2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHAT IS DIFFERENT FROM THE STANDARD?  (required)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =570
+      Width: =608
+      Height: =20
+      Visible: =varPanel = "def"
+- txtDef:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =LookUp(colSec, ElNo = varSec).Finding
+      HintText: ="e.g. 3 empty outlines, no sign-out tag"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Finding: Self.Text})
+      Mode: =TextMode.MultiLine
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =16
+      Y: =590
+      Width: =608
+      Height: =90
+      Visible: =varPanel = "def"
+- xSafe:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(LookUp(colSec, ElNo = varSec).SafetyRel, "☑  SAFETY HAZARD TOO (goes to FMEA / severity)", "☐  ALSO A SAFETY HAZARD?")
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {SafetyRel: !LookUp(colSec, ElNo = varSec).SafetyRel, Sev: If(LookUp(colSec, ElNo = varSec).SafetyRel, "", LookUp(colSec, ElNo = varSec).Sev)})
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colSec, ElNo = varSec).SafetyRel, RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(210, 153, 34, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =690
+      Width: =608
+      Height: =52
+      Visible: =varPanel = "def"
+- xSevC:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="C"
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Sev: "Critical", Act: If("Critical" = "Critical" || "Critical" = "High", true, LookUp(colSec, ElNo = varSec).Act)})
+      Font: =Font.Arial
+      Size: =20
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colSec, ElNo = varSec).Sev = "Critical", RGBA(207, 34, 46, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colSec, ElNo = varSec).Sev = "Critical", RGBA(255, 255, 255, 1), RGBA(207, 34, 46, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(207, 34, 46, 1)
+      BorderThickness: =3
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      Visible: =varPanel = "def" && LookUp(colSec, ElNo = varSec).SafetyRel
+      X: =16
+      Y: =750
+      Width: =144
+      Height: =50
+- xSevH:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="H"
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Sev: "High", Act: If("High" = "Critical" || "High" = "High", true, LookUp(colSec, ElNo = varSec).Act)})
+      Font: =Font.Arial
+      Size: =20
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colSec, ElNo = varSec).Sev = "High", RGBA(227, 98, 9, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colSec, ElNo = varSec).Sev = "High", RGBA(255, 255, 255, 1), RGBA(227, 98, 9, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(227, 98, 9, 1)
+      BorderThickness: =3
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      Visible: =varPanel = "def" && LookUp(colSec, ElNo = varSec).SafetyRel
+      X: =168
+      Y: =750
+      Width: =144
+      Height: =50
+- xSevM:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="M"
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Sev: "Medium", Act: If("Medium" = "Critical" || "Medium" = "High", true, LookUp(colSec, ElNo = varSec).Act)})
+      Font: =Font.Arial
+      Size: =20
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colSec, ElNo = varSec).Sev = "Medium", RGBA(210, 153, 34, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colSec, ElNo = varSec).Sev = "Medium", RGBA(255, 255, 255, 1), RGBA(210, 153, 34, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(210, 153, 34, 1)
+      BorderThickness: =3
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      Visible: =varPanel = "def" && LookUp(colSec, ElNo = varSec).SafetyRel
+      X: =320
+      Y: =750
+      Width: =144
+      Height: =50
+- xSevL:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="L"
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Sev: "Low", Act: If("Low" = "Critical" || "Low" = "High", true, LookUp(colSec, ElNo = varSec).Act)})
+      Font: =Font.Arial
+      Size: =20
+      FontWeight: =FontWeight.Bold
+      Fill: =If(LookUp(colSec, ElNo = varSec).Sev = "Low", RGBA(46, 160, 67, 1), RGBA(255, 255, 255, 1))
+      Color: =If(LookUp(colSec, ElNo = varSec).Sev = "Low", RGBA(255, 255, 255, 1), RGBA(46, 160, 67, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(46, 160, 67, 1)
+      BorderThickness: =3
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      Visible: =varPanel = "def" && LookUp(colSec, ElNo = varSec).SafetyRel
+      X: =472
+      Y: =750
+      Width: =144
+      Height: =50
+- xAct:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(LookUp(colSec, ElNo = varSec).Act, "☑  ADD TO NEWSPAPER", "☐  ADD TO NEWSPAPER")
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Act: !LookUp(colSec, ElNo = varSec).Act})
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =812
+      Width: =608
+      Height: =52
+      Visible: =varPanel = "def"
+- xDone:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =If(With({s: LookUp(colSec, ElNo = varSec)}, !(IsBlank(s.Rating) || (s.Rating = "Deficient" && (IsBlank(s.Pillar) || IsBlank(Trim(txtDef.Text)) || !s.HasPh || (s.SafetyRel && IsBlank(s.Sev)))))), "DONE ›", "PILLAR + WHAT'S DIFFERENT + PHOTO")
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Finding: txtDef.Text}); Set(varPanel, Blank())
+      Font: =Font.Arial
+      Size: =17
+      FontWeight: =FontWeight.Bold
+      Fill: |-
+        =If(With({s: LookUp(colSec, ElNo = varSec)}, !(IsBlank(s.Rating) || (s.Rating = "Deficient" && (IsBlank(s.Pillar) || IsBlank(Trim(txtDef.Text)) || !s.HasPh || (s.SafetyRel && IsBlank(s.Sev)))))), RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: |-
+        =If(With({s: LookUp(colSec, ElNo = varSec)}, !(IsBlank(s.Rating) || (s.Rating = "Deficient" && (IsBlank(s.Pillar) || IsBlank(Trim(txtDef.Text)) || !s.HasPh || (s.SafetyRel && IsBlank(s.Sev)))))), RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: |-
+        =If(With({s: LookUp(colSec, ElNo = varSec)}, !(IsBlank(s.Rating) || (s.Rating = "Deficient" && (IsBlank(s.Pillar) || IsBlank(Trim(txtDef.Text)) || !s.HasPh || (s.SafetyRel && IsBlank(s.Sev)))))), DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =876
+      Width: =608
+      Height: =76
+      Visible: =varPanel = "def"
+- xUndo:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="Meets standard after all: clear"
+      OnSelect: |-
+        =Patch(colSec, LookUp(colSec, ElNo = varSec), {Rating: "", Finding: "", HasPh: false, SafetyRel: false, Sev: ""}); RemoveIf(colPhotos, Key = "F" & varSec); Set(varPanel, Blank())
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(117, 120, 123, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(255, 255, 255, 1)
+      X: =16
+      Y: =964
+      Width: =608
+      Height: =50
+      Visible: =varPanel = "def"
+- iT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="INTERACT"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =160
+      Width: =300
+      Height: =40
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- iHint:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Required. Introduce yourself; you are a guest. Systems, not blame. Ask all four, listen more than you talk."
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      X: =16
+      Y: =200
+      Width: =608
+      Height: =44
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- iC0:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OPERATOR (name or role)  (required)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =246
+      Width: =608
+      Height: =20
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- txtOp:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="e.g. Line 209 lead, maintenance tech"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =16
+      Y: =266
+      Width: =608
+      Height: =48
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- iQ0:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="1.  What's the most hazardous thing about working here?"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =322
+      Width: =608
+      Height: =40
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- txtQ0:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="their words"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =16
+      Y: =362
+      Width: =608
+      Height: =78
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- iQ1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="2.  What part of your body is most tired at the end of the shift?"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =450
+      Width: =608
+      Height: =40
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- txtQ1:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="their words"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =16
+      Y: =490
+      Width: =608
+      Height: =78
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- iQ2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="3.  If you could change one thing here, what would it be?"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =578
+      Width: =608
+      Height: =40
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- txtQ2:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="their words"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =16
+      Y: =618
+      Width: =608
+      Height: =78
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- iQ3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="4.  Has anyone had a close call here recently?"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =706
+      Width: =608
+      Height: =40
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- txtQ3:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="their words"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =16
+      Y: =746
+      Width: =608
+      Height: =78
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- iC5:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="HOW OPEN WAS THE CONVERSATION?  1 = guarded · 5 = engaged"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =834
+      Width: =608
+      Height: =20
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- iCf1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="1"
+      OnSelect: =Set(varComfort, 1)
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varComfort = 1, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varComfort = 1, RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =854
+      Width: =114
+      Height: =50
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- iCf2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="2"
+      OnSelect: =Set(varComfort, 2)
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varComfort = 2, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varComfort = 2, RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =138
+      Y: =854
+      Width: =114
+      Height: =50
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- iCf3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="3"
+      OnSelect: =Set(varComfort, 3)
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varComfort = 3, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varComfort = 3, RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =260
+      Y: =854
+      Width: =114
+      Height: =50
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- iCf4:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="4"
+      OnSelect: =Set(varComfort, 4)
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varComfort = 4, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varComfort = 4, RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =382
+      Y: =854
+      Width: =114
+      Height: =50
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- iCf5:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="5"
+      OnSelect: =Set(varComfort, 5)
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varComfort = 5, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varComfort = 5, RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =504
+      Y: =854
+      Width: =114
+      Height: =50
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- btnINext:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(Len(Trim(txtOp.Text)) > 0 && Len(Trim(txtQ0.Text)) > 0 && Len(Trim(txtQ1.Text)) > 0 && Len(Trim(txtQ2.Text)) > 0 && Len(Trim(txtQ3.Text)) > 0 && varComfort > 0, "RECORD ›", "OPERATOR, 4 ANSWERS, COMFORT")
+      OnSelect: =Set(varStep, "record")
+      Font: =Font.Arial
+      Size: =17
+      FontWeight: =FontWeight.Bold
+      Fill: =If(Len(Trim(txtOp.Text)) > 0 && Len(Trim(txtQ0.Text)) > 0 && Len(Trim(txtQ1.Text)) > 0 && Len(Trim(txtQ2.Text)) > 0 && Len(Trim(txtQ3.Text)) > 0 && varComfort > 0, RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(Len(Trim(txtOp.Text)) > 0 && Len(Trim(txtQ0.Text)) > 0 && Len(Trim(txtQ1.Text)) > 0 && Len(Trim(txtQ2.Text)) > 0 && Len(Trim(txtQ3.Text)) > 0 && varComfort > 0, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(Len(Trim(txtOp.Text)) > 0 && Len(Trim(txtQ0.Text)) > 0 && Len(Trim(txtQ1.Text)) > 0 && Len(Trim(txtQ2.Text)) > 0 && Len(Trim(txtQ3.Text)) > 0 && varComfort > 0, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =918
+      Width: =608
+      Height: =72
+      Visible: =varStep = "interact" && IsBlank(varPanel)
+- rT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="RECORD"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =160
+      Width: =300
+      Height: =40
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- rPct:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(If(CountRows(Filter(colAns, Rating = "S")) + CountRows(Filter(colAns, Rating = "AR")) + CountRows(Filter(colAns, Rating = "U")) = 0, 1, CountRows(Filter(colAns, Rating = "S")) / (CountRows(Filter(colAns, Rating = "S")) + CountRows(Filter(colAns, Rating = "AR")) + CountRows(Filter(colAns, Rating = "U")))) * 100, "0") & "% SAFE"
+      Font: =Font.Arial
+      Size: =34
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =If(If(CountRows(Filter(colAns, Rating = "S")) + CountRows(Filter(colAns, Rating = "AR")) + CountRows(Filter(colAns, Rating = "U")) = 0, 1, CountRows(Filter(colAns, Rating = "S")) / (CountRows(Filter(colAns, Rating = "S")) + CountRows(Filter(colAns, Rating = "AR")) + CountRows(Filter(colAns, Rating = "U")))) >= 0.95, RGBA(46, 160, 67, 1), If(CountRows(Filter(colAns, Rating = "S")) + CountRows(Filter(colAns, Rating = "AR")) + CountRows(Filter(colAns, Rating = "U")) = 0, 1, CountRows(Filter(colAns, Rating = "S")) / (CountRows(Filter(colAns, Rating = "S")) + CountRows(Filter(colAns, Rating = "AR")) + CountRows(Filter(colAns, Rating = "U")))) >= 0.85, RGBA(210, 153, 34, 1), RGBA(207, 34, 46, 1))
+      X: =16
+      Y: =206
+      Width: =300
+      Height: =90
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- rTop:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="TOP SEVERITY" & Char(10) & Upper(With({v: Ungroup(Table({t: ForAll(Filter(colAns, Rating = "AR" || Rating = "U"), {S: Sev})}, {t: ForAll(Filter(colSec, Rating = "Deficient" && SafetyRel), {S: Sev})}), t)}, If(CountRows(Filter(v, S = "Critical")) > 0, "Critical", CountRows(Filter(v, S = "High")) > 0, "High", CountRows(Filter(v, S = "Medium")) > 0, "Medium", CountRows(Filter(v, S = "Low")) > 0, "Low", "None")))
+      Font: =Font.Arial
+      Size: =18
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: |-
+        =Switch(With({v: Ungroup(Table({t: ForAll(Filter(colAns, Rating = "AR" || Rating = "U"), {S: Sev})}, {t: ForAll(Filter(colSec, Rating = "Deficient" && SafetyRel), {S: Sev})}), t)}, If(CountRows(Filter(v, S = "Critical")) > 0, "Critical", CountRows(Filter(v, S = "High")) > 0, "High", CountRows(Filter(v, S = "Medium")) > 0, "Medium", CountRows(Filter(v, S = "Low")) > 0, "Low", "None")), "Critical", RGBA(207, 34, 46, 1), "High", RGBA(227, 98, 9, 1), "Medium", RGBA(210, 153, 34, 1), "Low", RGBA(46, 160, 67, 1), RGBA(177, 179, 179, 1))
+      X: =328
+      Y: =206
+      Width: =296
+      Height: =90
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- rCounts:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="Safety:  " & CountRows(Filter(colAns, Rating = "S")) & " S  ·  " & CountRows(Filter(colAns, Rating = "AR")) & " AR  ·  " & CountRows(Filter(colAns, Rating = "U")) & " U  ·  " & CountRows(Filter(colAns, Rating = "N/A")) & " N/A" & Char(10) & "5S:  " & CountRows(Filter(colSec, Rating = "OK")) & " meet  ·  " & CountRows(Filter(colSec, Rating = "Deficient")) & " deficient" & Char(10) & CountRows(Filter(colAns, (Rating = "AR" || Rating = "U") && Act)) + CountRows(Filter(colSec, Rating = "Deficient" && Act)) & " NEWSPAPER action(s) will be created"
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(243, 244, 244, 1)
+      PaddingLeft: =12
+      X: =16
+      Y: =304
+      Width: =608
+      Height: =96
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- rC1:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="CLOSE THE LOOP: DID YOU TELL THE OPERATOR WHAT YOU SAW AND WHAT HAPPENS NEXT?"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =412
+      Width: =608
+      Height: =20
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- rL0:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="ON THE SPOT"
+      OnSelect: =Set(varLoop, "On the spot")
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varLoop = "On the spot", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varLoop = "On the spot", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =434
+      Width: =300
+      Height: =52
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- rL1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="WITHIN 24 HOURS"
+      OnSelect: =Set(varLoop, "Within 24 hours")
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varLoop = "Within 24 hours", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varLoop = "Within 24 hours", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =324
+      Y: =434
+      Width: =300
+      Height: =52
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- rL2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="PENDING"
+      OnSelect: =Set(varLoop, "Pending")
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varLoop = "Pending", RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varLoop = "Pending", RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =494
+      Width: =300
+      Height: =52
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- rL3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="NOT DONE"
+      OnSelect: =Set(varLoop, "Not done")
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varLoop = "Not done", RGBA(207, 34, 46, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varLoop = "Not done", RGBA(255, 255, 255, 1), RGBA(207, 34, 46, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(207, 34, 46, 1)
+      BorderThickness: =2
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =324
+      Y: =494
+      Width: =300
+      Height: =52
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- rC2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="FOLLOW-UP DATE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =560
+      Width: =300
+      Height: =20
+      Visible: =varStep = "record" && IsBlank(varPanel) && (varLoop = "Within 24 hours" || varLoop = "Pending")
+- dpFollow:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =ForAll(Sequence(14) As n, {Value: Text(DateAdd(Today(), n.Value, TimeUnit.Days), "ddd m/d"), D: DateAdd(Today(), n.Value, TimeUnit.Days)})
+      Font: =Font.Arial
+      Size: =15
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =16
+      Y: =580
+      Width: =300
+      Height: =50
+      Visible: =varStep = "record" && IsBlank(varPanel) && (varLoop = "Within 24 hours" || varLoop = "Pending")
+- rC3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="KEY CONCERN THE OPERATOR RAISED  (required)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =640
+      Width: =608
+      Height: =20
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- txtConcern:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="in one line"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      X: =16
+      Y: =660
+      Width: =608
+      Height: =70
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- rC4:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="AUDITOR NOTES  (optional)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =16
+      Y: =738
+      Width: =608
+      Height: =20
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- txtNotes:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="follow-ups, context"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Mode: =TextMode.MultiLine
+      X: =16
+      Y: =758
+      Width: =608
+      Height: =70
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- btnSubmit:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(!IsBlank(varLoop) && Len(Trim(txtConcern.Text)) > 0, "SUBMIT AUDIT", "CLOSE THE LOOP + KEY CONCERN")
+      OnSelect: |-
+        =IfError(
+         Set(varAud, Patch(SAF_Audits, Defaults(SAF_Audits), {
+           Ref: "FA-" & varZone.ZoneID & "-" & Text(Now(), "yyyymmdd-hhmmss"), ZoneID: varZone.ZoneID, ZoneName: varZone.ZoneName, ZoneType: varZone.ZoneType,
+           Line: varZone.Line, Area: varZone.Area, AuditDate: Today(), Shift: If(Hour(Now()) * 60 + Minute(Now()) >= 360 && Hour(Now()) * 60 + Minute(Now()) < 990, 1, 2), Classification: {Value: ddClass.Selected.Value},
+           AuditedBy: User().Email, AuditorName: User().FullName, WhyZone: txtWhy.Text, FirstLook: txtStop.Text, StartedAt: varStart, CompletedAt: Now(),
+           NS: CountRows(Filter(colAns, Rating = "S")), NAR: CountRows(Filter(colAns, Rating = "AR")), NU: CountRows(Filter(colAns, Rating = "U")), NNA: CountRows(Filter(colAns, Rating = "N/A")), SafePct: If(CountRows(Filter(colAns, Rating = "S")) + CountRows(Filter(colAns, Rating = "AR")) + CountRows(Filter(colAns, Rating = "U")) = 0, 1, CountRows(Filter(colAns, Rating = "S")) / (CountRows(Filter(colAns, Rating = "S")) + CountRows(Filter(colAns, Rating = "AR")) + CountRows(Filter(colAns, Rating = "U")))), N5SOK: CountRows(Filter(colSec, Rating = "OK")), N5SDef: CountRows(Filter(colSec, Rating = "Deficient")), StandardID: varStdID,
+           TopSeverity: {Value: With({v: Ungroup(Table({t: ForAll(Filter(colAns, Rating = "AR" || Rating = "U"), {S: Sev})}, {t: ForAll(Filter(colSec, Rating = "Deficient" && SafetyRel), {S: Sev})}), t)}, If(CountRows(Filter(v, S = "Critical")) > 0, "Critical", CountRows(Filter(v, S = "High")) > 0, "High", CountRows(Filter(v, S = "Medium")) > 0, "Medium", CountRows(Filter(v, S = "Low")) > 0, "Low", "None"))}, OperatorRole: txtOp.Text, Q1: txtQ0.Text, Q2: txtQ1.Text, Q3: txtQ2.Text, Q4: txtQ3.Text, Comfort: varComfort,
+           KeyConcern: txtConcern.Text, LoopMethod: {Value: varLoop}, FollowUpDate: If(varLoop = "Within 24 hours" || varLoop = "Pending", dpFollow.Selected.D, Blank()), Notes: txtNotes.Text}));
+         ForAll(colAns As a, Patch(SAF_Results, Defaults(SAF_Results), {Ref: varAud.Ref & "-S" & a.ItemNo, AuditID: varAud.ID, ZoneID: varZone.ZoneID, Line: varZone.Line, AuditDate: Today(),
+           Kind: {Value: "Safety"}, ItemNo: a.ItemNo, Category: a.Category, Item: a.Item, Rating: {Value: a.Rating},
+           Severity: If((a.Rating = "AR" || a.Rating = "U") && !IsBlank(a.Sev), {Value: a.Sev}, Blank()), Finding: a.Finding, ImmediateAction: a.Imm,
+           ActionCreated: (a.Rating = "AR" || a.Rating = "U") && a.Act, NewspaperRef: If((a.Rating = "AR" || a.Rating = "U") && a.Act, varAud.Ref & "-S" & a.ItemNo, ""), ZoneOwnerEmail: varZone.OwnerEmail}));
+         ForAll(colSec As s, Patch(SAF_Results, Defaults(SAF_Results), {Ref: varAud.Ref & "-F" & s.ElNo, AuditID: varAud.ID, ZoneID: varZone.ZoneID, Line: varZone.Line, AuditDate: Today(),
+           Kind: {Value: "5S"}, ItemNo: s.ElNo, ElementID: s.ElementID, Category: "5S", Item: s.Section, Rating: {Value: s.Rating},
+           Pillar: If(s.Rating = "Deficient" && !IsBlank(s.Pillar), {Value: s.Pillar}, Blank()), Severity: If(s.Rating = "Deficient" && s.SafetyRel && !IsBlank(s.Sev), {Value: s.Sev}, Blank()),
+           SafetyRelevant: s.Rating = "Deficient" && s.SafetyRel, Finding: s.Finding, ActionCreated: s.Rating = "Deficient" && s.Act,
+           NewspaperRef: If(s.Rating = "Deficient" && s.Act, varAud.Ref & "-F" & s.ElNo, ""), ZoneOwnerEmail: varZone.OwnerEmail}));
+         ForAll(Filter(colAns, (Rating = "AR" || Rating = "U") && Act) As a, Patch(Newspaper, Defaults(Newspaper), {
+           Action: Left("FRONTIER " & Switch(a.Sev, "Critical", "C", "High", "H", "Medium", "M", "Low", "L", "") & ": " & a.Item & " at " & varZone.ZoneName & " | " & a.Finding, 250), Line: varZone.Line,
+           SQDCP: {Value: "Safety"}, Source: {Value: "Frontier audit"}, Owner: varZone.Owner, OwnerEmail: varZone.OwnerEmail,
+           Problem: "Frontier audit " & varAud.Ref & " (" & varZone.ZoneID & "), item " & a.ItemNo & " " & a.Item & ", " & a.Rating & ", " & a.Sev & ": " & a.Finding & If(IsBlank(a.Imm), "", Char(10) & "Immediate action: " & a.Imm),
+           RaisedDate: Today(), DueDate: DateAdd(Today(), Coalesce(Value(LookUp(colCfg, Setting = "SAF_DueDays_" & a.Sev).SettingValue), Switch(a.Sev, "Critical", 1, "High", 1, "Medium", 30, "Low", 90, 30)), TimeUnit.Days), Status: {Value: "Open"}, Progress: 0, RefKey: varAud.Ref & "-S" & a.ItemNo}));
+         ForAll(Filter(colSec, Rating = "Deficient" && Act) As s, Patch(Newspaper, Defaults(Newspaper), {
+           Action: Left("FRONTIER 5S " & s.Pillar & If(s.SafetyRel, " (" & Switch(s.Sev, "Critical", "C", "High", "H", "Medium", "M", "Low", "L", "") & ")", "") & ": " & s.Section & " at " & varZone.ZoneName & " | " & s.Finding, 250), Line: varZone.Line,
+           SQDCP: {Value: If(s.SafetyRel, "Safety", "Quality")}, Source: {Value: "Frontier audit"}, Owner: varZone.Owner, OwnerEmail: varZone.OwnerEmail,
+           Problem: "Frontier audit " & varAud.Ref & " (" & varZone.ZoneID & "), 5S section " & s.Section & " does not meet " & Coalesce(varStd.DocNo, "the 5S standard") & " (" & s.Pillar & "): " & s.Finding,
+           RaisedDate: Today(), DueDate: DateAdd(Today(), If(s.SafetyRel, Coalesce(Value(LookUp(colCfg, Setting = "SAF_DueDays_" & s.Sev).SettingValue), Switch(s.Sev, "Critical", 1, "High", 1, "Medium", 30, "Low", 90, 30)), Coalesce(Value(LookUp(colCfg, Setting = "SAF_DueDays_5S").SettingValue), 30)), TimeUnit.Days),
+           Status: {Value: "Open"}, Progress: 0, RefKey: varAud.Ref & "-F" & s.ElNo}));
+         ForAll(colPhotos As p, Patch(TS_Photos, LookUp(TS_Photos, ID = Value('MDI-UploadPhoto'.Run(JSON(p.Ph, JSONFormat.IncludeBinaryData), varAud.Ref & "-" & p.Key & ".jpg",
+            varAud.ID, If(p.Kind = "5S", 100 + p.No, p.No), 0, "Finding",
+            Left(If(p.Kind = "5S", "5S " & LookUp(colSec, ElNo = p.No).Section & ": " & LookUp(colSec, ElNo = p.No).Finding, LookUp(colAns, ItemNo = p.No).Item & ": " & LookUp(colAns, ItemNo = p.No).Finding), 250), User().Email).photoid)),
+            {Module: {Value: "Frontier audit"}, RefID: varAud.ID})),
+         Notify("NOT SUBMITTED: " & FirstError.Message & "  (check signal, try again)", NotificationType.Error),
+         Set(varDoneTop, With({v: Ungroup(Table({t: ForAll(Filter(colAns, Rating = "AR" || Rating = "U"), {S: Sev})}, {t: ForAll(Filter(colSec, Rating = "Deficient" && SafetyRel), {S: Sev})}), t)}, If(CountRows(Filter(v, S = "Critical")) > 0, "Critical", CountRows(Filter(v, S = "High")) > 0, "High", CountRows(Filter(v, S = "Medium")) > 0, "Medium", CountRows(Filter(v, S = "Low")) > 0, "Low", "None"))); Set(varDoneActs, CountRows(Filter(colAns, (Rating = "AR" || Rating = "U") && Act)) + CountRows(Filter(colSec, Rating = "Deficient" && Act))); Set(varDonePct, If(CountRows(Filter(colAns, Rating = "S")) + CountRows(Filter(colAns, Rating = "AR")) + CountRows(Filter(colAns, Rating = "U")) = 0, 1, CountRows(Filter(colAns, Rating = "S")) / (CountRows(Filter(colAns, Rating = "S")) + CountRows(Filter(colAns, Rating = "AR")) + CountRows(Filter(colAns, Rating = "U"))))); Set(varStep, "done"); Select(btnFRefresh))
+      Font: =Font.Arial
+      Size: =19
+      FontWeight: =FontWeight.Bold
+      Fill: =If(!IsBlank(varLoop) && Len(Trim(txtConcern.Text)) > 0, RGBA(0, 72, 81, 1), RGBA(217, 217, 214, 1))
+      Color: =If(!IsBlank(varLoop) && Len(Trim(txtConcern.Text)) > 0, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(!IsBlank(varLoop) && Len(Trim(txtConcern.Text)) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(117, 120, 123, 1)
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =846
+      Width: =608
+      Height: =80
+      Visible: =varStep = "record" && IsBlank(varPanel)
+- dnCard:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =Switch(varDoneTop, "Critical", RGBA(207, 34, 46, 1), "High", RGBA(227, 98, 9, 1), "Medium", RGBA(210, 153, 34, 1), "Low", RGBA(46, 160, 67, 1), RGBA(177, 179, 179, 1))
+      X: =40
+      Y: =170
+      Width: =560
+      Height: =440
+      Visible: =varStep = "done" && IsBlank(varPanel)
+- dnPct:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(varDonePct * 100, "0") & "% SAFE"
+      Font: =Font.Georgia
+      Size: =48
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =40
+      Y: =220
+      Width: =560
+      Height: =110
+      Visible: =varStep = "done" && IsBlank(varPanel)
+- dnSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varDoneTop = "None", "No safety findings. ", "Top severity: " & Upper(varDoneTop) & ". ") & varDoneActs & " action(s) added to NEWSPAPER." & If(varDoneTop = "Critical", Char(10) & Char(10) & "CRITICAL: make sure work is stopped and the area is safe. The safety coordinator and zone owner get a Teams alert.", "")
+      Font: =Font.Arial
+      Size: =15
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =60
+      Y: =340
+      Width: =520
+      Height: =250
+      Visible: =varStep = "done" && IsBlank(varPanel)
+- btnDnNext:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="NEXT ZONE"
+      OnSelect: =Set(varStep, "zone"); Set(varZone, Blank())
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =8
+      RadiusTopRight: =8
+      RadiusBottomLeft: =8
+      RadiusBottomRight: =8
+      X: =16
+      Y: =640
+      Width: =608
+      Height: =76
+      Visible: =varStep = "done" && IsBlank(varPanel)
+- btnFStart:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =Set(varStdID, Coalesce(varZone.StandardID, 0));
+        Set(varStd, If(varStdID > 0, LookUp(SW_Standards, ID = varStdID), Blank()));
+        If(varStdID > 0, IfError(ClearCollect(colEl, Sort(Filter(SW_Elements, StandardID = varStdID), ElementNo)), Notify("Could not load the 5S standard sections", NotificationType.Warning), true), Clear(colEl));
+        ClearCollect(colStdPh, If(varStdID > 0, Filter(TS_Photos, Module.Value = "Standard work" && RefID = varStdID)));
+        ClearCollect(colAns, ForAll(colItems As i, {ItemNo: i.ItemNo, Category: i.Category.Value, Item: i.Check, LookFor: i.LookFor, Rating: "", Sev: "", Finding: "", Imm: "", HasPh: false, Act: true}));
+        ClearCollect(colSec, If(CountRows(Filter(colEl, Coalesce(Active, true))) > 0,
+           ForAll(Filter(colEl, Coalesce(Active, true)) As e, {ElNo: e.ElementNo, ElementID: e.ID, Section: e.Element, Good: e.GoodLooksLike, Pillar: "", Rating: "", Finding: "", HasPh: false, SafetyRel: e.PointType.Value = "Safety", Sev: "", Act: true}),
+           ForAll(Table({ElNo: 1, Section: "Sort", Good: "Only what this area needs is here. No red-tag candidates, hoarding, personal items or broken/expired items.", P: "Sort"},
+              {ElNo: 2, Section: "Set in order", Good: "Everything has a labeled home, shadow boards complete, FIFO dates, min/max visible, obvious return path.", P: "Set in order"},
+              {ElNo: 3, Section: "Shine", Good: "Clean for its function. Cleaning schedule posted and followed; drains, vents and inspection points clear; no pests.", P: "Shine"},
+              {ElNo: 4, Section: "Standardize", Good: "Visual instructions and standard-condition photo posted; colors consistent; owner named; abnormal is obvious at a glance.", P: "Standardize"},
+              {ElNo: 5, Section: "Sustain", Good: "Evidence of recent checks; operators can explain the standard; improvements tracked; area recovers after disruption.", P: "Sustain"}) As g, {ElNo: g.ElNo, ElementID: 0, Section: g.Section, Good: g.Good, Pillar: g.P, Rating: "", Finding: "", HasPh: false, SafetyRel: false, Sev: "", Act: true})));
+        If(CountRows(Filter(colEl, Coalesce(Active, true))) = 0, Set(varStdID, 0));
+        Clear(colPhotos); Set(varComfort, 0); Set(varLoop, ""); Set(varPanel, Blank()); Set(varStart, Now());
+        Reset(txtWhy); Reset(txtStop); Reset(txtOp); Reset(txtQ0); Reset(txtQ1); Reset(txtQ2); Reset(txtQ3); Reset(txtConcern); Reset(txtNotes); Reset(ddClass);
+        If(CountRows(colAns) = 0, Notify("SAF_Items is empty. Run the list setup again.", NotificationType.Error), Set(varStep, "decide"))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =0
+      Y: =1135
+      Width: =1
+      Height: =1
+- lblLoaded:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(IsBlank(varLoaded), "Not loaded: tap ↻", "Loaded " & Text(varLoaded, "h:mm AM/PM"))
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(177, 179, 179, 1)
+      Align: =Align.Center
+      Visible: =IsBlank(varPanel)
+      X: =16
+      Y: =1104
+      Width: =608
+      Height: =26

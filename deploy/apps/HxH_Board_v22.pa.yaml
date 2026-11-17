@@ -1,0 +1,1905 @@
+- hdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =90
+- lblBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =34
+      Color: =RGBA(255, 255, 255, 1)
+      X: =24
+      Y: =6
+      Width: =170
+      Height: =52
+- lblBrandSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NEW ALBANY"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 178, 169, 1)
+      FontWeight: =FontWeight.Bold
+      X: =27
+      Y: =56
+      Width: =170
+      Height: =24
+- lblTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="HOUR x HOUR"
+      Font: =Font.Georgia
+      Size: =22
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      X: =190
+      Y: =20
+      Width: =260
+      Height: =50
+      Wrap: =false
+- cLine:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(177, 179, 179, 1)
+      FontWeight: =FontWeight.Bold
+      X: =440
+      Y: =6
+      Width: =120
+      Height: =20
+- ddLine:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =Distinct(PLAYBOOK, Line)
+      Default: ="209"
+      OnChange: =Select(btnRefresh)
+      Font: =Font.Arial
+      Size: =20
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =440
+      Y: =28
+      Width: =120
+      Height: =52
+      Tooltip: ="Production line. Standards load from the PLAYBOOK list."
+- cProd:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PRODUCT  (SIZE | FORM)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(177, 179, 179, 1)
+      FontWeight: =FontWeight.Bold
+      X: =570
+      Y: =6
+      Width: =340
+      Height: =20
+- ddProduct:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "— PICK PRODUCT —", Size: "", Form: ""})}, {t: Filter(ForAll(Filter(PLAYBOOK, Line = ddLine.Selected.Value), {Value: Size & " | " & Form, Size: Size, Form: Form}), IsBlank(txtProdFind.Text) || txtProdFind.Text in Value)}), t)
+      Default: =Coalesce(varProdDef, "— PICK PRODUCT —")
+      OnChange: =If(ddProduct.Selected.Value <> Coalesce(varProd, ""), Set(varProd, ddProduct.Selected.Value); Select(btnRefresh))
+      Font: =Font.Arial
+      Size: =18
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      Fill: =If(Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —", RGBA(255, 236, 179, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =If(Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —", RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      X: =570
+      Y: =28
+      Width: =256
+      Height: =52
+      Tooltip: ="Item running now (Size | Form). Long list? Type part of the size or form in FIND to narrow it. Sets standard speed, units/hr and crew from the PLAYBOOK."
+- txtProdFind:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="find"
+      Font: =Font.Arial
+      Size: =14
+      Align: =Align.Center
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =Select(btnRefresh)
+      X: =830
+      Y: =28
+      Width: =80
+      Height: =52
+      Tooltip: ="Type part of the size or form (for example 10 oz or wash) to narrow the product list. Clear it to see all."
+- cDate:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DATE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(177, 179, 179, 1)
+      FontWeight: =FontWeight.Bold
+      X: =920
+      Y: =6
+      Width: =190
+      Height: =20
+- ddDate:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =ForAll(Sequence(7, 0, -1), With({d: DateAdd(Today(), Value, TimeUnit.Days)}, {Value: Text(d, "ddd m/d"), D: d}))
+      OnChange: =Select(btnRefresh)
+      Font: =Font.Arial
+      Size: =18
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =920
+      Y: =28
+      Width: =190
+      Height: =52
+      Tooltip: ="Date the shift STARTED (night shift keeps its start date after midnight)."
+- cShift:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SHIFT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(177, 179, 179, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1120
+      Y: =6
+      Width: =90
+      Height: =20
+- ddShift:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["1", "2"]
+      OnChange: =Select(btnRefresh)
+      Font: =Font.Arial
+      Size: =20
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1120
+      Y: =28
+      Width: =90
+      Height: =52
+      Tooltip: ="1 = first shift, 2 = second shift."
+- btnRefresh:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="REFRESH"
+      OnSelect: |-
+        =Select(btnFlush);
+        ClearCollect(colLk, Filter(Lookups, Active = true));
+        ClearCollect(colLkDT, {Value: " ", Help: ""}, ForAll(Sort(Filter(colLk, Category.Value = "Downtime"), SortOrder), {Value: Label, Help: Help}));
+        ClearCollect(colLkScrap, {Value: "", Help: ""}, ForAll(Sort(Filter(colLk, Category.Value = "Scrap"), SortOrder), {Value: Label, Help: Help}));
+        ClearCollect(colLkSpeed, {Value: "", Help: ""}, ForAll(Sort(Filter(colLk, Category.Value = "Speed loss"), SortOrder), {Value: Label, Help: Help}));
+        ClearCollect(colLkStaff, {Value: "", Help: ""}, ForAll(Sort(Filter(colLk, Category.Value = "Extra headcount"), SortOrder), {Value: Label, Help: Help}));
+        Set(varShiftKey, ddLine.Selected.Value & "-" & Text(ddDate.Selected.D, "yyyymmdd") & "-S" & ddShift.Selected.Value);
+        Set(varKey, varShiftKey & "-H");
+        ClearCollect(colRunHist, Filter(HxH_Hourly, Line = ddLine.Selected.Value && ShiftDate >= DateAdd(ddDate.Selected.D, -30, TimeUnit.Days) && ShiftDate <= ddDate.Selected.D));
+        With({h: Filter(colRunHist, ShiftKey <> varShiftKey && Coalesce(RunRatePct, 0) > 0 && RunRatePct < 3 && Coalesce(HourlyTarget, 0) > 0)}, Set(varRunN, CountRows(h)); Set(varRunMean, Average(h, RunRatePct)); Set(varRunSD, StdevP(h, RunRatePct)));
+        Set(varStarCut, If(varRunN >= 20, Max(1.05, varRunMean + 2 * varRunSD), 1.15));
+        Set(varShiftRec, LookUp(HxH_Shift, Title = varShiftKey));
+        If(varShiftKey <> Coalesce(varProdKey, ""), Set(varProdKey, varShiftKey); Set(varProd, If(IsBlank(varShiftRec.ProductForm), "— PICK PRODUCT —", varShiftRec.ProductForm)); Set(varProdDef, varProd); Reset(ddProduct));
+        Set(varPB, With({f: First(Filter(PLAYBOOK, Line = ddLine.Selected.Value))}, If(Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —", f, Coalesce(LookUp(PLAYBOOK, Line = ddLine.Selected.Value && Size & " | " & Form = varProd), f))));
+        Set(varUPH, Coalesce(Value(varPB.'Playbook Units per Hour'), 0));
+        Set(varTmax, Coalesce(varPB.Rate, 0));
+        Set(varStartM, If(IsBlank(varShiftRec.ActualStartTime), If(ddShift.Selected.Value = "1", 360, 990), Hour(TimeValue(varShiftRec.ActualStartTime)) * 60 + Minute(TimeValue(varShiftRec.ActualStartTime))));
+        Set(varEndM, If(IsBlank(varShiftRec.ActualEndTime), If(ddShift.Selected.Value = "1", 990, 180), Hour(TimeValue(varShiftRec.ActualEndTime)) * 60 + Minute(TimeValue(varShiftRec.ActualEndTime))));
+        Set(varDurM, With({d0: ddDate.Selected.D}, With({d1: If(varEndM <= varStartM, DateAdd(d0, 1, TimeUnit.Days), d0)}, DateDiff(DateTime(Year(d0), Month(d0), Day(d0), RoundDown(varStartM / 60, 0), Mod(varStartM, 60), 0), DateTime(Year(d1), Month(d1), Day(d1), RoundDown(varEndM / 60, 0), Mod(varEndM, 60), 0), TimeUnit.Minutes))));
+        Set(varStart, DateTime(Year(ddDate.Selected.D), Month(ddDate.Selected.D), Day(ddDate.Selected.D), RoundDown(varStartM / 60, 0), Mod(varStartM, 60), 0));
+        ClearCollect(colSaved, Filter(HxH_Hourly, StartsWith(Title, varKey)));
+        ClearCollect(colHours,
+            ForAll(Sequence(Max(12, RoundUp(varDurM / 60, 0))),
+                With({h: Value},
+                    With({s: LookUp(colSaved, HourNo = h), sm: Max(0, Min(60, varDurM - (h - 1) * 60))},
+                        {HourNo: h,
+                         StartT: DateAdd(varStart, (h - 1) * 60, TimeUnit.Minutes),
+                         SlotMin: sm,
+                         InShift: sm > 0,
+                         Job: Coalesce(s.Job, ""),
+                         Cum: s.CumulativeUnits,
+                         BPM: s.SpeedBPM,
+                         Planned: Coalesce(s.PlannedMin, 0),
+                         Tgt: If(sm > 0, Max(0, varUPH * (sm - Coalesce(s.PlannedMin, 0)) / 60), 0),
+                         DT: s.DT_Minutes,
+                         Reason: Coalesce(s.DT_Reason, ""),
+                         DT2: s.DT2_Minutes,
+                         Reason2: Coalesce(s.DT2_Reason, ""),
+                         Safety: Coalesce(s.SafetyEvent, false),
+                         Notes: Coalesce(s.Notes, "")}))));
+        Set(varLoadedAt, Now())
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1222
+      Y: =28
+      Width: =130
+      Height: =52
+      Tooltip: |-
+        ="Reload this line / date / shift from SharePoint. Display screens: press to pick up the latest entries."
+- lblStd:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(IsBlank(varPB), "No PLAYBOOK standard", "TARGET SPEED  " & Text(varPB.Rate) & " BPM" & Char(10) & Text(varUPH, "#,##0") & " /hr  ·  Crew " & Text(Value(varPB.'Total HC')) & "  ·  Eff " & If(varPB.Rate > 0, Text(varUPH / (varPB.Rate * 60) * 100, "0") & "%", "—"))
+      Font: =Font.Arial
+      Size: =14
+      Color: =RGBA(176, 227, 228, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Right
+      X: =1548
+      Y: =10
+      Width: =360
+      Height: =70
+- shiftBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =12
+      Y: =96
+      Width: =1528
+      Height: =80
+- cStart:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="START"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =20
+      Y: =98
+      Width: =150
+      Height: =20
+- ddStart:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =ForAll(Sequence(48, 0), {Value: Text(Time(0, Value * 30, 0), "h:mm AM/PM"), M: Value * 30})
+      Default: =If(IsBlank(varShiftRec.ActualStartTime), If(ddShift.Selected.Value = "1", "6:00 AM", "4:30 PM"), varShiftRec.ActualStartTime)
+      OnChange: |-
+        =If(Self.Selected.Value <> If(IsBlank(varShiftRec.ActualStartTime), If(ddShift.Selected.Value = "1", "6:00 AM", "4:30 PM"), varShiftRec.ActualStartTime),
+            Select(btnSaveShift);
+            Select(btnRefresh))
+      Font: =Font.Arial
+      Size: =15
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =20
+      Y: =120
+      Width: =150
+      Height: =48
+      Tooltip: ="Actual shift start. Changing it rebuilds the hour rows and targets."
+- cEnd:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="END"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =178
+      Y: =98
+      Width: =150
+      Height: =20
+- ddEnd:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =ForAll(Sequence(48, 0), {Value: Text(Time(0, Value * 30, 0), "h:mm AM/PM"), M: Value * 30})
+      Default: =If(IsBlank(varShiftRec.ActualEndTime), If(ddShift.Selected.Value = "1", "4:30 PM", "3:00 AM"), varShiftRec.ActualEndTime)
+      OnChange: |-
+        =If(Self.Selected.Value <> If(IsBlank(varShiftRec.ActualEndTime), If(ddShift.Selected.Value = "1", "4:30 PM", "3:00 AM"), varShiftRec.ActualEndTime),
+            Select(btnSaveShift);
+            Select(btnRefresh))
+      Font: =Font.Arial
+      Size: =15
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =178
+      Y: =120
+      Width: =150
+      Height: =48
+      Tooltip: ="Actual shift end. Hours after the end show 'off' with no target."
+- cHrs:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SHIFT HRS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =336
+      Y: =98
+      Width: =90
+      Height: =20
+- lblHrs:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Text(varDurM / 60, "0.0#")
+      Font: =Font.Arial
+      Size: =20
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =336
+      Y: =120
+      Width: =90
+      Height: =48
+- cLunch:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LUNCH MIN"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =432
+      Y: =98
+      Width: =90
+      Height: =20
+- txtLunch:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Text(Coalesce(varShiftRec.LunchMin, 30))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =16
+      Align: =Align.Center
+      BorderColor: =RGBA(217, 217, 214, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =Select(btnSaveShift)
+      X: =432
+      Y: =120
+      Width: =84
+      Height: =48
+      BorderThickness: =1
+      Tooltip: ="Lunch minutes this shift. Also put them in the PLAN column of the hour lunch was taken."
+- cBreak:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="BREAK MIN"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =524
+      Y: =98
+      Width: =90
+      Height: =20
+- txtBreak:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Text(Coalesce(varShiftRec.BreakMin, 15))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =16
+      Align: =Align.Center
+      BorderColor: =RGBA(217, 217, 214, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =Select(btnSaveShift)
+      X: =524
+      Y: =120
+      Width: =84
+      Height: =48
+      BorderThickness: =1
+      Tooltip: ="Break minutes this shift. Also put them in the PLAN column of the hour(s) breaks were taken."
+- cJob1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="JOB 1 (PRIMARY)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =616
+      Y: =98
+      Width: =160
+      Height: =20
+- txtJob1:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(varShiftRec.Job1, "")
+      HintText: |-
+        ="job #"
+      Font: =Font.Arial
+      Size: =16
+      Align: =Align.Center
+      BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =Select(btnSaveShift)
+      X: =616
+      Y: =120
+      Width: =160
+      Height: =48
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderThickness: =If(IsBlank(Self.Text), 3, 1)
+      Tooltip: ="REQUIRED. Primary job number for the shift."
+      MaxLength: =6
+- cStdCrew:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="STD CREW"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =784
+      Y: =98
+      Width: =90
+      Height: =20
+- lblStdCrew:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varPB), "—", Text(Value(varPB.'Total HC')))
+      Font: =Font.Arial
+      Size: =20
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =784
+      Y: =120
+      Width: =90
+      Height: =48
+      Tooltip: ="Standard crew for this item from the PLAYBOOK (Total HC)."
+- cCrew:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ACTUAL CREW"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =882
+      Y: =98
+      Width: =110
+      Height: =20
+- txtCrew:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varShiftRec.ActualCrewSize), "", Text(varShiftRec.ActualCrewSize))
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =18
+      Align: =Align.Center
+      BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =Select(btnSaveShift)
+      FontWeight: =FontWeight.Bold
+      Fill: =If(Self.Text = "", RGBA(255, 242, 179, 1), Coalesce(Value(Self.Text), 0) > Value(varPB.'Total HC'), RGBA(253, 236, 200, 1), RGBA(255, 255, 255, 1))
+      X: =882
+      Y: =120
+      Width: =100
+      Height: =48
+      BorderThickness: =If(IsBlank(Self.Text), 3, 1)
+      Tooltip: ="REQUIRED. People actually on the line. If more than standard, pick a reason."
+- cStaff:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="REASON FOR EXTRA HEADCOUNT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =990
+      Y: =98
+      Width: =280
+      Height: =20
+- ddStaff:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =colLkStaff
+      Default: =Coalesce(varShiftRec.StaffingReasonCode, "")
+      OnChange: =If(Self.Selected.Value <> Coalesce(varShiftRec.StaffingReasonCode, ""), Select(btnSaveShift))
+      Font: =Font.Arial
+      Size: =13
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =990
+      Y: =120
+      Width: =280
+      Height: =48
+      Fill: =If((Coalesce(Value(txtCrew.Text), 0) > Value(varPB.'Total HC')) && (IsBlank(Self.Selected.Value)), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =If((Coalesce(Value(txtCrew.Text), 0) > Value(varPB.'Total HC')) && (IsBlank(Self.Selected.Value)), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      BorderThickness: =If((Coalesce(Value(txtCrew.Text), 0) > Value(varPB.'Total HC')) && (IsBlank(Self.Selected.Value)), 3, 1)
+      Tooltip: ="Required when actual crew is above standard."
+- cPlanChk:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PLANNED MIN IN ROWS vs LUNCH + BREAK"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1280
+      Y: =98
+      Width: =256
+      Height: =20
+      Visible: =false
+- lblPlanChk:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(Sum(colHours, Planned)) & " / " & Text(Coalesce(Value(txtLunch.Text), 0) + Coalesce(Value(txtBreak.Text), 0)) & If(Sum(colHours, Planned) = Coalesce(Value(txtLunch.Text), 0) + Coalesce(Value(txtBreak.Text), 0), "  ✓", "  — mark lunch/break hours")
+      Font: =Font.Arial
+      Size: =13
+      Color: =If(Sum(colHours, Planned) = Coalesce(Value(txtLunch.Text), 0) + Coalesce(Value(txtBreak.Text), 0), RGBA(46, 160, 67, 1), RGBA(210, 153, 34, 1))
+      FontWeight: =FontWeight.Bold
+      X: =1280
+      Y: =120
+      Width: =256
+      Height: =48
+      Visible: =false
+- colHdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(243, 244, 244, 1)
+      X: =12
+      Y: =182
+      Width: =1528
+      Height: =36
+- h00:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="HOUR"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =18
+      Y: =182
+      Width: =136
+      Height: =36
+      Tooltip: ="Hour of the shift. Highlighted row = the hour running now. Gray rows are outside the shift."
+- h01:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="JOB"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =158
+      Y: =182
+      Width: =80
+      Height: =36
+      Tooltip: ="Only fill if the job changed this hour (changeover). Blank = Job 1."
+- h02:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="HR TGT"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Right
+      X: =242
+      Y: =182
+      Width: =76
+      Height: =36
+      Tooltip: ="Hourly target = PLAYBOOK units/hr x (minutes in this slot - planned minutes) / 60."
+- h03:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CUM TGT"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Right
+      X: =322
+      Y: =182
+      Width: =86
+      Height: =36
+      Tooltip: ="Running total of hourly targets through this hour."
+- h04:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="● COUNTER"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =412
+      Y: =182
+      Width: =130
+      Height: =36
+      Tooltip: ="Cumulative counter reading at the END of the hour - not the hourly count. The board calculates the hour."
+- h05:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="HR ACT"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Right
+      X: =546
+      Y: =182
+      Width: =80
+      Height: =36
+      Tooltip: ="Units made this hour = this counter - last hour's counter."
+- h06:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="RUN %"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =630
+      Y: =182
+      Width: =116
+      Height: =36
+      Tooltip: |-
+        ="How this hour ran: HR ACT / HR TGT. Green 100%+, amber 90-99%, red under 90%. ★ purple = an exceptional hour for this line (well above its normal hour over the last 30 days)."
+- h07:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="+/- CUM"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =750
+      Y: =182
+      Width: =70
+      Height: =36
+      Tooltip: ="Counter minus cumulative target. Green = ahead of plan, red = behind."
+- h08:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="● BPM" & Char(10) & If(varTmax > 0, "TGT " & Text(varTmax), "no std")
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =824
+      Y: =182
+      Width: =64
+      Height: =36
+      Tooltip: ="Line speed this hour in bottles per minute. TGT = target speed for this item from the PLAYBOOK (Rate). Amber after entry = below target."
+- h09:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="● PLAN" & Char(10) & Text(Sum(colHours, Planned)) & "/" & Text(Coalesce(Value(txtLunch.Text), 0) + Coalesce(Value(txtBreak.Text), 0))
+      Font: =Font.Arial
+      Size: =9
+      Color: =If(Sum(colHours, Planned) = Coalesce(Value(txtLunch.Text), 0) + Coalesce(Value(txtBreak.Text), 0), RGBA(7, 39, 45, 1), RGBA(207, 34, 46, 1))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =892
+      Y: =182
+      Width: =56
+      Height: =36
+      Tooltip: ="Planned minutes in this hour (lunch, break, planned meeting). Lowers the hour target. Header shows minutes marked / lunch + break - they should match."
+- h10:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="● DT1"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =952
+      Y: =182
+      Width: =56
+      Height: =36
+      Tooltip: ="Unplanned downtime minutes, first event. Pick a reason next to it."
+- h11:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="● DT1 REASON"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1012
+      Y: =182
+      Width: =160
+      Height: =36
+      Tooltip: ="Reason for downtime event 1. Required when DT1 > 0."
+- h12:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="● DT2"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1176
+      Y: =182
+      Width: =56
+      Height: =36
+      Tooltip: ="Unplanned downtime minutes, second event this hour (if any)."
+- h13:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="● DT2 REASON"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1236
+      Y: =182
+      Width: =160
+      Height: =36
+      Tooltip: ="Reason for downtime event 2. Required when DT2 > 0."
+- h14:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="● SAFETY"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1400
+      Y: =182
+      Width: =64
+      Height: =36
+      Tooltip: ="Tap for a safety incident or near miss this hour (turns red). Tap again to undo. Add a note."
+- h15:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NOTES"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1468
+      Y: =182
+      Width: =68
+      Height: =36
+      Tooltip: ="Optional. Anything leadership should know about this hour."
+- galHours:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colHours
+      TemplateSize: =60
+      TemplatePadding: =0
+      ShowScrollbar: =false
+      TemplateFill: |-
+        =If(!ThisItem.InShift, RGBA(236, 236, 234, 1),
+           Now() >= ThisItem.StartT && Now() < DateAdd(ThisItem.StartT, ThisItem.SlotMin, TimeUnit.Minutes), RGBA(229, 243, 243, 1),
+           Mod(ThisItem.HourNo, 2) = 0, RGBA(247, 248, 248, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =RGBA(217, 217, 214, 1)
+      BorderThickness: =1
+      X: =12
+      Y: =218
+      Width: =1528
+      Height: =720
+    Children:
+      - gSlot:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(ThisItem.InShift, Substitute(Substitute(Text(ThisItem.StartT, "h:mm AM/PM"), " AM", ""), " PM", "") & "–" & Text(DateAdd(ThisItem.StartT, ThisItem.SlotMin, TimeUnit.Minutes), "h:mm AM/PM"), Text(ThisItem.StartT, "h:mm AM/PM") & "  off")
+            Font: =Font.Arial
+            Size: =13
+            Color: =If(ThisItem.InShift, RGBA(7, 39, 45, 1), RGBA(177, 179, 179, 1))
+            FontWeight: =FontWeight.Bold
+            X: =6
+            Y: =4
+            Width: =136
+            Height: =52
+      - gJob:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =ThisItem.Job
+            HintText: =""
+            Font: =Font.Arial
+            Size: =12
+            Align: =Align.Center
+            BorderColor: =RGBA(217, 217, 214, 1)
+            FocusedBorderColor: =RGBA(0, 72, 81, 1)
+            HoverBorderColor: =RGBA(117, 120, 123, 1)
+            OnChange: |-
+              =Patch(colHours, ThisItem, {Job: Self.Text});
+              Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
+              Select(btnSaveRow)
+            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            X: =146
+            Y: =9
+            Width: =80
+            Height: =42
+            BorderThickness: =1
+            Tooltip: ="Only if the job changed this hour (changeover). Blank = Job 1."
+            MaxLength: =6
+      - gTgt:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(ThisItem.InShift, Text(ThisItem.Tgt, "#,##0"), "")
+            Font: =Font.Arial
+            Size: =15
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Right
+            X: =230
+            Y: =4
+            Width: =76
+            Height: =52
+      - gCumTgt:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(ThisItem.InShift, Text(Sum(Filter(colHours, HourNo <= ThisItem.HourNo), Tgt), "#,##0"), "")
+            Font: =Font.Arial
+            Size: =15
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Right
+            X: =310
+            Y: =4
+            Width: =86
+            Height: =52
+      - gCounter:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =If(IsBlank(ThisItem.Cum), "", Text(ThisItem.Cum))
+            HintText: =If(ThisItem.InShift && Now() >= ThisItem.StartT, "enter", "")
+            Format: =TextFormat.Number
+            Font: =Font.Arial
+            Size: =20
+            Align: =Align.Center
+            BorderColor: =If(!ThisItem.InShift, RGBA(217, 217, 214, 1), !(IsBlank(ThisItem.Cum)), RGBA(177, 179, 179, 1), Now() >= DateAdd(ThisItem.StartT, ThisItem.SlotMin, TimeUnit.Minutes), RGBA(207, 34, 46, 1), Now() >= ThisItem.StartT, RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+            FocusedBorderColor: =RGBA(0, 72, 81, 1)
+            HoverBorderColor: =RGBA(117, 120, 123, 1)
+            OnChange: |-
+              =Patch(colHours, ThisItem, {Cum: If(IsBlank(Self.Text), Blank(), Value(Self.Text))});
+              Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
+              Select(btnSaveRow)
+            FontWeight: =FontWeight.Bold
+            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            BorderThickness: =If(ThisItem.InShift && (IsBlank(ThisItem.Cum)) && Now() >= ThisItem.StartT, 3, 1)
+            X: =400
+            Y: =7
+            Width: =130
+            Height: =46
+            Fill: =If(!ThisItem.InShift, RGBA(236, 236, 234, 1), !(IsBlank(ThisItem.Cum)), RGBA(255, 255, 255, 1), Now() >= DateAdd(ThisItem.StartT, ThisItem.SlotMin, TimeUnit.Minutes), RGBA(249, 214, 213, 1), Now() >= ThisItem.StartT, RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+            Tooltip: ="REQUIRED each hour. Cumulative counter reading at the END of the hour. Yellow = due now, red = overdue."
+      - gHrAct:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(IsBlank(ThisItem.Cum), "", Text(If(IsBlank(ThisItem.Cum), Blank(), ThisItem.Cum - Coalesce(LookUp(colHours, HourNo = ThisItem.HourNo - 1).Cum, 0)), "#,##0"))
+            Font: =Font.Arial
+            Size: =17
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Right
+            X: =534
+            Y: =4
+            Width: =80
+            Height: =52
+      - gRun:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =With({r: If(IsBlank(ThisItem.Cum) || ThisItem.Tgt = 0, Blank(), If(IsBlank(ThisItem.Cum), Blank(), ThisItem.Cum - Coalesce(LookUp(colHours, HourNo = ThisItem.HourNo - 1).Cum, 0)) / ThisItem.Tgt)}, If(IsBlank(r), "", If(r >= Coalesce(varStarCut, 1.15), "★ ", "") & Text(r * 100, "0") & "%"))
+            Font: =Font.Arial
+            Size: =19
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: |-
+              =With({r: If(IsBlank(ThisItem.Cum) || ThisItem.Tgt = 0, Blank(), If(IsBlank(ThisItem.Cum), Blank(), ThisItem.Cum - Coalesce(LookUp(colHours, HourNo = ThisItem.HourNo - 1).Cum, 0)) / ThisItem.Tgt)}, If(IsBlank(r), If(ThisItem.InShift, RGBA(243, 244, 244, 1), RGBA(0, 0, 0, 0)), r >= Coalesce(varStarCut, 1.15), RGBA(130, 80, 223, 1), r >= 1, RGBA(46, 160, 67, 1), r >= 0.9, RGBA(210, 153, 34, 1), RGBA(207, 34, 46, 1)))
+            Tooltip: |-
+              ="RUN % = units this hour / hour target. Green 100%+, amber 90-99%, red under 90%. ★ PURPLE = exceptional hour: " & Text(varStarCut * 100, "0") & "% or better (" & If(varRunN >= 20, "this line's typical hour " & Text(varRunMean * 100, "0") & "% plus 2 standard deviations, last 30 days, " & varRunN & " hours", "fixed 115% until this line has 20 hours of history") & ")."
+            X: =618
+            Y: =6
+            Width: =116
+            Height: =48
+      - gVar:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(IsBlank(ThisItem.Cum), "", If(ThisItem.Cum - Sum(Filter(colHours, HourNo <= ThisItem.HourNo), Tgt) >= 0, "+", "") & Text(ThisItem.Cum - Sum(Filter(colHours, HourNo <= ThisItem.HourNo), Tgt), "#,##0"))
+            Font: =Font.Arial
+            Size: =13
+            Color: =If(IsBlank(ThisItem.Cum), RGBA(117, 120, 123, 1), ThisItem.Cum - Sum(Filter(colHours, HourNo <= ThisItem.HourNo), Tgt) >= 0, RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            X: =738
+            Y: =4
+            Width: =70
+            Height: =52
+      - gBPM:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =If(IsBlank(ThisItem.BPM), "", Text(ThisItem.BPM))
+            HintText: =If(ThisItem.InShift && Now() >= ThisItem.StartT, If(varTmax > 0, "tgt " & Text(varTmax), "bpm"), "")
+            Format: =TextFormat.Number
+            Font: =Font.Arial
+            Size: =14
+            Align: =Align.Center
+            BorderColor: =If(!ThisItem.InShift, RGBA(217, 217, 214, 1), !(IsBlank(ThisItem.BPM)), RGBA(177, 179, 179, 1), Now() >= DateAdd(ThisItem.StartT, ThisItem.SlotMin, TimeUnit.Minutes), RGBA(207, 34, 46, 1), Now() >= ThisItem.StartT, RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+            FocusedBorderColor: =RGBA(0, 72, 81, 1)
+            HoverBorderColor: =RGBA(117, 120, 123, 1)
+            OnChange: |-
+              =Patch(colHours, ThisItem, {BPM: If(IsBlank(Self.Text), Blank(), Value(Self.Text))});
+              Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
+              Select(btnSaveRow)
+            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            Fill: =If(!ThisItem.InShift, RGBA(236, 236, 234, 1), !(IsBlank(ThisItem.BPM)), If(ThisItem.BPM < varTmax, RGBA(253, 236, 200, 1), RGBA(255, 255, 255, 1)), Now() >= DateAdd(ThisItem.StartT, ThisItem.SlotMin, TimeUnit.Minutes), RGBA(249, 214, 213, 1), Now() >= ThisItem.StartT, RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+            X: =812
+            Y: =9
+            Width: =64
+            Height: =42
+            BorderThickness: =If(ThisItem.InShift && (IsBlank(ThisItem.BPM)) && Now() >= ThisItem.StartT, 3, 1)
+            Tooltip: |-
+              ="REQUIRED each hour. Line speed in bottles per minute. Target for this item: " & If(varTmax > 0, Text(varTmax) & " BPM (PLAYBOOK)", "not in PLAYBOOK") & ". Amber after entry = below target."
+      - gPlan:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =If(ThisItem.Planned = 0, "", Text(ThisItem.Planned))
+            HintText: =""
+            Format: =TextFormat.Number
+            Font: =Font.Arial
+            Size: =14
+            Align: =Align.Center
+            BorderColor: =RGBA(217, 217, 214, 1)
+            FocusedBorderColor: =RGBA(0, 72, 81, 1)
+            HoverBorderColor: =RGBA(117, 120, 123, 1)
+            OnChange: |-
+              =With({p: Coalesce(Value(Self.Text), 0)}, Patch(colHours, ThisItem, {Planned: p, Tgt: Max(0, varUPH * (ThisItem.SlotMin - p) / 60)}));
+              Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
+              Select(btnSaveRow)
+            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            X: =880
+            Y: =9
+            Width: =56
+            Height: =42
+            BorderThickness: =1
+            Tooltip: ="Planned minutes this hour (lunch, break, planned meeting). Lowers this hour's target."
+      - gDT1:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =If(IsBlank(ThisItem.DT), "", Text(ThisItem.DT))
+            HintText: =""
+            Format: =TextFormat.Number
+            Font: =Font.Arial
+            Size: =14
+            Align: =Align.Center
+            BorderColor: =If((!IsBlank(ThisItem.Reason)) && (IsBlank(ThisItem.DT)), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+            FocusedBorderColor: =RGBA(0, 72, 81, 1)
+            HoverBorderColor: =RGBA(117, 120, 123, 1)
+            OnChange: |-
+              =Patch(colHours, ThisItem, {DT: If(IsBlank(Self.Text), Blank(), Value(Self.Text))});
+              Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
+              Select(btnSaveRow)
+            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            X: =940
+            Y: =9
+            Width: =56
+            Height: =42
+            Fill: =If((!IsBlank(ThisItem.Reason)) && (IsBlank(ThisItem.DT)), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+            BorderThickness: =If((!IsBlank(ThisItem.Reason)) && (IsBlank(ThisItem.DT)), 3, 1)
+            Tooltip: ="Unplanned downtime minutes, event 1."
+      - gR1:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Items: =colLkDT
+            Default: =Coalesce(ThisItem.Reason, " ")
+            OnChange: |-
+              =With({v: Trim(Self.Selected.Value)},
+               If(v <> Coalesce(ThisItem.Reason, ""),
+                  Patch(colHours, ThisItem, {Reason: v});
+                  Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
+                  Select(btnSaveRow)))
+            Font: =Font.Arial
+            Size: =11
+            ChevronBackground: =RGBA(255, 255, 255, 1)
+            ChevronFill: =RGBA(117, 120, 123, 1)
+            ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+            ChevronHoverFill: =RGBA(7, 39, 45, 1)
+            ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+            ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+            SelectionFill: =RGBA(0, 72, 81, 1)
+            SelectionColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(176, 227, 228, 1)
+            PressedFill: =RGBA(176, 227, 228, 1)
+            FocusedBorderColor: =RGBA(0, 72, 81, 1)
+            HoverBorderColor: =RGBA(117, 120, 123, 1)
+            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            X: =1000
+            Y: =9
+            Width: =160
+            Height: =42
+            Fill: =If((Coalesce(ThisItem.DT, 0) > 0) && (IsBlank(ThisItem.Reason)), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+            BorderColor: =If((Coalesce(ThisItem.DT, 0) > 0) && (IsBlank(ThisItem.Reason)), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+            BorderThickness: =If((Coalesce(ThisItem.DT, 0) > 0) && (IsBlank(ThisItem.Reason)), 3, 1)
+            Tooltip: ="Reason for downtime event 1. Required when there are DT1 minutes. List comes from the Lookups list (Downtime)."
+      - gDT2:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =If(IsBlank(ThisItem.DT2), "", Text(ThisItem.DT2))
+            HintText: =""
+            Format: =TextFormat.Number
+            Font: =Font.Arial
+            Size: =14
+            Align: =Align.Center
+            BorderColor: =If((!IsBlank(ThisItem.Reason2)) && (IsBlank(ThisItem.DT2)), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+            FocusedBorderColor: =RGBA(0, 72, 81, 1)
+            HoverBorderColor: =RGBA(117, 120, 123, 1)
+            OnChange: |-
+              =Patch(colHours, ThisItem, {DT2: If(IsBlank(Self.Text), Blank(), Value(Self.Text))});
+              Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
+              Select(btnSaveRow)
+            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            X: =1164
+            Y: =9
+            Width: =56
+            Height: =42
+            Fill: =If((!IsBlank(ThisItem.Reason2)) && (IsBlank(ThisItem.DT2)), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+            BorderThickness: =If((!IsBlank(ThisItem.Reason2)) && (IsBlank(ThisItem.DT2)), 3, 1)
+            Tooltip: ="Unplanned downtime minutes, event 2 (if a second issue hit this hour)."
+      - gR2:
+          Control: Classic/DropDown@2.3.1
+          Properties:
+            Items: =colLkDT
+            Default: =Coalesce(ThisItem.Reason2, " ")
+            OnChange: |-
+              =With({v: Trim(Self.Selected.Value)},
+               If(v <> Coalesce(ThisItem.Reason2, ""),
+                  Patch(colHours, ThisItem, {Reason2: v});
+                  Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
+                  Select(btnSaveRow)))
+            Font: =Font.Arial
+            Size: =11
+            ChevronBackground: =RGBA(255, 255, 255, 1)
+            ChevronFill: =RGBA(117, 120, 123, 1)
+            ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+            ChevronHoverFill: =RGBA(7, 39, 45, 1)
+            ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+            ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+            SelectionFill: =RGBA(0, 72, 81, 1)
+            SelectionColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(176, 227, 228, 1)
+            PressedFill: =RGBA(176, 227, 228, 1)
+            FocusedBorderColor: =RGBA(0, 72, 81, 1)
+            HoverBorderColor: =RGBA(117, 120, 123, 1)
+            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            X: =1224
+            Y: =9
+            Width: =160
+            Height: =42
+            Fill: =If((Coalesce(ThisItem.DT2, 0) > 0) && (IsBlank(ThisItem.Reason2)), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+            BorderColor: =If((Coalesce(ThisItem.DT2, 0) > 0) && (IsBlank(ThisItem.Reason2)), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+            BorderThickness: =If((Coalesce(ThisItem.DT2, 0) > 0) && (IsBlank(ThisItem.Reason2)), 3, 1)
+            Tooltip: ="Reason for downtime event 2. Required when there are DT2 minutes. List comes from the Lookups list (Downtime)."
+      - gSafety:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =If(ThisItem.Safety, "EVENT", "OK")
+            OnSelect: |-
+              =Patch(colHours, ThisItem, {Safety: !ThisItem.Safety});
+              Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
+              Select(btnSaveRow)
+            Font: =Font.Arial
+            Size: =11
+            FontWeight: =FontWeight.Bold
+            Fill: =If(!ThisItem.InShift, RGBA(243, 244, 244, 1), ThisItem.Safety, RGBA(207, 34, 46, 1), RGBA(243, 244, 244, 1))
+            Color: =If(ThisItem.Safety, RGBA(255, 255, 255, 1), RGBA(177, 179, 179, 1))
+            HoverFill: =ColorFade(Self.Fill, -15%)
+            BorderColor: =Self.Fill
+            DisplayMode: =If(ThisItem.InShift, DisplayMode.Edit, DisplayMode.Disabled)
+            X: =1388
+            Y: =10
+            Width: =64
+            Height: =40
+            Tooltip: ="Tap if a safety incident or near miss happened this hour. Tap again to undo. Add a note."
+      - gNotes:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Default: =ThisItem.Notes
+            HintText: =""
+            Font: =Font.Arial
+            Size: =10
+            Align: =Align.Center
+            BorderColor: =RGBA(217, 217, 214, 1)
+            FocusedBorderColor: =RGBA(0, 72, 81, 1)
+            HoverBorderColor: =RGBA(117, 120, 123, 1)
+            OnChange: |-
+              =Patch(colHours, ThisItem, {Notes: Self.Text});
+              Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
+              Select(btnSaveRow)
+            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            X: =1456
+            Y: =9
+            Width: =68
+            Height: =42
+            BorderThickness: =1
+            Tooltip: ="Optional note for this hour."
+- lblCrewGate:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —", "▲  PICK THE PRODUCT RUNNING NOW" & Char(10) & "Choose it in PRODUCT (top), then enter ACTUAL CREW. Safety can always be logged.", "▲  ENTER ACTUAL CREW TO START THE SHIFT" & Char(10) & "Hour entry unlocks once crew is in. Safety can always be logged.")
+      Font: =Font.Arial
+      Size: =26
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(255, 255, 255, 0.82)
+      Visible: =Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —" || Coalesce(Value(txtCrew.Text), 0) <= 0
+      Tooltip: ="Pick the PRODUCT and type the number of people actually on the line in ACTUAL CREW (top). Both are required before hourly entry."
+      X: =12
+      Y: =218
+      Width: =1376
+      Height: =720
+- botBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =12
+      Y: =946
+      Width: =1528
+      Height: =124
+- lblSumTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SHIFT SUMMARY"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =20
+      Y: =950
+      Width: =170
+      Height: =24
+- cScrap:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="FG SCRAP QTY (UNITS)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =20
+      Y: =976
+      Width: =160
+      Height: =20
+- txtScrap:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =If(IsBlank(varShiftRec.FGScrapQty), "", Text(varShiftRec.FGScrapQty))
+      HintText: ="0 if none"
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =18
+      Align: =Align.Center
+      BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =Select(btnSaveShift)
+      FontWeight: =FontWeight.Bold
+      X: =20
+      Y: =998
+      Width: =150
+      Height: =52
+      Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderThickness: =If(IsBlank(Self.Text), 3, 1)
+      Tooltip: ="REQUIRED at end of shift. Finished-goods scrap units. Enter 0 if none."
+- cScrapR:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PRIMARY SCRAP / DEFECT REASON"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =180
+      Y: =976
+      Width: =260
+      Height: =20
+- ddScrapReason:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =colLkScrap
+      Default: =Coalesce(varShiftRec.ScrapReasonCode, "")
+      OnChange: =If(Self.Selected.Value <> Coalesce(varShiftRec.ScrapReasonCode, ""), Select(btnSaveShift))
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =180
+      Y: =998
+      Width: =260
+      Height: =52
+      Fill: =If((Coalesce(Value(txtScrap.Text), 0) > 0) && (IsBlank(Self.Selected.Value)), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =If((Coalesce(Value(txtScrap.Text), 0) > 0) && (IsBlank(Self.Selected.Value)), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      BorderThickness: =If((Coalesce(Value(txtScrap.Text), 0) > 0) && (IsBlank(Self.Selected.Value)), 3, 1)
+      Tooltip: ="Required when scrap is more than 0."
+- cScrapN:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SCRAP NOTES"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =450
+      Y: =976
+      Width: =480
+      Height: =20
+- txtScrapNotes:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(varShiftRec.ScrapNotes, "")
+      HintText: ="notes"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(217, 217, 214, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =Select(btnSaveShift)
+      X: =450
+      Y: =998
+      Width: =480
+      Height: =52
+      BorderThickness: =1
+      Tooltip: ="Optional detail on scrap."
+- cSpeed:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="REASON RUNNING BELOW TARGET SPEED"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =940
+      Y: =976
+      Width: =300
+      Height: =20
+- ddSpeedLoss:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =colLkSpeed
+      Default: =Coalesce(varShiftRec.SpeedLossReasonCode, "")
+      OnChange: =If(Self.Selected.Value <> Coalesce(varShiftRec.SpeedLossReasonCode, ""), Select(btnSaveShift))
+      Font: =Font.Arial
+      Size: =14
+      ChevronBackground: =RGBA(255, 255, 255, 1)
+      ChevronFill: =RGBA(117, 120, 123, 1)
+      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
+      ChevronHoverFill: =RGBA(7, 39, 45, 1)
+      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
+      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
+      SelectionFill: =RGBA(0, 72, 81, 1)
+      SelectionColor: =RGBA(255, 255, 255, 1)
+      HoverFill: =RGBA(176, 227, 228, 1)
+      PressedFill: =RGBA(176, 227, 228, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =940
+      Y: =998
+      Width: =300
+      Height: =52
+      Fill: |-
+        =If((With({b: If(CountRows(Filter(colHours, Coalesce(BPM, 0) > 0)) = 0, Blank(), Average(Filter(colHours, Coalesce(BPM, 0) > 0), BPM))}, !IsBlank(b) && b < varTmax)) && (IsBlank(Self.Selected.Value)), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
+      BorderColor: |-
+        =If((With({b: If(CountRows(Filter(colHours, Coalesce(BPM, 0) > 0)) = 0, Blank(), Average(Filter(colHours, Coalesce(BPM, 0) > 0), BPM))}, !IsBlank(b) && b < varTmax)) && (IsBlank(Self.Selected.Value)), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      BorderThickness: |-
+        =If((With({b: If(CountRows(Filter(colHours, Coalesce(BPM, 0) > 0)) = 0, Blank(), Average(Filter(colHours, Coalesce(BPM, 0) > 0), BPM))}, !IsBlank(b) && b < varTmax)) && (IsBlank(Self.Selected.Value)), 3, 1)
+      Tooltip: ="Required when average speed for the shift is below standard."
+- cAllow:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="EST. 3% SCRAP ALLOWANCE"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1250
+      Y: =976
+      Width: =280
+      Height: =20
+- lblAllow:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Text(Round(Max(colHours, Coalesce(Cum, 0)) * 0.03, 0), "#,##0") & " units"
+      Font: =Font.Arial
+      Size: =18
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1250
+      Y: =998
+      Width: =280
+      Height: =52
+- kAttain:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =With({last: Max(Filter(colHours, !IsBlank(Cum)), HourNo)},
+         With({ca: LookUp(colHours, HourNo = last).Cum, ct: Sum(Filter(colHours, HourNo <= last), Tgt)},
+          If(IsBlank(last) || ct = 0, "—", Text((ca / ct) * 100, "0") & "%")))
+      Font: =Font.Georgia
+      Size: =80
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: |-
+        =With({last: Max(Filter(colHours, !IsBlank(Cum)), HourNo)},
+         With({ca: LookUp(colHours, HourNo = last).Cum, ct: Sum(Filter(colHours, HourNo <= last), Tgt)},
+          If(IsBlank(last) || ct = 0, RGBA(117, 120, 123, 1), ca / ct >= 1, RGBA(46, 160, 67, 1), ca / ct >= 0.9, RGBA(210, 153, 34, 1), RGBA(207, 34, 46, 1))))
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =10
+      X: =1548
+      Y: =96
+      Width: =360
+      Height: =230
+      Tooltip: ="Counter at the last entered hour / cumulative target through that hour. Green 100%+, amber 90-99%, red under 90%."
+- kAttainCap:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SHIFT ATTAINMENT  (THROUGH LAST HOUR)"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1548
+      Y: =104
+      Width: =360
+      Height: =26
+- kUnits:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =With({last: Max(Filter(colHours, !IsBlank(Cum)), HourNo)},
+         With({ca: LookUp(colHours, HourNo = last).Cum, ct: Sum(Filter(colHours, HourNo <= last), Tgt)},
+          If(IsBlank(last), "—", Text(ca, "#,##0") & "  /  " & Text(ct, "#,##0")))) & Char(10) & "shift target " & Text(Sum(colHours, Tgt), "#,##0")
+      Font: =Font.Arial
+      Size: =24
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =10
+      X: =1548
+      Y: =334
+      Width: =360
+      Height: =130
+      Tooltip: ="Units made vs target through the last entered hour. Bottom line = full-shift target."
+- kUnitsCap:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="UNITS  ACTUAL / TARGET"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1548
+      Y: =340
+      Width: =360
+      Height: =26
+- kOEE:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =With({act: Max(colHours, Coalesce(Cum, 0)), tgt: Sum(colHours, Tgt),
+              bpm: If(CountRows(Filter(colHours, Coalesce(BPM, 0) > 0)) = 0, Blank(), Average(Filter(colHours, Coalesce(BPM, 0) > 0), BPM)),
+              avail: varDurM - Coalesce(Value(txtLunch.Text), 0) - Coalesce(Value(txtBreak.Text), 0),
+              scrap: Coalesce(Value(txtScrap.Text), 0),
+              rep: Sum(colHours, Coalesce(DT, 0) + Coalesce(DT2, 0))},
+         With({up: If(Coalesce(bpm, 0) > 0, act / bpm, Blank())},
+          With({A: If(avail > 0 && !IsBlank(up), up / avail, Blank()),
+                P: If(varTmax > 0 && Coalesce(bpm, 0) > 0, bpm / varTmax, Blank()),
+                Q: If(act > 0, 1 - scrap / act, Blank())},
+           If(IsBlank(A) || IsBlank(P) || IsBlank(Q), "—", Text((A * P * Q) * 100, "0") & "%"))))
+      Font: =Font.Arial
+      Size: =44
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =62
+      X: =1548
+      Y: =472
+      Width: =360
+      Height: =200
+      Tooltip: ="OEE = Availability x Performance x Quality. A = uptime / (shift - lunch - break); P = avg BPM / standard BPM; Q = 1 - scrap / units."
+- kAPQ:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =With({act: Max(colHours, Coalesce(Cum, 0)), tgt: Sum(colHours, Tgt),
+              bpm: If(CountRows(Filter(colHours, Coalesce(BPM, 0) > 0)) = 0, Blank(), Average(Filter(colHours, Coalesce(BPM, 0) > 0), BPM)),
+              avail: varDurM - Coalesce(Value(txtLunch.Text), 0) - Coalesce(Value(txtBreak.Text), 0),
+              scrap: Coalesce(Value(txtScrap.Text), 0),
+              rep: Sum(colHours, Coalesce(DT, 0) + Coalesce(DT2, 0))},
+         With({up: If(Coalesce(bpm, 0) > 0, act / bpm, Blank())},
+          With({A: If(avail > 0 && !IsBlank(up), up / avail, Blank()),
+                P: If(varTmax > 0 && Coalesce(bpm, 0) > 0, bpm / varTmax, Blank()),
+                Q: If(act > 0, 1 - scrap / act, Blank())},
+           "A " & If(IsBlank(A), "—", Text(A * 100, "0") & "%") & "    P " & If(IsBlank(P), "—", Text(P * 100, "0") & "%") & "    Q " & If(IsBlank(Q), "—", Text(Q * 100, "0") & "%"))))
+      Font: =Font.Arial
+      Size: =20
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Wrap: =false
+      X: =1548
+      Y: =620
+      Width: =360
+      Height: =44
+- kOEECap:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OEE  (AVAIL × PERF × QUAL)"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1548
+      Y: =480
+      Width: =360
+      Height: =26
+- kDT:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =With({act: Max(colHours, Coalesce(Cum, 0)), tgt: Sum(colHours, Tgt),
+              bpm: If(CountRows(Filter(colHours, Coalesce(BPM, 0) > 0)) = 0, Blank(), Average(Filter(colHours, Coalesce(BPM, 0) > 0), BPM)),
+              avail: varDurM - Coalesce(Value(txtLunch.Text), 0) - Coalesce(Value(txtBreak.Text), 0),
+              scrap: Coalesce(Value(txtScrap.Text), 0),
+              rep: Sum(colHours, Coalesce(DT, 0) + Coalesce(DT2, 0))},
+         With({up: If(Coalesce(bpm, 0) > 0, act / bpm, Blank())},
+          With({A: If(avail > 0 && !IsBlank(up), up / avail, Blank()),
+                P: If(varTmax > 0 && Coalesce(bpm, 0) > 0, bpm / varTmax, Blank()),
+                Q: If(act > 0, 1 - scrap / act, Blank())},
+           "Reported " & Text(rep) & "  ·  Calc " & If(IsBlank(up), "—", Text(avail - up, "0")) & " min" & Char(10) &
+           If(IsBlank(up) || avail - up <= 0, "", Text((rep / (avail - up)) * 100, "0") & "%" & " of downtime reported")))) & Char(10) &
+        Coalesce(First(SortByColumns(AddColumns(GroupBy(Filter(Ungroup(Table({t: ForAll(colHours, {R: Reason, M: Coalesce(DT, 0)})}, {t: ForAll(colHours, {R: Reason2, M: Coalesce(DT2, 0)})}), t), !IsBlank(R) && R <> "" && M > 0), R, G), Mins, Sum(G, M)), "Mins", SortOrder.Descending)).R, "no reasons logged")
+      Font: =Font.Arial
+      Size: =16
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =RGBA(243, 244, 244, 1)
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =12
+      X: =1548
+      Y: =680
+      Width: =360
+      Height: =200
+      Tooltip: ="Reported = DT1 + DT2 minutes entered. Calc = available time - machine uptime (units / avg BPM). % reported shows how much downtime got logged."
+- kDTCap:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DOWNTIME  ·  TOP REASON"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1548
+      Y: =688
+      Width: =360
+      Height: =26
+- kSafety:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(CountIf(colHours, Safety) = 0, "NO EVENTS", Text(CountIf(colHours, Safety)) & " EVENT(S)")
+      Font: =Font.Arial
+      Size: =28
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: =If(CountIf(colHours, Safety) = 0, RGBA(46, 160, 67, 1), RGBA(207, 34, 46, 1))
+      VerticalAlign: =VerticalAlign.Bottom
+      PaddingBottom: =12
+      X: =1548
+      Y: =888
+      Width: =360
+      Height: =120
+      Tooltip: ="Hours flagged EVENT this shift."
+- kSafetyCap:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SAFETY THIS SHIFT"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      X: =1548
+      Y: =896
+      Width: =360
+      Height: =26
+- lblSaved:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varSavedAt), "Loaded " & Text(varLoadedAt, "h:mm AM/PM"), "Saved " & Text(varSavedAt, "h:mm:ss AM/PM")) & "  ·  " & User().FullName
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Center
+      X: =1548
+      Y: =1016
+      Width: =360
+      Height: =40
+- lblNext:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(Coalesce(Value(txtCrew.Text), 0) <= 0, "NEXT ▸ ENTER" & Char(10) & "ACTUAL CREW", With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
+              od: CountRows(Filter(colHours, InShift && Now() >= DateAdd(StartT, SlotMin, TimeUnit.Minutes) && IsBlank(Cum)))},
+          If(IsBlank(n),
+             If(CountRows(Filter(colHours, InShift && IsBlank(Cum))) = 0, "✓ ALL HOURS ENTERED", "✓ UP TO DATE"),
+             "NEXT ▸ " & Text(n.StartT, "h:mm AM/PM") & " counter" & If(od > 0, Char(10) & Text(od) & If(od = 1, " hour", " hours") & " overdue", ""))))
+      Font: =Font.Arial
+      Size: =15
+      Color: |-
+        =If(Coalesce(Value(txtCrew.Text), 0) <= 0, RGBA(7, 39, 45, 1), With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
+              od: CountRows(Filter(colHours, InShift && Now() >= DateAdd(StartT, SlotMin, TimeUnit.Minutes) && IsBlank(Cum)))},
+          If(IsBlank(n) || od > 0, RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))))
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Fill: |-
+        =If(Coalesce(Value(txtCrew.Text), 0) <= 0, RGBA(255, 242, 179, 1), With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
+              od: CountRows(Filter(colHours, InShift && Now() >= DateAdd(StartT, SlotMin, TimeUnit.Minutes) && IsBlank(Cum)))},
+          If(IsBlank(n), RGBA(46, 160, 67, 1), od > 0, RGBA(207, 34, 46, 1), RGBA(255, 242, 179, 1))))
+      Tooltip: ="What the operator owes the board right now. Yellow = this hour is due. Red = hours have ended with no counter entered."
+      X: =1280
+      Y: =100
+      Width: =256
+      Height: =72
+- lgY:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 242, 179, 1)
+      BorderColor: =RGBA(210, 153, 34, 1)
+      BorderThickness: =2
+      X: =200
+      Y: =953
+      Width: =16
+      Height: =16
+- lgYt:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Fill in now"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =220
+      Y: =948
+      Width: =100
+      Height: =26
+- lgR:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(249, 214, 213, 1)
+      BorderColor: =RGBA(207, 34, 46, 1)
+      BorderThickness: =2
+      X: =322
+      Y: =953
+      Width: =16
+      Height: =16
+- lgRt:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Overdue"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =342
+      Y: =948
+      Width: =80
+      Height: =26
+- lgW:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =2
+      X: =424
+      Y: =953
+      Width: =16
+      Height: =16
+- lgWt:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Done / optional"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =444
+      Y: =948
+      Width: =120
+      Height: =26
+- lgP:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(130, 80, 223, 1)
+      BorderColor: =RGBA(130, 80, 223, 1)
+      BorderThickness: =2
+      X: =566
+      Y: =953
+      Width: =16
+      Height: =16
+- lgPt:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="★ Exceptional hour"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =586
+      Y: =948
+      Width: =140
+      Height: =26
+- lgTip:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="● = operator entry   ·   hover any box or column header for help"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      X: =730
+      Y: =948
+      Width: =420
+      Height: =26
+- btnFlush:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =If(CountRows(colPending) > 0,
+         IfError(ForAll(colPending As p, Patch(HxH_Hourly, Coalesce(LookUp(HxH_Hourly, Title = p.K), Defaults(HxH_Hourly)), p.Rec)),
+          Notify("Still not connected: " & CountRows(colPending) & " hour(s) waiting on this tablet. Keep the app open.", NotificationType.Warning),
+          Clear(colPending); Notify("Waiting hours saved.", NotificationType.Success)))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =4
+      Y: =1079
+      Width: =1
+      Height: =1
+- lblPending:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="⚠  " & CountRows(colPending) & If(CountRows(colPending) = 1, " HOUR", " HOURS") & " NOT SAVED YET (hour " & Concat(Sort(colPending, HourNo), Text(HourNo), ", ") & ")  ·  kept on this tablet, retrying on every save. KEEP THIS APP OPEN."
+      Font: =Font.Arial
+      Size: =14
+      Color: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(207, 34, 46, 1)
+      Visible: =CountRows(colPending) > 0
+      PaddingLeft: =16
+      X: =12
+      Y: =92
+      Width: =1180
+      Height: =44
+- btnRetry:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="RETRY NOW"
+      OnSelect: =Select(btnFlush)
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(207, 34, 46, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(207, 34, 46, 1)
+      Visible: =CountRows(colPending) > 0
+      BorderThickness: =2
+      X: =1196
+      Y: =94
+      Width: =150
+      Height: =40
+- btnSaveRow:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =Select(btnFlush);
+        If(IsBlank(varPB), Select(btnRefresh));
+        With({r: varRow, k: ddLine.Selected.Value & "-" & Text(ddDate.Selected.D, "yyyymmdd") & "-S" & ddShift.Selected.Value & "-H" & Text(varRow.HourNo, "00")},
+         With({cumT: Sum(Filter(colHours, HourNo <= r.HourNo), Tgt), prev: Coalesce(LookUp(colHours, HourNo = r.HourNo - 1).Cum, 0),
+               c1: If(IsBlank(r.Reason), 0, Sum(Filter(colHours, Reason = r.Reason), Coalesce(DT, 0)) + Sum(Filter(colHours, Reason2 = r.Reason), Coalesce(DT2, 0))),
+               c2: If(IsBlank(r.Reason2), 0, Sum(Filter(colHours, Reason = r.Reason2), Coalesce(DT, 0)) + Sum(Filter(colHours, Reason2 = r.Reason2), Coalesce(DT2, 0)))},
+          With({rec: {Title: k, Line: ddLine.Selected.Value, ShiftDate: ddDate.Selected.D, Shift: Value(ddShift.Selected.Value),
+            HourNo: r.HourNo, HourStart: r.StartT, SlotMin: r.SlotMin,
+            ProductForm: If(varProd = "— PICK PRODUCT —", "", varPB.Size & " " & varPB.Form),
+            PlaybookKey: If(varProd = "— PICK PRODUCT —", "", ddLine.Selected.Value & "|" & varPB.Size & "|" & varPB.Form),
+            Job: If(IsBlank(r.Job), txtJob1.Text, r.Job),
+            HourlyTarget: r.Tgt, CumTarget: cumT, CumulativeUnits: r.Cum,
+            HourlyActual: If(IsBlank(r.Cum), Blank(), r.Cum - prev),
+            RunRatePct: If(IsBlank(r.Cum) || r.Tgt = 0, Blank(), (r.Cum - prev) / r.Tgt),
+            SpeedBPM: r.BPM, PlannedMin: r.Planned,
+            DT_Minutes: r.DT, DT_Reason: r.Reason, DT2_Minutes: r.DT2, DT2_Reason: r.Reason2,
+            SafetyEvent: r.Safety, Notes: r.Notes, EnteredBy: User().Email,
+            ShiftKey: ddLine.Selected.Value & "-" & Text(ddDate.Selected.D, "yyyymmdd") & "-S" & ddShift.Selected.Value,
+            EscReason: If(c2 > c1, r.Reason2, r.Reason), EscCumMin: Max(c1, c2)}},
+           IfError(Patch(HxH_Hourly, Coalesce(LookUp(HxH_Hourly, Title = k), Defaults(HxH_Hourly)), rec),
+            RemoveIf(colPending, K = k); Collect(colPending, {K: k, HourNo: r.HourNo, Rec: rec, At: Now()});
+            Notify("Hour " & r.HourNo & " NOT saved (no connection?). It is kept on this tablet and will retry. Keep this app open.", NotificationType.Warning),
+            RemoveIf(colPending, K = k)))));
+        If(CountRows(colPending) = 0, Set(varSavedAt, Now()));
+        Select(btnSaveShift)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =0
+      Y: =1079
+      Width: =1
+      Height: =1
+- btnSaveShift:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =With({act: Max(colHours, Coalesce(Cum, 0)), tgt: Sum(colHours, Tgt),
+              bpm: If(CountRows(Filter(colHours, Coalesce(BPM, 0) > 0)) = 0, Blank(), Average(Filter(colHours, Coalesce(BPM, 0) > 0), BPM)),
+              avail: With({d0: ddDate.Selected.D}, With({d1: If(ddEnd.Selected.M <= ddStart.Selected.M, DateAdd(d0, 1, TimeUnit.Days), d0)}, DateDiff(DateTime(Year(d0), Month(d0), Day(d0), RoundDown(ddStart.Selected.M / 60, 0), Mod(ddStart.Selected.M, 60), 0), DateTime(Year(d1), Month(d1), Day(d1), RoundDown(ddEnd.Selected.M / 60, 0), Mod(ddEnd.Selected.M, 60), 0), TimeUnit.Minutes))) - Coalesce(Value(txtLunch.Text), 0) - Coalesce(Value(txtBreak.Text), 0),
+              scrap: Coalesce(Value(txtScrap.Text), 0),
+              rep: Sum(colHours, Coalesce(DT, 0) + Coalesce(DT2, 0))},
+         With({up: If(Coalesce(bpm, 0) > 0, act / bpm, Blank())},
+          With({A: If(avail > 0 && !IsBlank(up), up / avail, Blank()),
+                P: If(varTmax > 0 && Coalesce(bpm, 0) > 0, bpm / varTmax, Blank()),
+                Q: If(act > 0, 1 - scrap / act, Blank())},
+           IfError(Patch(HxH_Shift,
+            Coalesce(LookUp(HxH_Shift, Title = ddLine.Selected.Value & "-" & Text(ddDate.Selected.D, "yyyymmdd") & "-S" & ddShift.Selected.Value), Defaults(HxH_Shift)),
+            {Title: ddLine.Selected.Value & "-" & Text(ddDate.Selected.D, "yyyymmdd") & "-S" & ddShift.Selected.Value, Line: ddLine.Selected.Value, ShiftDate: ddDate.Selected.D, Shift: Value(ddShift.Selected.Value),
+             ProductForm: If(varProd = "— PICK PRODUCT —", "", varProd),
+             PlaybookKey: If(varProd = "— PICK PRODUCT —", "", ddLine.Selected.Value & "|" & varPB.Size & "|" & varPB.Form),
+             Job1: txtJob1.Text,
+             Job2: Coalesce(Last(Filter(colHours, !IsBlank(Job) && Job <> txtJob1.Text)).Job, ""),
+             PlannedShiftHrs: With({d0: ddDate.Selected.D}, With({d1: If(ddEnd.Selected.M <= ddStart.Selected.M, DateAdd(d0, 1, TimeUnit.Days), d0)}, DateDiff(DateTime(Year(d0), Month(d0), Day(d0), RoundDown(ddStart.Selected.M / 60, 0), Mod(ddStart.Selected.M, 60), 0), DateTime(Year(d1), Month(d1), Day(d1), RoundDown(ddEnd.Selected.M / 60, 0), Mod(ddEnd.Selected.M, 60), 0), TimeUnit.Minutes))) / 60,
+             ActualStartTime: ddStart.Selected.Value, ActualEndTime: ddEnd.Selected.Value,
+             LunchMin: Coalesce(Value(txtLunch.Text), 0), BreakMin: Coalesce(Value(txtBreak.Text), 0),
+             TargetUnits: tgt, ActualUnits: act, AvgBPM: bpm, TmaxBPM: varTmax,
+             ReportedDowntimeMin: rep, CalculatedDowntimeMin: If(IsBlank(up), Blank(), avail - up), MachineUptimeMin: up,
+             Availability: A, Performance: P, FGScrapQty: scrap, Quality: Q, OEE: If(IsBlank(A) || IsBlank(P) || IsBlank(Q), Blank(), A * P * Q),
+             ScrapReasonCode: ddScrapReason.Selected.Value, ScrapNotes: txtScrapNotes.Text,
+             StdCrewSize: Value(varPB.'Total HC'), ActualCrewSize: Value(txtCrew.Text),
+             StaffingReasonCode: ddStaff.Selected.Value, SpeedLossReasonCode: ddSpeedLoss.Selected.Value,
+             EnteredBy: User().Email}), Notify("Shift totals not saved yet (no connection?). They update on the next save.", NotificationType.Warning), true))));
+        Set(varSavedAt, Now())
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =RGBA(0, 0, 0, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      PressedFill: =RGBA(0, 0, 0, 0)
+      TabIndex: =-1
+      X: =2
+      Y: =1079
+      Width: =1
+      Height: =1
