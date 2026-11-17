@@ -8,3 +8,5 @@ These are the editable source of the installed solutions. Import them only into 
 | `MDISetup_UNMANAGED_v1.0.0.0.zip` | The **MDI - Set Up Site** flow: creates or repairs the lists on a SharePoint site and emails the MDI2 setup code. |
 
 To ship a change: edit and publish in the dev environment → raise the MDI version → Export as **Managed** → import into production as an **Upgrade**.
+
+**Test only:** `MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.2_TEST.zip` is the 1.1.4.1 unmanaged zip repacked with only the version in `solution.xml` changed to 1.1.4.2 (all other 103 files byte-identical). It checks that a repacked solution imports. Not a release; keep using 1.1.4.1 as the editable source.
