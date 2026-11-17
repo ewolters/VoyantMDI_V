@@ -64,7 +64,7 @@ def apply_theme(text, name=None):
             text = text.replace(p[0], p[1])
     return text
 
-exec(open("/tmp/claude-0/gen/fx_compat.py").read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/fx_compat.py").read())
 def write_themed(path, text):
     if os.environ.get("MDI_OUTDIR"): path = os.path.join(os.environ["MDI_OUTDIR"], os.path.basename(path))
     open(path, "w").write(photo_b64(fix_iferror(apply_theme(text))))

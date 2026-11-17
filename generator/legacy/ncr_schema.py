@@ -1,6 +1,6 @@
 """Adds the NCR list (nonconformance reports, ISO 9001:2015 8.7 + 10.2) to deploy/mdi_package.json. Idempotent."""
 import json, html
-P = '/mnt/user-data/outputs/deploy/mdi_package.json'
+P = __import__("os").environ["MDI_DEPLOY"]+"/mdi_package.json"
 p = json.load(open(P))
 def fx(fmt): return f' CustomFormatter="{html.escape(fmt, quote=True)}"' if fmt else ''
 def text(n): return f'<Field Type="Text" Name="{n}" DisplayName="{n}" StaticName="{n}"/>'

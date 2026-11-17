@@ -1,10 +1,10 @@
 # MDI Settings app: 6 screens editing the lists the other MDI apps read.
 # Screen1 ESCALATION · scrDrop DROPDOWN LISTS · scrLines LINES & VALUE STREAMS · scrStd STANDARDS · scrCfg THRESHOLDS & LINKS · scrPeople PEOPLE
 import sys
-exec(open("/tmp/claude-0/gen/settings_helpers.py").read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/settings_helpers.py").read())
 VER = sys.argv[1] if len(sys.argv) > 1 else "1"
 import os
-OUTD = os.environ.get("SETOUT", "/mnt/user-data/outputs/")
+OUTD = os.environ.get("SETOUT", __import__("os").environ["MDI_OUTDIR"]+"/")
 LIGHT = "RGBA(244, 245, 245, 1)"; SEL = "RGBA(229, 243, 243, 1)"
 I = 6
 ED = 'If(varCan, DisplayMode.Edit, DisplayMode.Disabled)'

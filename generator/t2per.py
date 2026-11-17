@@ -1,10 +1,10 @@
 # Tier 2 WEEKS & MONTHS screen (scrPeriods). Reuses the Tier 2 metric formulas (t2v2.py) per line per week/month.
 import os, re
-os.environ.pop("MDI_OUTDIR", None)
-_SCR="/tmp/claude-0/-home-claude/601fafd3-a670-51b2-876c-025e0ddaa3f8/scratchpad/_t2_tmp.yaml"
-_OUT=os.environ.get("T2POUT", "/mnt/user-data/outputs/deploy/apps/T2_Periods_v1.pa.yaml")
+_OUTD = os.environ.pop("MDI_OUTDIR", None) or os.environ["MDI_TMP"]
+_SCR=__import__("os").environ["MDI_TMP"]+"/_t2_tmp.yaml"
+_OUT=os.environ.get("T2POUT", _OUTD+"/T2_Periods_v2.pa.yaml")
 os.environ["T2OUT"]=_SCR
-exec(open("/tmp/claude-0/gen/t2v2.py").read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/t2v2.py").read())
 out=[]   # fresh control list for the new screen
 
 REN=[("colShift","colPShift"),("colQA","colPQA"),("colTS","colPTS"),("colWv","colPWv"),("colPC","colPPC"),("colSafe","colPSafe"),

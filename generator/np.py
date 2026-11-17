@@ -1,12 +1,12 @@
 # Generates Newspaper_v7.pa.yaml — NEWSPAPER action register (1920x1080)
-exec(open("/tmp/claude-0/gen/theme.py").read())
-src=open('/tmp/claude-0/gen/build6.py').read()
+exec(open(__import__("os").environ["MDI_GEN"]+"/theme.py").read())
+src=open(__import__("os").environ["MDI_GEN"]+"/build6.py").read()
 exec(src[:src.index("DT_OLD=")])
 EXTRA.clear()
 MUTE="RGBA(243, 244, 244, 1)"; PANEL="RGBA(248, 249, 249, 1)"; YEL="RGBA(255, 242, 179, 1)"; YELB="RGBA(210, 153, 34, 1)"; AMBL="RGBA(253, 236, 200, 1)"
 RAD={"RadiusTopLeft":"=6","RadiusTopRight":"=6","RadiusBottomLeft":"=6","RadiusBottomRight":"=6"}
 FLOW="'MDI-UploadPhoto'"
-exec(open("/tmp/claude-0/gen/harvey.py").read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/harvey.py").read())
 
 BODY=r'''
 def rect(name,fill,x,y,w,h,indent=0,extra=None):
@@ -167,5 +167,5 @@ out.append(btn("btnNReset",'""',RESET,0,1079,1,1,fill=CLEAR,color=CLEAR,extra=HE
 for _ in range(2):
     out=[]
     exec(BODY)
-write_themed("/mnt/user-data/outputs/Newspaper_v7.pa.yaml", "".join(out))
+write_themed(__import__("os").environ["MDI_OUTDIR"]+"/Newspaper_v7.pa.yaml", "".join(out))
 print("ok", len(out))

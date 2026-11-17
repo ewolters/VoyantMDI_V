@@ -1,6 +1,6 @@
 """Rewrites the PKG line (line 9) of deploy/provision_mdi.js(.txt) from deploy/mdi_package.json."""
 import json
-D = "/mnt/user-data/outputs/deploy/"
+D = __import__("os").environ["MDI_DEPLOY"]+"/"
 p = json.load(open(D + "mdi_package.json"))
 s = json.dumps(p, ensure_ascii=False, separators=(",", ":"))
 for f, esc in (("provision_mdi.js.txt", True), ("provision_mdi.js", False)):

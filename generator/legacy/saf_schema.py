@@ -1,6 +1,6 @@
 """Adds the Frontier (safety + 5S) lite lists to deploy/mdi_package.json. Idempotent."""
 import json, html
-P = '/mnt/user-data/outputs/deploy/mdi_package.json'
+P = __import__("os").environ["MDI_DEPLOY"]+"/mdi_package.json"
 p = json.load(open(P))
 GRAY = '{"$schema":"https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json","elmType":"div","style":{"color":"#75787B","font-weight":"600"},"txtContent":"@currentField"}'
 def pill(colors, default="#75787B"):

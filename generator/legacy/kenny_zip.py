@@ -1,5 +1,5 @@
 import zipfile, os
-os.chdir('/mnt/user-data/outputs')
+os.chdir(__import__("os").environ["MDI_OUTDIR"])
 OUT='NewAlbany_MDI_Install_for_Kenny_2026-10-21.zip'; R='NewAlbany_MDI_Install/'
 with zipfile.ZipFile(OUT,'w',zipfile.ZIP_DEFLATED) as z:
     z.write('KENNY_HANDOFF_for_Copilot.md', R+'00_START_HERE_Install_Checklist.md')

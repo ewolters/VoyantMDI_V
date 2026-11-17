@@ -1,6 +1,6 @@
 # Generates SW_Manager_v2.pa.yaml — Standard Work manager (1920x1080): standards library, element photos, PC card builder, adherence
-exec(open("/tmp/claude-0/gen/theme.py").read())
-src=open('/tmp/claude-0/gen/build6.py').read()
+exec(open(__import__("os").environ["MDI_GEN"]+"/theme.py").read())
+src=open(__import__("os").environ["MDI_GEN"]+"/build6.py").read()
 exec(src[:src.index("DT_OLD=")])
 EXTRA.clear()
 MUTE="RGBA(243, 244, 244, 1)"; PANEL="RGBA(248, 249, 249, 1)"; YEL="RGBA(255, 242, 179, 1)"; YELB="RGBA(210, 153, 34, 1)"
@@ -290,5 +290,5 @@ tip("ddStType","5S = a 5S standard page: one section per area, each with a stand
 for _ in range(2):
     out=[]
     exec(BODY)
-write_themed(__import__("sys").argv[1] if len(__import__("sys").argv) > 1 else "/mnt/user-data/outputs/SW_Manager_v4.pa.yaml", "".join(out))
+write_themed(__import__("sys").argv[1] if len(__import__("sys").argv) > 1 else __import__("os").environ["MDI_OUTDIR"]+"/SW_Manager_v4.pa.yaml", "".join(out))
 print("ok", len(out))

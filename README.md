@@ -1,12 +1,16 @@
 # Voyant Virtual MDI (Microsoft 365 build)
 
+**New owner? Read [START_HERE.md](START_HERE.md).** Claude reads [CLAUDE.md](CLAUDE.md) automatically.
+
 Virtual MDI boards for Voyant New Albany, built entirely on Microsoft 365: SharePoint lists, Power Apps canvas apps (pasted from `.pa.yaml`), and Power Automate flows, packaged as the **MDI** managed solution.
 
 | Folder | What's in it |
 |---|---|
 | `deploy/` | Everything needed to install: app screens (`apps/`, newest version of each), flow definitions (`flows/`), the site/list schema and provisioner (`mdi_package.json`, `provision_mdi.js`), the per-customer package builder (`package/`), console tools (`tools/`), and the install guide (`README.md`). |
 | `deploy/apps/APP_BUILD_GUIDE.md` | Which file goes on which app and screen. |
-| `generator/` | The Python generators that write the `.pa.yaml` screens and flow JSON, plus the lint checks (`generator/lint/`). |
+| `generator/` | The Python generators that write the `.pa.yaml` screens and flow JSON. Run everything through `generator/make.py` (`check` proves the repo matches the installed apps; `lint` runs the checks). Old one-off scripts are in `generator/legacy/`. |
+| `holmdel/` | Holmdel's Tier 2 (Excel boards, no lists): install notes, the 1.0.0.19 package, board-reading script, app source and generator. |
+| `.claude/skills/` | `/change-app`, `/ship-upgrade`, `/troubleshoot` for Claude Code. |
 | `solution/` | Unmanaged solution zips (MDI, MDI Setup) for the owner's dev environment, the starting point for building managed upgrades. |
 | `log.md` | Engineering log for the build. |
 | `TROUBLESHOOTING.md` | Owner's guide: how changes ship, permission errors (incl. Holmdel), blank-board checks, Power Fx traps, and a starter prompt for the owner's Claude. |

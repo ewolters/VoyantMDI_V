@@ -1,6 +1,6 @@
 # Generates TS_Maintenance_v5.pa.yaml (board-linked downtime) — phone (640x1136) troubleshooting app for maintenance
-exec(open("/tmp/claude-0/gen/theme.py").read())
-src=open('/tmp/claude-0/gen/build6.py').read()
+exec(open(__import__("os").environ["MDI_GEN"]+"/theme.py").read())
+src=open(__import__("os").environ["MDI_GEN"]+"/build6.py").read()
 exec(src[:src.index("DT_OLD=")])
 EXTRA.clear()
 MUTE="RGBA(243, 244, 244, 1)"; PANEL="RGBA(248, 249, 249, 1)"
@@ -277,5 +277,5 @@ def image(name,img,x,y,w,h,indent=0):
 for _ in range(2):
     out=[]
     exec(BODY)
-write_themed(__import__("os").environ.get("MTOUT","/mnt/user-data/outputs/TS_Maintenance_v5.pa.yaml"), "".join(out))
+write_themed(__import__("os").environ.get("MTOUT",__import__("os").environ["MDI_OUTDIR"]+"/TS_Maintenance_v5.pa.yaml"), "".join(out))
 print("ok", len(out))

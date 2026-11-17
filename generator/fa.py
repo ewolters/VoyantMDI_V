@@ -2,11 +2,11 @@
 # D-S-O-I-R: zone -> decide/stop -> observe safety (19 items, S/AR/U/N/A) -> observe 5S vs the zone's 5S standard
 # -> interact (4 questions, comfort) -> record (close the loop) -> submit.
 import os, sys
-exec(open("/tmp/claude-0/gen/theme.py").read())
-src = open('/tmp/claude-0/gen/build6.py').read()
+exec(open(__import__("os").environ["MDI_GEN"]+"/theme.py").read())
+src = open(__import__("os").environ["MDI_GEN"]+"/build6.py").read()
 exec(src[:src.index("DT_OLD=")])
 EXTRA.clear()
-OUT = sys.argv[1] if len(sys.argv) > 1 else "/mnt/user-data/outputs/Frontier_Audit_v2.pa.yaml"
+OUT = sys.argv[1] if len(sys.argv) > 1 else __import__("os").environ["MDI_OUTDIR"]+"/Frontier_Audit_v2.pa.yaml"
 MUTE = "RGBA(243, 244, 244, 1)"; YEL = "RGBA(255, 242, 179, 1)"; YELB = "RGBA(210, 153, 34, 1)"
 LGREEN = "RGBA(220, 242, 225, 1)"; ORANGE = "RGBA(227, 98, 9, 1)"
 RAD = {"RadiusTopLeft": "=8", "RadiusTopRight": "=8", "RadiusBottomLeft": "=8", "RadiusBottomRight": "=8"}

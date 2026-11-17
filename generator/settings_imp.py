@@ -1,12 +1,12 @@
 # MDI Settings: IMPORT HISTORY screen (scrImport) + regenerated THRESHOLDS screen with the IMPORT button.
 import os, sys
-SCR = "/tmp/claude-0/-home-claude/601fafd3-a670-51b2-876c-025e0ddaa3f8/scratchpad/set/"
+SCR = __import__("os").environ["MDI_TMP"]+"/set/"
 os.makedirs(SCR, exist_ok=True)
 os.environ["SETOUT"] = SCR
 sys.argv = ["settings.py", "2"]
-exec(open("/tmp/claude-0/gen/settings.py").read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/settings.py").read())
 FLOWN = "'MDI-ImportHistory'"
-OUTDIR = "/mnt/user-data/outputs/deploy/apps/"
+OUTDIR = __import__("os").environ["MDI_OUTDIR"]+"/"
 
 def N(f): return f'IfError(Value(Text(v.{f}), "en-US"), Blank())'
 def T(f): return f'Trim(Text(v.{f}))'
@@ -166,5 +166,5 @@ out.append(label("iIdle", '"Scan a workbook on the left. Nothing is written unti
 
 write_themed(OUTDIR + "Settings_scrImport_v2.pa.yaml", "".join(out))
 import shutil
-shutil.copy(SCR + "Settings_Thresholds_v2.pa.yaml", OUTDIR + "Settings_scrCfg_v2.pa.yaml")
+shutil.copy(__import__("os").environ.get("MDI_OUTDIR", SCR.rstrip("/")) + "/Settings_Thresholds_v2.pa.yaml", OUTDIR + "Settings_scrCfg_v2.pa.yaml")
 print("ok")

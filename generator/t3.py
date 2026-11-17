@@ -1,14 +1,14 @@
 # Tier 3 Board v1 generator (1920x1080): plant leadership. SQDCP by value stream, period DAY / WEEK / MONTH to date,
 # weekly (13) and monthly (12) trends vs target, drill PLANT -> VALUE STREAM -> LINE, KPI focus view.
 # History: computes the last 7 days per line with the SAME formulas as Tier 2 and saves closed days to KPI_Daily.
-exec(open("/tmp/claude-0/gen/theme.py").read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/theme.py").read())
 import os, sys
-HERE = "/tmp/claude-0/gen"
+HERE = __import__("os").environ["MDI_GEN"]
 _src = open(os.path.join(HERE, "t2v2.py")).read().split("# =========================== SUB-BAR")[0]
-_src = _src.replace('exec(open("/tmp/claude-0/gen/theme.py").read())', '')
+_src = _src.replace('exec(open(__import__("os").environ["MDI_GEN"]+"/theme.py").read())', '')
 exec(_src)          # T2 helpers, DOMS/DEF/TIPS, LOAD, DAYREC (same daily math as Tier 2)
 out.clear()         # drop T2's header controls
-OUT = sys.argv[1] if len(sys.argv) > 1 else "/mnt/user-data/outputs/T3_Board_v1.pa.yaml"
+OUT = sys.argv[1] if len(sys.argv) > 1 else __import__("os").environ["MDI_OUTDIR"]+"/T3_Board_v1.pa.yaml"
 
 # all shifts at Tier 3
 DAYREC = DAYREC.replace(SHM, "true").replace('(ddShift.Selected.Value = "All" || EndsWith(ShiftKey, "-S" & ddShift.Selected.Value))', "true")
@@ -16,7 +16,7 @@ assert "ddShift" not in DAYREC
 DAYREC = DAYREC.replace('" Frontier"', '" safety audits"')
 LOAD = LOAD.replace("(Frontier)", "(safety audits)")
 
-exec(open("/tmp/claude-0/gen/t3_metrics.py").read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/t3_metrics.py").read())
 KP = LETTERS
 TOPG0 = 'If(!IsBlank(varLn), varLn, !IsBlank(varVert), varVert, !IsBlank(varVS), varVS, "PLANT")'
 KN = LNAME

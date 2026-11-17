@@ -1,6 +1,6 @@
 """Rebuilds MDI_Deploy_Package.zip and the full package zip from outputs/ (no .py/.js files)."""
 import zipfile, os, io
-os.chdir('/mnt/user-data/outputs')
+os.chdir(__import__("os").environ["MDI_OUTDIR"])
 def deploy_files():
     for root, dirs, fs in os.walk('deploy'):
         dirs[:] = [d for d in dirs if d != 'generator']

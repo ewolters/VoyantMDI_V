@@ -2,7 +2,7 @@
 connection references and the four flows in any Power Platform environment, pointed at the customer's site."""
 import json, sys, importlib.util
 
-spec = importlib.util.spec_from_file_location("flows", "/tmp/claude-0/gen/flows.py")
+spec = importlib.util.spec_from_file_location("flows", __import__("os").environ["MDI_GEN"]+"/flows.py")
 F = importlib.util.module_from_spec(spec); spec.loader.exec_module(F)
 
 LISTS = ["People", "MDI_Config", "HxH_Shift", "HxH_Hourly", "Newspaper", "Lines",

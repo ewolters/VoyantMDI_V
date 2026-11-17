@@ -1,11 +1,11 @@
 # Tier 2 Board v2 generator (1920x1080). Layers: FLOOR -> LINE | DOMAIN -> CELL (line x domain). 7-day trend.
-exec(open("/tmp/claude-0/gen/theme.py").read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/theme.py").read())
 import os
 HERE=os.path.dirname(os.path.abspath(__file__))
 src=open(os.path.join(HERE,"t2.py")).read().split("# ---------------- header")[0]
 exec(src)   # palette + ctrl/label/btn/rect/dd/ti helpers
 exec(open(os.path.join(HERE,"harvey.py")).read())
-OUT=os.environ.get("T2OUT", os.path.join(HERE,"..","T2_Board_v16.pa.yaml"))
+OUT=os.environ.get("T2OUT", os.path.join(HERE,"..","T2_Board_v19.pa.yaml"))
 LIGHT="RGBA(244, 245, 245, 1)"
 HELP={"Color":F(CLEAR),"BorderColor":F(CLEAR),"HoverFill":"=RGBA(0, 178, 169, 0.08)","PressedFill":"=RGBA(0, 178, 169, 0.15)","TabIndex":"=-1",
       "RadiusTopLeft":"=0","RadiusTopRight":"=0","RadiusBottomLeft":"=0","RadiusBottomRight":"=0"}

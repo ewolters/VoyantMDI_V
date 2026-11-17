@@ -4,7 +4,7 @@ G9="RGBA(117, 120, 123, 1)"; G5="RGBA(177, 179, 179, 1)"; G1="RGBA(217, 217, 214
 GREEN="RGBA(46, 160, 67, 1)"; AMBER="RGBA(210, 153, 34, 1)"; RED="RGBA(207, 34, 46, 1)"; CLEAR="RGBA(0, 0, 0, 0)"
 out=[]
 EXTRA={}
-exec(open('/tmp/claude-0/gen/ux.py').read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/ux.py").read())
 def ind(s,n): return "\n".join((" "*n+l) if l else l for l in s.split("\n"))
 def ctrl(name, ctype, props, indent=0, children=None, variant=None):
     p=" "*indent
@@ -258,8 +258,8 @@ SAVESHIFT=(SUMW.replace("varDurM","With({dm: Mod(ddEnd.Selected.M - ddStart.Sele
  '     StaffingReasonCode: ddStaff.Selected.Value, SpeedLossReasonCode: ddSpeedLoss.Selected.Value,\n'
  '     EnteredBy: User().Email})'+SUMEND+';\n'
  'Set(varSavedAt, Now())')
-exec(open('/tmp/claude-0/gen/ux_tail.py').read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/ux_tail.py").read())
 out.append(btn("btnSaveRow",'""',SAVEROW,0,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
 out.append(btn("btnSaveShift",'""',SAVESHIFT,2,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
-open("/mnt/user-data/outputs/HxH_Board_v5.pa.yaml","w").write("".join(out))
+open(__import__("os").environ["MDI_OUTDIR"]+"/HxH_Board_v5.pa.yaml","w").write("".join(out))
 print("ok", sum(len(x) for x in out))

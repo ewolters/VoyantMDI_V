@@ -2,8 +2,8 @@
 # Scope (plant / value stream / vertical / line) and the reviewed day are set on PERFORMANCE; these screens read them.
 import sys
 OUTB, OUTV = sys.argv[1], sys.argv[2]
-sys.argv = ["t3.py", "/tmp/claude-0/_t3_tmp.pa.yaml"]
-exec(open("/tmp/claude-0/gen/t3.py").read())
+sys.argv = ["t3.py", __import__("os").environ["MDI_TMP"]+"/_t3_tmp.pa.yaml"]
+exec(open(__import__("os").environ["MDI_GEN"]+"/t3.py").read())
 
 SCOPEPATH = '"PLANT" & If(IsBlank(varVS), "", "  ›  " & varVS) & If(IsBlank(varVert), "", "  ›  " & varVert) & If(IsBlank(varLn), "", "  ›  LINE " & varLn)'
 def header(pfx, title):

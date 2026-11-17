@@ -2,8 +2,8 @@
 Apps come from the generators run with MDI_THEME=neutral MDI_OUTDIR=<G>/apps."""
 import json, re, os, sys, importlib.util
 G = sys.argv[1]
-SRC = "/mnt/user-data/outputs/deploy"
-spec = importlib.util.spec_from_file_location("theme", "/tmp/claude-0/gen/theme.py")
+SRC = __import__("os").environ["MDI_DEPLOY"]
+spec = importlib.util.spec_from_file_location("theme", __import__("os").environ["MDI_GEN"]+"/theme.py")
 T = importlib.util.module_from_spec(spec); os.environ["MDI_THEME"] = "neutral"; spec.loader.exec_module(T)
 
 p = json.load(open(f"{SRC}/mdi_package.json"))

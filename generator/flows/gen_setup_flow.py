@@ -2,8 +2,8 @@
 seeds config, sets permissions, and emails the SETUP CODE (MDI2:...) used to build the customer's app package.
 Placeholders: __REF_SP__, __REF_O365__ (connection reference logical names)."""
 import json, re, sys
-PK = json.load(open('/mnt/user-data/outputs/deploy/mdi_package.json'))
-OUT = sys.argv[1] if len(sys.argv) > 1 else '/tmp/claude-0/pkgr/setup_flow.json'
+PK = json.load(open(__import__("os").environ["MDI_DEPLOY"]+"/mdi_package.json"))
+OUT = sys.argv[1] if len(sys.argv) > 1 else __import__("os").environ["MDI_TMP"]+"/setup_flow.json"
 
 # ---------- compact package ----------
 fmts, fidx = [], {}

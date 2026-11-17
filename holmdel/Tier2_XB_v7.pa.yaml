@@ -1,0 +1,5179 @@
+- hdrBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =90
+- lblBrand:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="voyant"
+      Font: =Font.Georgia
+      Size: =34
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Left
+      X: =24
+      Y: =6
+      Width: =170
+      Height: =52
+- lblBrandSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="HOLMDEL"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(0, 178, 169, 1)
+      Align: =Align.Left
+      X: =27
+      Y: =56
+      Width: =170
+      Height: =24
+      FontWeight: =FontWeight.Bold
+- lblTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TIER 2 · SQDC"
+      Font: =Font.Georgia
+      Size: =24
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Left
+      X: =190
+      Y: =20
+      Width: =260
+      Height: =50
+      FontWeight: =FontWeight.Bold
+      Wrap: =false
+- cVS:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="VALUE STREAM"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(177, 179, 179, 1)
+      Align: =Align.Left
+      X: =460
+      Y: =6
+      Width: =200
+      Height: =20
+      FontWeight: =FontWeight.Bold
+- cDate:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="START"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(177, 179, 179, 1)
+      Align: =Align.Left
+      X: =670
+      Y: =6
+      Width: =150
+      Height: =20
+      FontWeight: =FontWeight.Bold
+- cEnd:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="END"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(177, 179, 179, 1)
+      Align: =Align.Left
+      X: =830
+      Y: =6
+      Width: =150
+      Height: =20
+      FontWeight: =FontWeight.Bold
+- cShift:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SHIFT"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(177, 179, 179, 1)
+      Align: =Align.Left
+      X: =990
+      Y: =6
+      Width: =100
+      Height: =20
+      FontWeight: =FontWeight.Bold
+- ddVS:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "All value streams"})}, {t: Sort(Distinct(colLines, VS), Value)}), t)
+      OnChange: =Select(btnCalc)
+      Font: =Font.Arial
+      Size: =15
+      FontWeight: =FontWeight.Bold
+      X: =460
+      Y: =28
+      Width: =200
+      Height: =52
+- btnFrom:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =If(IsBlank(varFrom), "–", Text(varFrom, "ddd m/d/yy"))
+      OnSelect: |-
+        =Set(varCalMode, "F"); Set(varTmpFrom, Coalesce(varFrom, Today())); Set(varTmpTo, Coalesce(varTo, Today())); Set(varCalM, Date(Year(Coalesce(varFrom, Today())), Month(Coalesce(varFrom, Today())), 1)); Set(varCal, true)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =13
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(255, 255, 255, 1)
+      Color: |-
+        =RGBA(7, 39, 45, 1)
+      HoverFill: |-
+        =RGBA(230, 244, 244, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      BorderThickness: |-
+        =2
+      X: |-
+        =670
+      Y: |-
+        =28
+      Width: |-
+        =150
+      Height: |-
+        =52
+      Tooltip: |-
+        ="Pick the start date"
+- btnTo:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =If(IsBlank(varTo), "–", Text(varTo, "ddd m/d/yy"))
+      OnSelect: |-
+        =Set(varCalMode, "T"); Set(varTmpFrom, Coalesce(varFrom, Today())); Set(varTmpTo, Coalesce(varTo, Today())); Set(varCalM, Date(Year(Coalesce(varTo, Today())), Month(Coalesce(varTo, Today())), 1)); Set(varCal, true)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =13
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(255, 255, 255, 1)
+      Color: |-
+        =RGBA(7, 39, 45, 1)
+      HoverFill: |-
+        =RGBA(230, 244, 244, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      BorderThickness: |-
+        =2
+      X: |-
+        =830
+      Y: |-
+        =28
+      Width: |-
+        =150
+      Height: |-
+        =52
+      Tooltip: |-
+        ="Pick the end date"
+- ddShift:
+    Control: Classic/DropDown@2.3.1
+    Properties:
+      Items: =["All", "1", "2"]
+      OnChange: =Select(btnCalc)
+      Font: =Font.Arial
+      Size: =16
+      FontWeight: =FontWeight.Bold
+      X: =990
+      Y: =28
+      Width: =100
+      Height: =52
+- btnRefresh:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varBusy, "LOADING…", "REFRESH")
+      OnSelect: |-
+        =Set(varBusy, true);
+        Set(varErr, "");
+        IfError(Set(varR, 'MDIXB-Tier2Data'.Run("GET", "")), Set(varErr, "Could not reach the flow MDI XB - Tier 2 Data. Is it on and added to this app? " & FirstError.Message));
+        If(IsBlank(varErr) && varR.ok <> "1", Set(varErr, Coalesce(varR.err, "No data returned.")));
+        If(IsBlank(varErr),
+          Set(varJ, ParseJSON(varR.data));
+          ClearCollect(colRows, ForAll(Table(varJ.rows) As x,
+            {K: Text(x.Value.k), L: Text(x.Value.l),
+             D: IfError(With({t: Text(x.Value.d)}, Date(Value(Left(t, 4)), Value(Mid(t, 6, 2)), Value(Mid(t, 9, 2)))), Blank()),
+             S: Value(x.Value.s), WO: Text(x.Value.wo), Lead: Text(x.Value.lead), Prod: Text(x.Value.prod),
+             HT: Value(x.Value.ht), Tgt: Value(x.Value.tgt), Act: Value(x.Value.act), H: Text(x.Value.h),
+             A: Value(x.Value.a), P: Value(x.Value.p), Q: Value(x.Value.q), OEE: Value(x.Value.oee),
+             DT: Value(x.Value.dt), DTR: Text(x.Value.dtr), HDT: Value(x.Value.hdt),
+             Scrap: Value(x.Value.scrap), SCR: Text(x.Value.scr), SN: Value(x.Value.sN), SF: Value(x.Value.sF), SR: Value(x.Value.sR),
+             CrS: Value(x.Value.crS), CrA: Value(x.Value.crA), SP: Value(x.Value.sp), SSP: Value(x.Value.ssp)}));
+          ClearCollect(colLines, ForAll(Table(varJ.lines) As x, {Line: Text(x.Value.line), VS: Text(x.Value.vs), N: IfError(Value(Text(x.Value.line)), 999)}));
+          Collect(colLines, ForAll(Filter(Distinct(colRows, L), !(Value in colLines.Line)) As m, {Line: m.Value, VS: "(not in a line folder)", N: IfError(Value(m.Value), 999)}));
+          Set(varS, ParseJSON(If(IsBlank(varR.settings), "{}", varR.settings)));
+          Set(varOG, Coalesce(Value(varS.oeeGreen), 65)); Set(varOA, Coalesce(Value(varS.oeeAmber), 50));
+          Set(varEG, Coalesce(Value(varS.effGreen), 95)); Set(varEA, Coalesce(Value(varS.effAmber), 85));
+          Set(varDA, Coalesce(Value(varS.dtAmber), 30)); Set(varDR, Coalesce(Value(varS.dtRed), 60));
+          Set(varSA, Coalesce(Value(varS.scrapAmber), 0.5)); Set(varSR, Coalesce(Value(varS.scrapRed), 1));
+          Set(varUpd, IfError(DateTimeValue(Text(varJ.lastRun)), Blank()));
+          RemoveIf(colRows, IsBlank(D) || D > DateAdd(Today(), 1, TimeUnit.Days) || D < DateAdd(Today(), -400, TimeUnit.Days));
+          ClearCollect(colDates, ForAll(Sort(Distinct(colRows, D), Value, SortOrder.Descending) As dd, {Value: Text(dd.Value, "ddd m/d/yyyy"), D: dd.Value}));
+          Set(varD0, Coalesce(First(Filter(colDates, D < Today())).D, First(colDates).D, Today()));
+          If(IsBlank(varFrom) || IsBlank(varTo), Set(varFrom, varD0); Set(varTo, varD0))
+        );
+        If(!IsBlank(varErr), Notify(varErr, NotificationType.Error));
+        Set(varBusy, false);
+        Select(btnCalc)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1104
+      Y: =28
+      Width: =130
+      Height: =52
+      DisplayMode: =If(varBusy, DisplayMode.Disabled, DisplayMode.Edit)
+      Tooltip: ="Reload what the sync flow has read from the Tier 1 boards."
+- btnCfg:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="⚙ TARGETS"
+      OnSelect: =Set(varCfg, true); Reset(cfgOG); Reset(cfgOA); Reset(cfgEG); Reset(cfgEA); Reset(cfgDA); Reset(cfgDR); Reset(cfgSA); Reset(cfgSR)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1246
+      Y: =28
+      Width: =120
+      Height: =52
+      Tooltip: ="OEE, efficiency, downtime and scrap color levels."
+- lblUpd:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varUpd), "No data yet", "Boards read " & Text(varUpd, "ddd h:mm AM/PM")) & Char(10) & varTot.Ran & " of " & varTot.Lines & " lines ran"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(176, 227, 228, 1)
+      Align: =Align.Right
+      X: =1540
+      Y: =10
+      Width: =364
+      Height: =70
+      FontWeight: =FontWeight.Bold
+- btnCalc:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =ClearCollect(colFloor, SortByColumns(ForAll(Filter(colLines, ddVS.Selected.Value = "All value streams" || VS = ddVS.Selected.Value) As ln,
+         With({shs: Filter(colRows, L = ln.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value))},
+         With({tg: Coalesce(Sum(shs, Tgt), 0), ac: Coalesce(Sum(shs, Act), 0),
+                ow: Coalesce(Sum(Filter(shs, !IsBlank(OEE)), Tgt), 0), os: Coalesce(Sum(Filter(shs, !IsBlank(OEE)), OEE * Tgt), 0),
+                dtu: Coalesce(Sum(shs, DT), 0), sc: Coalesce(Sum(shs, Scrap), 0),
+                sr: Coalesce(Sum(shs, SR), 0), sf: Coalesce(Sum(shs, SF), 0), sn: Coalesce(Sum(shs, SN), 0),
+                cs: Coalesce(Sum(shs, CrS), 0), ca: Coalesce(Sum(shs, CrA), 0), n: CountRows(shs),
+                dtt: ForAll(Filter(Split(Concat(shs, DTR, "|"), "|"), !IsBlank(Value)) As p, {R: Index(Split(p.Value, "~"), 1).Value, M: Value(Index(Split(p.Value, "~"), 2).Value)})},
+          {Line: ln.Line, N: ln.N, VS: ln.VS, Ran: n > 0, Shifts: n, Tgt: tg, Act: ac,
+           Eff: If(tg > 0, ac / tg * 100, Blank()), OEE: If(ow > 0, os / ow * 100, Blank()),
+           DTU: dtu, DTs: dtu / Max(n, 1),
+           TopR: First(SortByColumns(AddColumns(GroupBy(dtt, R, G), Mn, Sum(G, M)), "Mn", SortOrder.Descending)).R,
+           Scrap: sc, ScrapPct: If(ac > 0, sc / ac * 100, Blank()), SR: sr, SF: sf, SN: sn, CrS: cs, CrA: ca,
+           StS: If(n = 0, "N", sr > 0, "R", sf > 0, "A", "G"),
+           StQ: If(n = 0 || ac = 0, "N", sc / ac * 100 >= varSR, "R", sc / ac * 100 >= varSA, "A", "G"),
+           StD: If(tg = 0, "N", ac / tg * 100 >= varEG, "G", ac / tg * 100 >= varEA, "A", "R"),
+           StDT: If(n = 0, "N", dtu / Max(n, 1) >= varDR, "R", dtu / Max(n, 1) >= varDA, "A", "G"),
+           StO: If(ow = 0, "N", os / ow * 100 >= varOG, "G", os / ow * 100 >= varOA, "A", "R"),
+           StP: If(cs = 0 || ca = 0, "N", ca < cs, "R", ca > cs, "A", "G"),
+           E0: With({sh0: Filter(colRows, L = ln.Line && D = DateAdd(varTo, -6, TimeUnit.Days) && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value))}, If(Coalesce(Sum(sh0, Tgt), 0) > 0, Coalesce(Sum(sh0, Act), 0) / Sum(sh0, Tgt) * 100, Blank())), E1: With({sh1: Filter(colRows, L = ln.Line && D = DateAdd(varTo, -5, TimeUnit.Days) && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value))}, If(Coalesce(Sum(sh1, Tgt), 0) > 0, Coalesce(Sum(sh1, Act), 0) / Sum(sh1, Tgt) * 100, Blank())), E2: With({sh2: Filter(colRows, L = ln.Line && D = DateAdd(varTo, -4, TimeUnit.Days) && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value))}, If(Coalesce(Sum(sh2, Tgt), 0) > 0, Coalesce(Sum(sh2, Act), 0) / Sum(sh2, Tgt) * 100, Blank())), E3: With({sh3: Filter(colRows, L = ln.Line && D = DateAdd(varTo, -3, TimeUnit.Days) && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value))}, If(Coalesce(Sum(sh3, Tgt), 0) > 0, Coalesce(Sum(sh3, Act), 0) / Sum(sh3, Tgt) * 100, Blank())), E4: With({sh4: Filter(colRows, L = ln.Line && D = DateAdd(varTo, -2, TimeUnit.Days) && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value))}, If(Coalesce(Sum(sh4, Tgt), 0) > 0, Coalesce(Sum(sh4, Act), 0) / Sum(sh4, Tgt) * 100, Blank())), E5: With({sh5: Filter(colRows, L = ln.Line && D = DateAdd(varTo, -1, TimeUnit.Days) && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value))}, If(Coalesce(Sum(sh5, Tgt), 0) > 0, Coalesce(Sum(sh5, Act), 0) / Sum(sh5, Tgt) * 100, Blank())), E6: With({sh6: Filter(colRows, L = ln.Line && D = DateAdd(varTo, -0, TimeUnit.Days) && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value))}, If(Coalesce(Sum(sh6, Tgt), 0) > 0, Coalesce(Sum(sh6, Act), 0) / Sum(sh6, Tgt) * 100, Blank()))}))), "N", SortOrder.Ascending));
+        ClearCollect(colParRaw, Ungroup(ForAll(Filter(colRows, L in colFloor.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)) As r, {X: ForAll(Filter(Split(r.DTR, "|"), !IsBlank(Value)) As p, {Ln: r.L, R: Index(Split(p.Value, "~"), 1).Value, M: Value(Index(Split(p.Value, "~"), 2).Value)})}), X));
+        ClearCollect(colPar, FirstN(SortByColumns(AddColumns(GroupBy(colParRaw, R, G), Mn, Sum(G, M), Lns, Concat(Distinct(G, Ln), Value, ", ")), "Mn", SortOrder.Descending), 10));
+        ClearCollect(colScrRaw, Ungroup(ForAll(Filter(colRows, L in colFloor.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)) As r, {X: ForAll(Filter(Split(r.SCR, "|"), !IsBlank(Value)) As p, {Ln: r.L, I: Index(Split(p.Value, "~"), 1).Value, Q: Value(Index(Split(p.Value, "~"), 2).Value)})}), X));
+        ClearCollect(colScr, FirstN(SortByColumns(AddColumns(GroupBy(colScrRaw, I, G), Qty, Sum(G, Q), Lns, Concat(Distinct(G, Ln), Value, ", ")), "Qty", SortOrder.Descending), 8));
+        Set(varTot, {Tgt: Coalesce(Sum(colFloor, Tgt), 0), Act: Coalesce(Sum(colFloor, Act), 0), DTU: Coalesce(Sum(colFloor, DTU), 0),
+          Scrap: Coalesce(Sum(colFloor, Scrap), 0), SR: Coalesce(Sum(colFloor, SR), 0), SF: Coalesce(Sum(colFloor, SF), 0), SN: Coalesce(Sum(colFloor, SN), 0),
+          CrS: Coalesce(Sum(colFloor, CrS), 0), CrA: Coalesce(Sum(colFloor, CrA), 0), Ran: CountRows(Filter(colFloor, Ran)), Lines: CountRows(colFloor),
+          OEE: If(Coalesce(Sum(Filter(colFloor, !IsBlank(OEE)), Tgt), 0) > 0, Sum(Filter(colFloor, !IsBlank(OEE)), OEE * Tgt) / Sum(Filter(colFloor, !IsBlank(OEE)), Tgt), Blank())})
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =0
+      Y: =0
+      Width: =1
+      Height: =1
+      Visible: =false
+- bgMain:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 244, 242, 1)
+      X: =0
+      Y: =90
+      Width: =1920
+      Height: =990
+- hLine:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =16
+      Y: =98
+      Width: =120
+      Height: =30
+      FontWeight: =FontWeight.Bold
+- hS:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SAFETY"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =140
+      Y: =98
+      Width: =120
+      Height: =30
+      FontWeight: =FontWeight.Bold
+- hQ:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="QUALITY · SCRAP"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =266
+      Y: =98
+      Width: =170
+      Height: =30
+      FontWeight: =FontWeight.Bold
+- hD:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DELIVERY · UNITS VS TARGET"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =442
+      Y: =98
+      Width: =240
+      Height: =30
+      FontWeight: =FontWeight.Bold
+- hDT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DOWNTIME"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =688
+      Y: =98
+      Width: =230
+      Height: =30
+      FontWeight: =FontWeight.Bold
+- hO:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OEE"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =924
+      Y: =98
+      Width: =100
+      Height: =30
+      FontWeight: =FontWeight.Bold
+- hP:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PEOPLE · CREW"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =1030
+      Y: =98
+      Width: =130
+      Height: =30
+      FontWeight: =FontWeight.Bold
+- h7:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="EFFICIENCY · LAST 7 DAYS"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =1166
+      Y: =98
+      Width: =280
+      Height: =30
+      FontWeight: =FontWeight.Bold
+- galFloor:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colFloor
+      TemplateSize: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor))))
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      BorderThickness: =0
+      TemplateFill: =RGBA(0, 0, 0, 0)
+      X: =16
+      Y: =130
+      Width: =1440
+      Height: =830
+    Children:
+      - gLineBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =If(ThisItem.Ran, RGBA(7, 39, 45, 1), RGBA(217, 217, 214, 1))
+            X: =0
+            Y: =3
+            Width: =120
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+      - gLine:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Line
+            Font: =Font.Arial
+            Size: =20
+            Color: =If(ThisItem.Ran, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+            Align: =Align.Center
+            X: =0
+            Y: =3
+            Width: =120
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+      - gS:
+          Control: Label@2.5.1
+          Properties:
+            Wrap: =false
+            Text: =If(!ThisItem.Ran, "–", ThisItem.SR > 0, "REC " & ThisItem.SR, ThisItem.SF > 0, "FA " & ThisItem.SF, ThisItem.SN > 0, "OK · NM " & ThisItem.SN, "OK")
+            Font: =Font.Arial
+            Size: =14
+            Color: =If(ThisItem.StS = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =124
+            Y: =3
+            Width: =120
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(ThisItem.StS, "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+      - gQ:
+          Control: Label@2.5.1
+          Properties:
+            Wrap: =false
+            Text: =If(!ThisItem.Ran, "–", Text(ThisItem.Scrap, "#,##0") & "  ·  " & Text(Coalesce(ThisItem.ScrapPct, 0), "0.0") & "%")
+            Font: =Font.Arial
+            Size: =14
+            Color: =If(ThisItem.StQ = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =250
+            Y: =3
+            Width: =170
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(ThisItem.StQ, "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+      - gD:
+          Control: Label@2.5.1
+          Properties:
+            Wrap: =false
+            Text: =If(ThisItem.Tgt = 0, If(ThisItem.Ran, "no target", "–"), Text(ThisItem.Act, "#,##0") & " / " & Text(ThisItem.Tgt, "#,##0") & "  ·  " & Text(ThisItem.Eff, "0") & "%")
+            Font: =Font.Arial
+            Size: =14
+            Color: =If(ThisItem.StD = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =426
+            Y: =3
+            Width: =240
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(ThisItem.StD, "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+      - gDT:
+          Control: Label@2.5.1
+          Properties:
+            Wrap: =false
+            Text: =If(!ThisItem.Ran, "–", Text(ThisItem.DTU, "#,##0") & " min" & If(IsBlank(ThisItem.TopR), "", "  ·  " & If(Len(ThisItem.TopR) > 13, Left(ThisItem.TopR, 12) & "…", ThisItem.TopR)))
+            Font: =Font.Arial
+            Size: =14
+            Color: =If(ThisItem.StDT = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =672
+            Y: =3
+            Width: =230
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(ThisItem.StDT, "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+      - gO:
+          Control: Label@2.5.1
+          Properties:
+            Wrap: =false
+            Text: =If(IsBlank(ThisItem.OEE), "–", Text(ThisItem.OEE, "0") & "%")
+            Font: =Font.Arial
+            Size: =14
+            Color: =If(ThisItem.StO = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =908
+            Y: =3
+            Width: =100
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(ThisItem.StO, "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+      - gP:
+          Control: Label@2.5.1
+          Properties:
+            Wrap: =false
+            Text: =If(ThisItem.CrS = 0 || ThisItem.CrA = 0, "–", ThisItem.CrA & " / " & ThisItem.CrS)
+            Font: =Font.Arial
+            Size: =14
+            Color: =If(ThisItem.StP = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =1014
+            Y: =3
+            Width: =130
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(ThisItem.StP, "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+      - gE0:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.E0), "", Text(ThisItem.E0, "0"))
+            Font: =Font.Arial
+            Size: =10
+            Color: =If(If(IsBlank(ThisItem.E0), "N", ThisItem.E0 >= varEG, "G", ThisItem.E0 >= varEA, "A", "R") = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =1150
+            Y: =3
+            Width: =36
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(If(IsBlank(ThisItem.E0), "N", ThisItem.E0 >= varEG, "G", ThisItem.E0 >= varEA, "A", "R"), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+            Tooltip: |-
+              =Text(DateAdd(varTo, -6, TimeUnit.Days), "ddd m/d") & ": efficiency " & If(IsBlank(ThisItem.E0), "no data", Text(ThisItem.E0, "0") & "%")
+      - gE1:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.E1), "", Text(ThisItem.E1, "0"))
+            Font: =Font.Arial
+            Size: =10
+            Color: =If(If(IsBlank(ThisItem.E1), "N", ThisItem.E1 >= varEG, "G", ThisItem.E1 >= varEA, "A", "R") = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =1190
+            Y: =3
+            Width: =36
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(If(IsBlank(ThisItem.E1), "N", ThisItem.E1 >= varEG, "G", ThisItem.E1 >= varEA, "A", "R"), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+            Tooltip: |-
+              =Text(DateAdd(varTo, -5, TimeUnit.Days), "ddd m/d") & ": efficiency " & If(IsBlank(ThisItem.E1), "no data", Text(ThisItem.E1, "0") & "%")
+      - gE2:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.E2), "", Text(ThisItem.E2, "0"))
+            Font: =Font.Arial
+            Size: =10
+            Color: =If(If(IsBlank(ThisItem.E2), "N", ThisItem.E2 >= varEG, "G", ThisItem.E2 >= varEA, "A", "R") = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =1230
+            Y: =3
+            Width: =36
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(If(IsBlank(ThisItem.E2), "N", ThisItem.E2 >= varEG, "G", ThisItem.E2 >= varEA, "A", "R"), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+            Tooltip: |-
+              =Text(DateAdd(varTo, -4, TimeUnit.Days), "ddd m/d") & ": efficiency " & If(IsBlank(ThisItem.E2), "no data", Text(ThisItem.E2, "0") & "%")
+      - gE3:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.E3), "", Text(ThisItem.E3, "0"))
+            Font: =Font.Arial
+            Size: =10
+            Color: =If(If(IsBlank(ThisItem.E3), "N", ThisItem.E3 >= varEG, "G", ThisItem.E3 >= varEA, "A", "R") = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =1270
+            Y: =3
+            Width: =36
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(If(IsBlank(ThisItem.E3), "N", ThisItem.E3 >= varEG, "G", ThisItem.E3 >= varEA, "A", "R"), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+            Tooltip: |-
+              =Text(DateAdd(varTo, -3, TimeUnit.Days), "ddd m/d") & ": efficiency " & If(IsBlank(ThisItem.E3), "no data", Text(ThisItem.E3, "0") & "%")
+      - gE4:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.E4), "", Text(ThisItem.E4, "0"))
+            Font: =Font.Arial
+            Size: =10
+            Color: =If(If(IsBlank(ThisItem.E4), "N", ThisItem.E4 >= varEG, "G", ThisItem.E4 >= varEA, "A", "R") = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =1310
+            Y: =3
+            Width: =36
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(If(IsBlank(ThisItem.E4), "N", ThisItem.E4 >= varEG, "G", ThisItem.E4 >= varEA, "A", "R"), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+            Tooltip: |-
+              =Text(DateAdd(varTo, -2, TimeUnit.Days), "ddd m/d") & ": efficiency " & If(IsBlank(ThisItem.E4), "no data", Text(ThisItem.E4, "0") & "%")
+      - gE5:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.E5), "", Text(ThisItem.E5, "0"))
+            Font: =Font.Arial
+            Size: =10
+            Color: =If(If(IsBlank(ThisItem.E5), "N", ThisItem.E5 >= varEG, "G", ThisItem.E5 >= varEA, "A", "R") = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =1350
+            Y: =3
+            Width: =36
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(If(IsBlank(ThisItem.E5), "N", ThisItem.E5 >= varEG, "G", ThisItem.E5 >= varEA, "A", "R"), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+            Tooltip: |-
+              =Text(DateAdd(varTo, -1, TimeUnit.Days), "ddd m/d") & ": efficiency " & If(IsBlank(ThisItem.E5), "no data", Text(ThisItem.E5, "0") & "%")
+      - gE6:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.E6), "", Text(ThisItem.E6, "0"))
+            Font: =Font.Arial
+            Size: =10
+            Color: =If(If(IsBlank(ThisItem.E6), "N", ThisItem.E6 >= varEG, "G", ThisItem.E6 >= varEA, "A", "R") = "N", RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: =Align.Center
+            X: =1390
+            Y: =3
+            Width: =36
+            Height: =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            FontWeight: =FontWeight.Bold
+            Fill: =Switch(If(IsBlank(ThisItem.E6), "N", ThisItem.E6 >= varEG, "G", ThisItem.E6 >= varEA, "A", "R"), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+            Tooltip: |-
+              =Text(DateAdd(varTo, -0, TimeUnit.Days), "ddd m/d") & ": efficiency " & If(IsBlank(ThisItem.E6), "no data", Text(ThisItem.E6, "0") & "%")
+      - lineHit:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: |-
+              =""
+            OnSelect: |-
+              =Set(varLine, ThisItem.Line);
+              ClearCollect(colDetSh, SortByColumns(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo), "D", SortOrder.Descending, "S", SortOrder.Ascending));
+              Set(varDS, First(colDetSh));
+              ClearCollect(colDetDT, SortByColumns(AddColumns(GroupBy(ForAll(Filter(Split(Concat(colDetSh, DTR, "|"), "|"), !IsBlank(Value)) As p, {R: Index(Split(p.Value, "~"), 1).Value, M: Value(Index(Split(p.Value, "~"), 2).Value)}), R, G), Mn, Sum(G, M)), "Mn", SortOrder.Descending));
+              ClearCollect(colDetSc, SortByColumns(AddColumns(GroupBy(ForAll(Filter(Split(Concat(colDetSh, SCR, "|"), "|"), !IsBlank(Value)) As p, {I: Index(Split(p.Value, "~"), 1).Value, Q: Value(Index(Split(p.Value, "~"), 2).Value)}), I, G), Qty, Sum(G, Q)), "Qty", SortOrder.Descending));
+              Set(varTWSel, true); Set(varDTab, "O"); Set(varDet, true)
+            Fill: |-
+              =RGBA(0, 0, 0, 0)
+            Color: |-
+              =RGBA(255, 255, 255, 1)
+            HoverFill: |-
+              =RGBA(255, 255, 255, 0.18)
+            PressedFill: |-
+              =RGBA(255, 255, 255, 0.3)
+            BorderColor: |-
+              =RGBA(0, 0, 0, 0)
+            X: |-
+              =0
+            Y: |-
+              =3
+            Width: |-
+              =120
+            Height: |-
+              =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            Tooltip: |-
+              ="Line " & ThisItem.Line & ": shifts, hour by hour, downtime and scrap"
+      - mS:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: |-
+              =""
+            OnSelect: |-
+              =Set(varLine, ThisItem.Line); Set(varMetTab, "S"); Set(varMetT, "LINE " & ThisItem.Line & "  ·  SAFETY"); Set(varMetB, "BY TYPE"); Set(varMetSum, "Recordable " & ThisItem.SR & "  ·  First aid " & ThisItem.SF & "  ·  Near miss " & ThisItem.SN & "  ·  " & ThisItem.Shifts & " shift(s)");
+              ClearCollect(colMet, ForAll(SortByColumns(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), "D", SortOrder.Descending, "S", SortOrder.Ascending) As r, {K: Upper(Text(r.D, "ddd m/d")) & "  ·  SHIFT " & r.S, K2: Trim(Coalesce(r.Prod, "") & If(IsBlank(r.WO), "", "   W/O " & r.WO) & If(IsBlank(r.Lead), "", "   " & r.Lead)), V: "Recordable " & r.SR & "     First aid " & r.SF & "     Near miss " & r.SN, V2: If(r.SR + r.SF + r.SN = 0, "Nothing logged on the board", "Logged on the board, E18:F20"), St: If(r.SR > 0, "R", r.SF > 0, "A", "G")}));
+              ClearCollect(colMetB, Table({N: "Recordable", Q: Coalesce(Sum(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), SR), 0)}, {N: "First aid", Q: Coalesce(Sum(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), SF), 0)}, {N: "Near miss", Q: Coalesce(Sum(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), SN), 0)}));
+              Set(varMetOpen, true)
+            Fill: |-
+              =RGBA(0, 0, 0, 0)
+            Color: |-
+              =RGBA(255, 255, 255, 1)
+            HoverFill: |-
+              =RGBA(255, 255, 255, 0.18)
+            PressedFill: |-
+              =RGBA(255, 255, 255, 0.3)
+            BorderColor: |-
+              =RGBA(0, 0, 0, 0)
+            X: |-
+              =124
+            Y: |-
+              =3
+            Width: |-
+              =120
+            Height: |-
+              =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            Tooltip: |-
+              ="Safety, line " & ThisItem.Line
+      - mQ:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: |-
+              =""
+            OnSelect: |-
+              =Set(varLine, ThisItem.Line); Set(varMetTab, "Q"); Set(varMetT, "LINE " & ThisItem.Line & "  ·  QUALITY · SCRAP"); Set(varMetB, "BY COMPONENT"); Set(varMetSum, Text(ThisItem.Scrap, "#,##0") & " scrap on " & Text(ThisItem.Act, "#,##0") & " units" & If(ThisItem.Act > 0, "  ·  " & Text(ThisItem.Scrap / ThisItem.Act * 100, "0.00") & "%", ""));
+              ClearCollect(colMet, ForAll(SortByColumns(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), "D", SortOrder.Descending, "S", SortOrder.Ascending) As r, {K: Upper(Text(r.D, "ddd m/d")) & "  ·  SHIFT " & r.S, K2: Trim(Coalesce(r.Prod, "") & If(IsBlank(r.WO), "", "   W/O " & r.WO) & If(IsBlank(r.Lead), "", "   " & r.Lead)), V: Text(r.Scrap, "#,##0") & " scrap" & If(r.Act > 0, "  ·  " & Text(r.Scrap / r.Act * 100, "0.0") & "% of " & Text(r.Act, "#,##0") & " units", ""), V2: If(IsBlank(r.SCR), "No scrap logged", Substitute(Substitute(r.SCR, "~", " "), "|", ", ") & ""), St: If(r.Act = 0, "N", r.Scrap / r.Act * 100 >= varSR, "R", r.Scrap / r.Act * 100 >= varSA, "A", "G")}));
+              ClearCollect(colMetB, SortByColumns(ForAll(GroupBy(ForAll(Filter(Split(Concat(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), SCR, "|"), "|"), !IsBlank(Value)) As p, {N: Index(Split(p.Value, "~"), 1).Value, M: Value(Index(Split(p.Value, "~"), 2).Value)}), N, G) As g, {N: g.N, Q: Sum(g.G, M)}), "Q", SortOrder.Descending));
+              Set(varMetOpen, true)
+            Fill: |-
+              =RGBA(0, 0, 0, 0)
+            Color: |-
+              =RGBA(255, 255, 255, 1)
+            HoverFill: |-
+              =RGBA(255, 255, 255, 0.18)
+            PressedFill: |-
+              =RGBA(255, 255, 255, 0.3)
+            BorderColor: |-
+              =RGBA(0, 0, 0, 0)
+            X: |-
+              =250
+            Y: |-
+              =3
+            Width: |-
+              =170
+            Height: |-
+              =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            Tooltip: |-
+              ="Scrap, line " & ThisItem.Line
+      - mD:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: |-
+              =""
+            OnSelect: |-
+              =Set(varLine, ThisItem.Line); Set(varMetTab, "D"); Set(varMetT, "LINE " & ThisItem.Line & "  ·  DELIVERY · UNITS VS TARGET"); Set(varMetB, "AVERAGE UNITS BY HOUR OF SHIFT"); Set(varMetSum, Text(ThisItem.Act, "#,##0") & " / " & Text(ThisItem.Tgt, "#,##0") & If(ThisItem.Tgt > 0, "  ·  " & Text(ThisItem.Act / ThisItem.Tgt * 100, "0") & "% efficiency", "") & "  ·  " & CountIf(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), Tgt > 0 && Act >= Tgt) & " of " & CountIf(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), Tgt > 0) & " shifts at target");
+              ClearCollect(colMet, ForAll(SortByColumns(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), "D", SortOrder.Descending, "S", SortOrder.Ascending) As r, {K: Upper(Text(r.D, "ddd m/d")) & "  ·  SHIFT " & r.S, K2: Trim(Coalesce(r.Prod, "") & If(IsBlank(r.WO), "", "   W/O " & r.WO) & If(IsBlank(r.Lead), "", "   " & r.Lead)), V: Text(r.Act, "#,##0") & " / " & Text(r.Tgt, "#,##0") & If(r.Tgt > 0, "  ·  " & Text(r.Act / r.Tgt * 100, "0") & "%", "  ·  no target"), V2: "Hours: " & Substitute(r.H, ",", " · ") & If(r.HT > 0, "   (target " & Text(r.HT, "#,##0") & "/hr, " & CountIf(ForAll(Split(r.H, ",") As h, {U: IfError(Value(h.Value), Blank())}), !IsBlank(U) && U < r.HT) & " hour(s) under)", ""), St: If(r.Tgt = 0, "N", r.Act / r.Tgt * 100 >= varEG, "G", r.Act / r.Tgt * 100 >= varEA, "A", "R")}));
+              ClearCollect(colMetB, ForAll(Sequence(8) As i, {N: "Hour " & i.Value, Q: Coalesce(Round(Average(ForAll(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)) As r, {U: IfError(Value(Index(Split(r.H, ","), i.Value).Value), Blank())}), U), 0), 0)}));
+              Set(varMetOpen, true)
+            Fill: |-
+              =RGBA(0, 0, 0, 0)
+            Color: |-
+              =RGBA(255, 255, 255, 1)
+            HoverFill: |-
+              =RGBA(255, 255, 255, 0.18)
+            PressedFill: |-
+              =RGBA(255, 255, 255, 0.3)
+            BorderColor: |-
+              =RGBA(0, 0, 0, 0)
+            X: |-
+              =426
+            Y: |-
+              =3
+            Width: |-
+              =240
+            Height: |-
+              =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            Tooltip: |-
+              ="Units vs target, line " & ThisItem.Line
+      - mDT:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: |-
+              =""
+            OnSelect: |-
+              =Set(varLine, ThisItem.Line); Set(varMetTab, "C"); Set(varMetT, "LINE " & ThisItem.Line & "  ·  DOWNTIME"); Set(varMetB, "BY REASON (MINUTES)"); Set(varMetSum, Text(ThisItem.DTU, "#,##0") & " min over " & ThisItem.Shifts & " shift(s)  ·  " & Text(ThisItem.DTs, "0") & " min per shift" & If(IsBlank(ThisItem.TopR), "", "  ·  top reason: " & ThisItem.TopR));
+              ClearCollect(colMet, ForAll(SortByColumns(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), "D", SortOrder.Descending, "S", SortOrder.Ascending) As r, {K: Upper(Text(r.D, "ddd m/d")) & "  ·  SHIFT " & r.S, K2: Trim(Coalesce(r.Prod, "") & If(IsBlank(r.WO), "", "   W/O " & r.WO) & If(IsBlank(r.Lead), "", "   " & r.Lead)), V: r.DT & " min", V2: If(IsBlank(r.DTR), "No downtime logged", Substitute(Substitute(r.DTR, "~", " "), "|", " min, ") & " min") & If(r.HDT = 1, "   (logged by the hour)", ""), St: If(r.DT >= varDR, "R", r.DT >= varDA, "A", "G")}));
+              ClearCollect(colMetB, SortByColumns(ForAll(GroupBy(ForAll(Filter(Split(Concat(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), DTR, "|"), "|"), !IsBlank(Value)) As p, {N: Index(Split(p.Value, "~"), 1).Value, M: Value(Index(Split(p.Value, "~"), 2).Value)}), N, G) As g, {N: g.N, Q: Sum(g.G, M)}), "Q", SortOrder.Descending));
+              Set(varMetOpen, true)
+            Fill: |-
+              =RGBA(0, 0, 0, 0)
+            Color: |-
+              =RGBA(255, 255, 255, 1)
+            HoverFill: |-
+              =RGBA(255, 255, 255, 0.18)
+            PressedFill: |-
+              =RGBA(255, 255, 255, 0.3)
+            BorderColor: |-
+              =RGBA(0, 0, 0, 0)
+            X: |-
+              =672
+            Y: |-
+              =3
+            Width: |-
+              =230
+            Height: |-
+              =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            Tooltip: |-
+              ="Downtime, line " & ThisItem.Line & If(IsBlank(ThisItem.TopR), "", ": top reason " & ThisItem.TopR)
+      - mO:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: |-
+              =""
+            OnSelect: |-
+              =Set(varLine, ThisItem.Line); Set(varMetTab, "C"); Set(varMetT, "LINE " & ThisItem.Line & "  ·  OEE (BOARD OEE ACTUAL %)"); Set(varMetB, "AVERAGE A / P / Q (%)"); Set(varMetSum, If(IsBlank(ThisItem.OEE), "OEE –  (no Act. Speed on these boards)", "OEE " & Text(ThisItem.OEE, "0") & "%  (weighted by target across the shifts)"));
+              ClearCollect(colMet, ForAll(SortByColumns(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), "D", SortOrder.Descending, "S", SortOrder.Ascending) As r, {K: Upper(Text(r.D, "ddd m/d")) & "  ·  SHIFT " & r.S, K2: Trim(Coalesce(r.Prod, "") & If(IsBlank(r.WO), "", "   W/O " & r.WO) & If(IsBlank(r.Lead), "", "   " & r.Lead)), V: If(IsBlank(r.OEE), "–", Text(r.OEE * 100, "0") & "%"), V2: If(IsBlank(r.OEE), "Not calculated: Act. Speed (E4) is blank on the board", "") & If(IsBlank(r.A) || IsBlank(r.P), "", "A " & Text(r.A * 100, "0") & "   P " & Text(r.P * 100, "0") & "   Q " & Text(Coalesce(r.Q, 0) * 100, "0")) & If(IsBlank(r.SP), "", "   ·   speed " & r.SP & If(IsBlank(r.SSP), "", " vs std " & Text(r.SSP, "0.0"))), St: If(IsBlank(r.OEE), "N", r.OEE * 100 >= varOG, "G", r.OEE * 100 >= varOA, "A", "R")}));
+              ClearCollect(colMetB, Table({N: "Availability", Q: Coalesce(Round(Average(Filter(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), !IsBlank(A)), A) * 100, 0), 0)}, {N: "Performance", Q: Coalesce(Round(Average(Filter(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), !IsBlank(P)), P) * 100, 0), 0)}, {N: "Quality", Q: Coalesce(Round(Average(Filter(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), !IsBlank(Q)), Q) * 100, 0), 0)}));
+              Set(varMetOpen, true)
+            Fill: |-
+              =RGBA(0, 0, 0, 0)
+            Color: |-
+              =RGBA(255, 255, 255, 1)
+            HoverFill: |-
+              =RGBA(255, 255, 255, 0.18)
+            PressedFill: |-
+              =RGBA(255, 255, 255, 0.3)
+            BorderColor: |-
+              =RGBA(0, 0, 0, 0)
+            X: |-
+              =908
+            Y: |-
+              =3
+            Width: |-
+              =100
+            Height: |-
+              =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            Tooltip: |-
+              ="OEE, line " & ThisItem.Line
+      - mP:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: |-
+              =""
+            OnSelect: |-
+              =Set(varLine, ThisItem.Line); Set(varMetTab, "C"); Set(varMetT, "LINE " & ThisItem.Line & "  ·  PEOPLE · CREW (ACTUAL / STANDARD)"); Set(varMetB, "SHIFTS BY STAFFING"); Set(varMetSum, "Crew " & ThisItem.CrA & " / " & ThisItem.CrS & "  (summed over " & ThisItem.Shifts & " shift(s))");
+              ClearCollect(colMet, ForAll(SortByColumns(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), "D", SortOrder.Descending, "S", SortOrder.Ascending) As r, {K: Upper(Text(r.D, "ddd m/d")) & "  ·  SHIFT " & r.S, K2: Trim(Coalesce(r.Prod, "") & If(IsBlank(r.WO), "", "   W/O " & r.WO) & If(IsBlank(r.Lead), "", "   " & r.Lead)), V: "Crew " & If(IsBlank(r.CrA), "–", Text(r.CrA)) & " / " & If(IsBlank(r.CrS), "–", Text(r.CrS)), V2: If(Coalesce(r.CrA, 0) > 0, Text(r.Act / r.CrA, "#,##0") & " units per person", "") & If(Coalesce(r.CrA, 0) = 0 || Coalesce(r.CrS, 0) = 0, "", r.CrA < r.CrS, "   ·   short " & (r.CrS - r.CrA), r.CrA > r.CrS, "   ·   over by " & (r.CrA - r.CrS), "   ·   at standard"), St: If(Coalesce(r.CrA, 0) = 0 || Coalesce(r.CrS, 0) = 0, "N", r.CrA < r.CrS, "R", r.CrA > r.CrS, "A", "G")}));
+              ClearCollect(colMetB, Table({N: "Shifts short", Q: CountIf(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), Coalesce(CrA, 0) > 0 && Coalesce(CrS, 0) > 0 && CrA < CrS)}, {N: "Shifts at standard", Q: CountIf(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), Coalesce(CrA, 0) > 0 && CrA = CrS)}, {N: "Shifts over", Q: CountIf(Filter(colRows, L = ThisItem.Line && D >= varFrom && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), Coalesce(CrA, 0) > 0 && Coalesce(CrS, 0) > 0 && CrA > CrS)}));
+              Set(varMetOpen, true)
+            Fill: |-
+              =RGBA(0, 0, 0, 0)
+            Color: |-
+              =RGBA(255, 255, 255, 1)
+            HoverFill: |-
+              =RGBA(255, 255, 255, 0.18)
+            PressedFill: |-
+              =RGBA(255, 255, 255, 0.3)
+            BorderColor: |-
+              =RGBA(0, 0, 0, 0)
+            X: |-
+              =1014
+            Y: |-
+              =3
+            Width: |-
+              =130
+            Height: |-
+              =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            Tooltip: |-
+              ="Crew, line " & ThisItem.Line
+      - m7:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: |-
+              =""
+            OnSelect: |-
+              =Set(varLine, ThisItem.Line); Set(varMetTab, "D"); Set(varMetT, "LINE " & ThisItem.Line & "  ·  EFFICIENCY, LAST 7 DAYS TO " & Upper(Text(varTo, "ddd m/d"))); Set(varMetB, "UNITS BY DAY"); Set(varMetSum, "Units vs target per day, shift filter applied");
+              ClearCollect(colMet, ForAll(Sequence(7) As k, With({dd: DateAdd(varTo, 1 - k.Value, TimeUnit.Days)}, With({sh: Filter(colRows, L = ThisItem.Line && D = dd && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value))}, {K: Upper(Text(dd, "dddd m/d")), K2: CountRows(sh) & " shift(s)", V: If(Coalesce(Sum(sh, Tgt), 0) > 0, Text(Sum(sh, Act), "#,##0") & " / " & Text(Sum(sh, Tgt), "#,##0") & "  ·  " & Text(Sum(sh, Act) / Sum(sh, Tgt) * 100, "0") & "%", "no data"), V2: If(CountRows(sh) = 0, "", "Downtime " & Coalesce(Sum(sh, DT), 0) & " min   ·   scrap " & Coalesce(Sum(sh, Scrap), 0)), St: If(Coalesce(Sum(sh, Tgt), 0) = 0, "N", Sum(sh, Act) / Sum(sh, Tgt) * 100 >= varEG, "G", Sum(sh, Act) / Sum(sh, Tgt) * 100 >= varEA, "A", "R")}))));
+              ClearCollect(colMetB, ForAll(Sequence(7) As k, With({dd: DateAdd(varTo, k.Value - 7, TimeUnit.Days)}, {N: Text(dd, "ddd m/d"), Q: Coalesce(Sum(Filter(colRows, L = ThisItem.Line && D = dd && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)), Act), 0)})));
+              Set(varMetOpen, true)
+            Fill: |-
+              =RGBA(0, 0, 0, 0)
+            Color: |-
+              =RGBA(255, 255, 255, 1)
+            HoverFill: |-
+              =RGBA(255, 255, 255, 0.18)
+            PressedFill: |-
+              =RGBA(255, 255, 255, 0.3)
+            BorderColor: |-
+              =RGBA(0, 0, 0, 0)
+            X: |-
+              =1150
+            Y: |-
+              =3
+            Width: |-
+              =276
+            Height: |-
+              =Max(34, Min(64, 820 / Max(1, CountRows(colFloor)))) - 6
+            Tooltip: |-
+              ="Efficiency by day, line " & ThisItem.Line
+- totBar:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =16
+      Y: =968
+      Width: =1440
+      Height: =96
+- totTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="PLANT"
+      Font: =Font.Arial
+      Size: =18
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Center
+      X: =16
+      Y: =968
+      Width: =120
+      Height: =96
+      FontWeight: =FontWeight.Bold
+- totS:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Recordable " & varTot.SR & Char(10) & "First aid " & varTot.SF & Char(10) & "Near miss " & varTot.SN
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Left
+      X: =140
+      Y: =972
+      Width: =120
+      Height: =88
+      FontWeight: =FontWeight.Bold
+- totQ:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(varTot.Scrap, "#,##0") & " scrap" & Char(10) & If(varTot.Act > 0, Text(varTot.Scrap / varTot.Act * 100, "0.00") & "% of units", "")
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Left
+      X: =266
+      Y: =972
+      Width: =170
+      Height: =88
+      FontWeight: =FontWeight.Bold
+- totD:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(varTot.Act, "#,##0") & " / " & Text(varTot.Tgt, "#,##0") & Char(10) & If(varTot.Tgt > 0, Text(varTot.Act / varTot.Tgt * 100, "0") & "% efficiency", "")
+      Font: =Font.Arial
+      Size: =15
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Left
+      X: =442
+      Y: =972
+      Width: =240
+      Height: =88
+      FontWeight: =FontWeight.Bold
+- totDT:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(varTot.DTU, "#,##0") & " min downtime" & Char(10) & "across " & varTot.Ran & " lines"
+      Font: =Font.Arial
+      Size: =13
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Left
+      X: =688
+      Y: =972
+      Width: =230
+      Height: =88
+      FontWeight: =FontWeight.Bold
+- totO:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(IsBlank(varTot.OEE), "–", Text(varTot.OEE, "0") & "%")
+      Font: =Font.Arial
+      Size: =18
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Center
+      X: =924
+      Y: =972
+      Width: =100
+      Height: =88
+      FontWeight: =FontWeight.Bold
+- totP:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(varTot.CrS = 0, "–", varTot.CrA & " / " & varTot.CrS)
+      Font: =Font.Arial
+      Size: =16
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Center
+      X: =1030
+      Y: =972
+      Width: =130
+      Height: =88
+      FontWeight: =FontWeight.Bold
+- totNote:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Tap any cell for its detail. Tap a line number for the full line view."
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(176, 227, 228, 1)
+      Align: =Align.Left
+      X: =1166
+      Y: =972
+      Width: =280
+      Height: =88
+- tS:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =""
+      OnSelect: |-
+        =Set(varLine, ""); Set(varMetTab, "O"); Set(varMetT, "PLANT  ·  SAFETY"); Set(varMetB, "BY TYPE"); Set(varMetSum, "One row per line, " & varTot.Ran & " of " & varTot.Lines & " lines ran");
+        ClearCollect(colMet, ForAll(colFloor As f, {K: "LINE " & f.Line, K2: f.VS, V: If(!f.Ran, "did not run", "Recordable " & f.SR & "     First aid " & f.SF & "     Near miss " & f.SN), V2: If(!f.Ran, "", ""), St: f.StS}));
+        ClearCollect(colMetB, Table({N: "Recordable", Q: Coalesce(Sum(colFloor, SR), 0)}, {N: "First aid", Q: Coalesce(Sum(colFloor, SF), 0)}, {N: "Near miss", Q: Coalesce(Sum(colFloor, SN), 0)}));
+        Set(varMetOpen, true)
+      Fill: |-
+        =RGBA(0, 0, 0, 0)
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      HoverFill: |-
+        =RGBA(255, 255, 255, 0.15)
+      PressedFill: |-
+        =RGBA(255, 255, 255, 0.25)
+      BorderColor: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =140
+      Y: |-
+        =972
+      Width: |-
+        =120
+      Height: |-
+        =88
+      Tooltip: |-
+        ="Every line, this metric"
+- tQ:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =""
+      OnSelect: |-
+        =Set(varLine, ""); Set(varMetTab, "O"); Set(varMetT, "PLANT  ·  QUALITY · SCRAP"); Set(varMetB, "BY COMPONENT"); Set(varMetSum, "One row per line, " & varTot.Ran & " of " & varTot.Lines & " lines ran");
+        ClearCollect(colMet, ForAll(colFloor As f, {K: "LINE " & f.Line, K2: f.VS, V: If(!f.Ran, "did not run", Text(f.Scrap, "#,##0") & " scrap" & If(f.Act > 0, "  ·  " & Text(f.Scrap / f.Act * 100, "0.0") & "%", "")), V2: If(!f.Ran, "", ""), St: f.StQ}));
+        ClearCollect(colMetB, SortByColumns(ForAll(GroupBy(colScrRaw, I, G) As g, {N: g.I, Q: Sum(g.G, Q)}), "Q", SortOrder.Descending));
+        Set(varMetOpen, true)
+      Fill: |-
+        =RGBA(0, 0, 0, 0)
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      HoverFill: |-
+        =RGBA(255, 255, 255, 0.15)
+      PressedFill: |-
+        =RGBA(255, 255, 255, 0.25)
+      BorderColor: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =266
+      Y: |-
+        =972
+      Width: |-
+        =170
+      Height: |-
+        =88
+      Tooltip: |-
+        ="Every line, this metric"
+- tD:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =""
+      OnSelect: |-
+        =Set(varLine, ""); Set(varMetTab, "O"); Set(varMetT, "PLANT  ·  DELIVERY · UNITS VS TARGET"); Set(varMetB, "EFFICIENCY BY VALUE STREAM (%)"); Set(varMetSum, "One row per line, " & varTot.Ran & " of " & varTot.Lines & " lines ran");
+        ClearCollect(colMet, ForAll(colFloor As f, {K: "LINE " & f.Line, K2: f.VS, V: If(!f.Ran, "did not run", Text(f.Act, "#,##0") & " / " & Text(f.Tgt, "#,##0") & If(f.Tgt > 0, "  ·  " & Text(f.Eff, "0") & "%", "")), V2: If(!f.Ran, "", f.Shifts & " shift(s)"), St: f.StD}));
+        ClearCollect(colMetB, ForAll(GroupBy(Filter(colFloor, Tgt > 0), VS, G) As g, {N: g.VS, Q: Round(Sum(g.G, Act) / Sum(g.G, Tgt) * 100, 0)}));
+        Set(varMetOpen, true)
+      Fill: |-
+        =RGBA(0, 0, 0, 0)
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      HoverFill: |-
+        =RGBA(255, 255, 255, 0.15)
+      PressedFill: |-
+        =RGBA(255, 255, 255, 0.25)
+      BorderColor: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =442
+      Y: |-
+        =972
+      Width: |-
+        =240
+      Height: |-
+        =88
+      Tooltip: |-
+        ="Every line, this metric"
+- tDT:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =""
+      OnSelect: |-
+        =Set(varLine, ""); Set(varMetTab, "O"); Set(varMetT, "PLANT  ·  DOWNTIME"); Set(varMetB, "BY REASON (MINUTES)"); Set(varMetSum, "One row per line, " & varTot.Ran & " of " & varTot.Lines & " lines ran");
+        ClearCollect(colMet, ForAll(colFloor As f, {K: "LINE " & f.Line, K2: f.VS, V: If(!f.Ran, "did not run", Text(f.DTU, "#,##0") & " min"), V2: If(!f.Ran, "", If(IsBlank(f.TopR), "", "Top reason: " & f.TopR) & "   ·   " & Text(f.DTs, "0") & " min per shift"), St: f.StDT}));
+        ClearCollect(colMetB, SortByColumns(ForAll(GroupBy(colParRaw, R, G) As g, {N: g.R, Q: Sum(g.G, M)}), "Q", SortOrder.Descending));
+        Set(varMetOpen, true)
+      Fill: |-
+        =RGBA(0, 0, 0, 0)
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      HoverFill: |-
+        =RGBA(255, 255, 255, 0.15)
+      PressedFill: |-
+        =RGBA(255, 255, 255, 0.25)
+      BorderColor: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =688
+      Y: |-
+        =972
+      Width: |-
+        =230
+      Height: |-
+        =88
+      Tooltip: |-
+        ="Every line, this metric"
+- tO:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =""
+      OnSelect: |-
+        =Set(varLine, ""); Set(varMetTab, "O"); Set(varMetT, "PLANT  ·  OEE (BOARD OEE ACTUAL %)"); Set(varMetB, ""); Set(varMetSum, "One row per line, " & varTot.Ran & " of " & varTot.Lines & " lines ran");
+        ClearCollect(colMet, ForAll(colFloor As f, {K: "LINE " & f.Line, K2: f.VS, V: If(!f.Ran, "did not run", If(IsBlank(f.OEE), "–", Text(f.OEE, "0") & "%")), V2: If(!f.Ran, "", If(IsBlank(f.OEE) && f.Ran, "No Act. Speed on the board", "")), St: f.StO}));
+        Clear(colMetB);
+        Set(varMetOpen, true)
+      Fill: |-
+        =RGBA(0, 0, 0, 0)
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      HoverFill: |-
+        =RGBA(255, 255, 255, 0.15)
+      PressedFill: |-
+        =RGBA(255, 255, 255, 0.25)
+      BorderColor: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =924
+      Y: |-
+        =972
+      Width: |-
+        =100
+      Height: |-
+        =88
+      Tooltip: |-
+        ="Every line, this metric"
+- tP:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =""
+      OnSelect: |-
+        =Set(varLine, ""); Set(varMetTab, "O"); Set(varMetT, "PLANT  ·  PEOPLE · CREW (ACTUAL / STANDARD)"); Set(varMetB, "LINES BY STAFFING"); Set(varMetSum, "One row per line, " & varTot.Ran & " of " & varTot.Lines & " lines ran");
+        ClearCollect(colMet, ForAll(colFloor As f, {K: "LINE " & f.Line, K2: f.VS, V: If(!f.Ran, "did not run", If(f.CrS = 0 || f.CrA = 0, "–", f.CrA & " / " & f.CrS)), V2: If(!f.Ran, "", If(f.CrA > 0, Text(f.Act / f.CrA, "#,##0") & " units per person", "")), St: f.StP}));
+        ClearCollect(colMetB, Table({N: "Lines short", Q: CountIf(colFloor, StP = "R")}, {N: "Lines at standard", Q: CountIf(colFloor, StP = "G")}, {N: "Lines over", Q: CountIf(colFloor, StP = "A")}));
+        Set(varMetOpen, true)
+      Fill: |-
+        =RGBA(0, 0, 0, 0)
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      HoverFill: |-
+        =RGBA(255, 255, 255, 0.15)
+      PressedFill: |-
+        =RGBA(255, 255, 255, 0.25)
+      BorderColor: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =1030
+      Y: |-
+        =972
+      Width: |-
+        =130
+      Height: |-
+        =88
+      Tooltip: |-
+        ="Every line, this metric"
+- lblEmpty:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(varBusy, "Loading…", "No lines to show. Press REFRESH, or run MDI XB - Sync Excel Boards if this is the first time.")
+      Font: =Font.Arial
+      Size: =16
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Center
+      X: =16
+      Y: =400
+      Width: =1440
+      Height: =80
+      FontWeight: =FontWeight.Bold
+      Visible: =CountRows(colFloor) = 0
+- rpBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =1472
+      Y: =98
+      Width: =432
+      Height: =966
+- rpDTT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DOWNTIME · TOP REASONS"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      Align: =Align.Left
+      X: =1488
+      Y: =106
+      Width: =400
+      Height: =30
+      FontWeight: =FontWeight.Bold
+- rpDTS:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(Coalesce(Sum(colPar, Mn), 0), "#,##0") & " min on the boards"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =1488
+      Y: =134
+      Width: =400
+      Height: =22
+- galPar:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colPar
+      TemplateSize: =62
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      BorderThickness: =0
+      X: =1488
+      Y: =160
+      Width: =400
+      Height: =560
+    Children:
+      - pR:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.R
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Left
+            X: =0
+            Y: =2
+            Width: =370
+            Height: =22
+            FontWeight: =FontWeight.Bold
+      - pBarBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(236, 236, 234, 1)
+            X: =0
+            Y: =26
+            Width: =262
+            Height: =16
+      - pBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(207, 34, 46, 1)
+            X: =0
+            Y: =26
+            Width: =262 * ThisItem.Mn / Max(1, Max(colPar, Mn))
+            Height: =16
+      - pMin:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.Mn, "#,##0") & " min"
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Right
+            X: =266
+            Y: =22
+            Width: =104
+            Height: =24
+            FontWeight: =FontWeight.Bold
+      - pLns:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="Lines " & ThisItem.Lns
+            Font: =Font.Arial
+            Size: =9
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Left
+            X: =0
+            Y: =42
+            Width: =370
+            Height: =18
+- rpScT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SCRAP · TOP COMPONENTS"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      Align: =Align.Left
+      X: =1488
+      Y: =730
+      Width: =400
+      Height: =30
+      FontWeight: =FontWeight.Bold
+- galScr:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colScr
+      TemplateSize: =36
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      BorderThickness: =0
+      X: =1488
+      Y: =762
+      Width: =400
+      Height: =296
+    Children:
+      - sI:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.I
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Left
+            X: =0
+            Y: =2
+            Width: =196
+            Height: =34
+            FontWeight: =FontWeight.Bold
+      - sBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(210, 153, 34, 1)
+            X: =200
+            Y: =12
+            Width: =96 * ThisItem.Qty / Max(1, Max(colScr, Qty))
+            Height: =14
+      - sQ:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.Qty, "#,##0")
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Right
+            X: =300
+            Y: =2
+            Width: =70
+            Height: =34
+            FontWeight: =FontWeight.Bold
+- dDim:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 0.55)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =1080
+      Visible: =varDet
+      OnSelect: =Set(varDet, false)
+- dPanel:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =80
+      Y: =70
+      Width: =1760
+      Height: =960
+      Visible: =varDet
+- dHdr:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =80
+      Y: =70
+      Width: =1760
+      Height: =64
+      Visible: =varDet
+- dTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="LINE " & varLine & "  ·  " & If(varFrom = varTo, Text(varFrom, "ddd m/d"), Text(varFrom, "m/d") & " – " & Text(varTo, "m/d"))
+      Font: =Font.Arial
+      Size: =18
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Left
+      X: =104
+      Y: =70
+      Width: =700
+      Height: =64
+      FontWeight: =FontWeight.Bold
+      Visible: =varDet
+- dClose:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="CLOSE"
+      OnSelect: =Set(varDet, false)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 178, 169, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1700
+      Y: =80
+      Width: =120
+      Height: =44
+      Visible: =varDet
+- dShT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SHIFTS  ·  newest first  ·  tap one for its hours"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =104
+      Y: =146
+      Width: =800
+      Height: =26
+      FontWeight: =FontWeight.Bold
+      Visible: =varDet && varDTab = "O"
+- galDetSh:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colDetSh
+      TemplateSize: =140
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      BorderThickness: =0
+      Visible: =varDet && varDTab = "O"
+      X: =104
+      Y: =174
+      Width: =800
+      Height: =286
+    Children:
+      - shBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =If(ThisItem.K = varDS.K, RGBA(176, 227, 228, 0.45), RGBA(244, 244, 242, 1))
+            X: =0
+            Y: =4
+            Width: =800
+            Height: =132
+      - shT:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Upper(Text(ThisItem.D, "ddd m/d")) & "  ·  SHIFT " & ThisItem.S & "   " & Coalesce(ThisItem.Prod, "") & If(IsBlank(ThisItem.WO), "", "  ·  " & ThisItem.WO) & If(IsBlank(ThisItem.Lead), "", "  ·  " & ThisItem.Lead)
+            Font: =Font.Arial
+            Size: =13
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Left
+            X: =16
+            Y: =8
+            Width: =770
+            Height: =28
+            FontWeight: =FontWeight.Bold
+      - shD:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="Units " & Text(ThisItem.Act, "#,##0") & " / " & Text(ThisItem.Tgt, "#,##0") & If(ThisItem.Tgt > 0, "  (" & Text(ThisItem.Act / ThisItem.Tgt * 100, "0") & "%)", "") & "     Downtime " & ThisItem.DT & " min     Scrap " & ThisItem.Scrap
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Left
+            X: =16
+            Y: =40
+            Width: =770
+            Height: =28
+      - shO:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.OEE), "OEE –  (actual and standard speed not on the board)", "OEE " & Text(ThisItem.OEE * 100, "0") & "%   ·   A " & Text(ThisItem.A * 100, "0") & "  P " & Text(ThisItem.P * 100, "0") & "  Q " & Text(ThisItem.Q * 100, "0"))
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Left
+            X: =16
+            Y: =70
+            Width: =770
+            Height: =28
+      - shP:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              ="Crew " & If(IsBlank(ThisItem.CrA), "–", ThisItem.CrA) & " / " & If(IsBlank(ThisItem.CrS), "–", ThisItem.CrS) & "     Safety: " & If(ThisItem.SR + ThisItem.SF + ThisItem.SN = 0, "none", "recordable " & ThisItem.SR & ", first aid " & ThisItem.SF & ", near miss " & ThisItem.SN) & If(ThisItem.HDT = 1, "     downtime logged by the hour", "")
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(117, 120, 123, 1)
+            Align: =Align.Left
+            X: =16
+            Y: =100
+            Width: =770
+            Height: =28
+      - shHit:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =""
+            OnSelect: =Set(varDS, ThisItem)
+            Font: =Font.Arial
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(255, 255, 255, 1)
+            HoverFill: =RGBA(0, 178, 169, 0.12)
+            BorderColor: =Self.Fill
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            X: =0
+            Y: =0
+            Width: =800
+            Height: =136
+- dHrT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="HOUR BY HOUR  ·  shift " & varDS.S & "  ·  target " & Text(varDS.HT, "#,##0") & " / hr"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =104
+      Y: =470
+      Width: =800
+      Height: =26
+      FontWeight: =FontWeight.Bold
+      Visible: =varDet && varDTab = "O"
+- galHr:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =ForAll(Sequence(8) As i, {Hr: i.Value, U: IfError(Value(Index(Split(Coalesce(varDS.H, ",,,,,,,"), ","), i.Value).Value), Blank()), T: Coalesce(varDS.HT, 0)})
+      TemplateSize: =52
+      TemplatePadding: =0
+      ShowScrollbar: =false
+      BorderThickness: =0
+      Visible: =varDet && varDTab = "O"
+      X: =104
+      Y: =500
+      Width: =800
+      Height: =420
+    Children:
+      - hrN:
+          Control: Label@2.5.1
+          Properties:
+            Text: ="HOUR " & ThisItem.Hr
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Left
+            X: =0
+            Y: =4
+            Width: =90
+            Height: =44
+            FontWeight: =FontWeight.Bold
+      - hrBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(236, 236, 234, 1)
+            X: =96
+            Y: =12
+            Width: =560
+            Height: =28
+      - hrBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =If(IsBlank(ThisItem.U) || ThisItem.T = 0, RGBA(217, 217, 214, 1), ThisItem.U >= ThisItem.T, RGBA(46, 160, 67, 1), ThisItem.U >= ThisItem.T * 0.85, RGBA(210, 153, 34, 1), RGBA(207, 34, 46, 1))
+            X: =96
+            Y: =12
+            Width: |-
+              =If(IsBlank(ThisItem.U), 0, 560 * Min(ThisItem.U / Max(varDS.HT * 1.3, Max(ForAll(Sequence(8) As i, {Hr: i.Value, U: IfError(Value(Index(Split(Coalesce(varDS.H, ",,,,,,,"), ","), i.Value).Value), Blank()), T: Coalesce(varDS.HT, 0)}), U), 1), 1))
+            Height: =28
+      - hrTgt:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(7, 39, 45, 1)
+            X: |-
+              =96 + 560 * Min(ThisItem.T / Max(varDS.HT * 1.3, Max(ForAll(Sequence(8) As i, {Hr: i.Value, U: IfError(Value(Index(Split(Coalesce(varDS.H, ",,,,,,,"), ","), i.Value).Value), Blank()), T: Coalesce(varDS.HT, 0)}), U), 1), 1) - 1
+            Y: =6
+            Width: =3
+            Height: =40
+            Visible: =ThisItem.T > 0
+      - hrV:
+          Control: Label@2.5.1
+          Properties:
+            Text: =If(IsBlank(ThisItem.U), "not entered", Text(ThisItem.U, "#,##0") & If(ThisItem.T > 0, "  ·  " & Text(ThisItem.U / ThisItem.T * 100, "0") & "%", ""))
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Right
+            X: =664
+            Y: =4
+            Width: =136
+            Height: =44
+            FontWeight: =FontWeight.Bold
+- dHrNote:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Dark tick = hourly target. Green at or above target, amber within 15%, red below."
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =104
+      Y: =924
+      Width: =800
+      Height: =26
+      Visible: =varDet && varDTab = "O"
+- dDTT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DOWNTIME BY REASON  ·  " & Coalesce(Sum(colDetDT, Mn), 0) & " min"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =940
+      Y: =146
+      Width: =860
+      Height: =26
+      FontWeight: =FontWeight.Bold
+      Visible: =varDet && varDTab = "O"
+- galDetDT:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colDetDT
+      TemplateSize: =38
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      BorderThickness: =0
+      Visible: =varDet && varDTab = "O"
+      X: =940
+      Y: =174
+      Width: =860
+      Height: =420
+    Children:
+      - ddR:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.R
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Left
+            X: =0
+            Y: =2
+            Width: =300
+            Height: =34
+            FontWeight: =FontWeight.Bold
+      - ddBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(236, 236, 234, 1)
+            X: =304
+            Y: =12
+            Width: =440
+            Height: =16
+      - ddBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(207, 34, 46, 1)
+            X: =304
+            Y: =12
+            Width: =440 * ThisItem.Mn / Max(1, Max(colDetDT, Mn))
+            Height: =16
+      - ddM:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Mn & " min"
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Right
+            X: =750
+            Y: =2
+            Width: =100
+            Height: =34
+            FontWeight: =FontWeight.Bold
+- dScT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SCRAP BY COMPONENT  ·  " & Coalesce(Sum(colDetSc, Qty), 0)
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =940
+      Y: =610
+      Width: =860
+      Height: =26
+      FontWeight: =FontWeight.Bold
+      Visible: =varDet && varDTab = "O"
+- galDetSc:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =colDetSc
+      TemplateSize: =38
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      BorderThickness: =0
+      Visible: =varDet && varDTab = "O"
+      X: =940
+      Y: =638
+      Width: =860
+      Height: =280
+    Children:
+      - dsI:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.I
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Left
+            X: =0
+            Y: =2
+            Width: =300
+            Height: =34
+            FontWeight: =FontWeight.Bold
+      - dsBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: =RGBA(210, 153, 34, 1)
+            X: =304
+            Y: =12
+            Width: =440 * ThisItem.Qty / Max(1, Max(colDetSc, Qty))
+            Height: =16
+      - dsQ:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Qty
+            Font: =Font.Arial
+            Size: =12
+            Color: =RGBA(7, 39, 45, 1)
+            Align: =Align.Right
+            X: =750
+            Y: =2
+            Width: =100
+            Height: =34
+            FontWeight: =FontWeight.Bold
+- dNoData:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Nothing entered on this board for the selected dates."
+      Font: =Font.Arial
+      Size: =16
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Center
+      X: =104
+      Y: =400
+      Width: =1700
+      Height: =60
+      FontWeight: =FontWeight.Bold
+      Visible: =varDet && varDTab = "O" && CountRows(colDetSh) = 0
+- btnLT:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =""
+      OnSelect: |-
+        =If(IsBlank(varTWSel), Set(varTWSel, true));
+        If(varTWSel,
+          Set(varTW0, If(varFrom = varTo, DateAdd(varTo, -13, TimeUnit.Days), varFrom)); Set(varTW, DateDiff(varTW0, varTo, TimeUnit.Days) + 1),
+          Set(varTW0, DateAdd(varTo, 1 - Coalesce(varTW, 30), TimeUnit.Days)); Set(varTW, Coalesce(varTW, 30)));
+        Set(varSM, Date(Year(varTo), Month(varTo), 1));
+        ClearCollect(colLR, Filter(colRows, L = varLine && D >= varTW0 && D <= varTo && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value)));
+        ClearCollect(colTr, ForAll(Sequence(varTW) As k, With({dd: DateAdd(varTW0, k.Value - 1, TimeUnit.Days)}, With({sh: Filter(colLR, D = dd)},
+         With({n: CountRows(sh), tg: Coalesce(Sum(sh, Tgt), 0), ac: Coalesce(Sum(sh, Act), 0), sc: Coalesce(Sum(sh, Scrap), 0), dt: Coalesce(Sum(sh, DT), 0),
+           sr: Coalesce(Sum(sh, SR), 0), sf: Coalesce(Sum(sh, SF), 0), sn: Coalesce(Sum(sh, SN), 0),
+           ow: Coalesce(Sum(Filter(sh, !IsBlank(OEE)), Tgt), 0), os: Coalesce(Sum(Filter(sh, !IsBlank(OEE)), OEE * Tgt), 0)},
+          {D: dd, N: n, Tgt: tg, Act: ac, Scrap: sc, DT: dt, SR: sr, SF: sf, SN: sn,
+           Ev: If(n = 0, Blank(), sr + sf + sn), Eff: If(tg > 0, ac / tg * 100, Blank()), SP: If(ac > 0, sc / ac * 100, Blank()),
+           DTs: If(n = 0, Blank(), dt / n), OEE: If(ow > 0, os / ow * 100, Blank()),
+           StS: If(n = 0, "N", sr > 0, "R", sf > 0, "A", "G"),
+           StQ: If(n = 0 || ac = 0, "N", sc / ac * 100 >= varSR, "R", sc / ac * 100 >= varSA, "A", "G"),
+           StD: If(tg = 0, "N", ac / tg * 100 >= varEG, "G", ac / tg * 100 >= varEA, "A", "R"),
+           StDT: If(n = 0, "N", dt / n >= varDR, "R", dt / n >= varDA, "A", "G"),
+           StO: If(ow = 0, "N", os / ow * 100 >= varOG, "G", os / ow * 100 >= varOA, "A", "R")})))));
+        Set(varTS, {S: Max(2, Coalesce(Max(colTr, Ev), 0)), Q: Max(varSR * 1.5, Coalesce(Max(colTr, SP), 0)), D: Max(110, Coalesce(Max(colTr, Eff), 0)),
+          C: Max(varDR * 1.3, Coalesce(Max(colTr, DTs), 0)), O: Max(100, Coalesce(Max(colTr, OEE), 0))});
+        Set(varLW, With({tg: Coalesce(Sum(colLR, Tgt), 0), ac: Coalesce(Sum(colLR, Act), 0), ca: Coalesce(Sum(colLR, CrA), 0),
+           ow: Coalesce(Sum(Filter(colLR, !IsBlank(OEE)), Tgt), 0), os: Coalesce(Sum(Filter(colLR, !IsBlank(OEE)), OEE * Tgt), 0)},
+          {N: CountRows(colLR), Tgt: tg, Act: ac, Scrap: Coalesce(Sum(colLR, Scrap), 0), DT: Coalesce(Sum(colLR, DT), 0),
+           SR: Coalesce(Sum(colLR, SR), 0), SF: Coalesce(Sum(colLR, SF), 0), SN: Coalesce(Sum(colLR, SN), 0),
+           Eff: If(tg > 0, ac / tg * 100, Blank()), SP: If(ac > 0, Coalesce(Sum(colLR, Scrap), 0) / ac * 100, Blank()), OEE: If(ow > 0, os / ow * 100, Blank()),
+           UPP: If(ca > 0, ac / ca, Blank()), AtT: CountIf(colLR, Tgt > 0 && Act >= Tgt), WithT: CountIf(colLR, Tgt > 0),
+           Short: CountIf(colLR, Coalesce(CrA, 0) > 0 && Coalesce(CrS, 0) > 0 && CrA < CrS), Staffed: CountIf(colLR, Coalesce(CrA, 0) > 0 && Coalesce(CrS, 0) > 0),
+           A: If(CountRows(Filter(colLR, !IsBlank(A))) = 0, Blank(), Average(Filter(colLR, !IsBlank(A)), A) * 100), P: If(CountRows(Filter(colLR, !IsBlank(P))) = 0, Blank(), Average(Filter(colLR, !IsBlank(P)), P) * 100), Q: If(CountRows(Filter(colLR, !IsBlank(Q))) = 0, Blank(), Average(Filter(colLR, !IsBlank(Q)), Q) * 100)}));
+        ClearCollect(colLDTR, Ungroup(ForAll(colLR As r, {X: ForAll(Filter(Split(Coalesce(r.DTR, ""), "|"), !IsBlank(Value)) As p, {R: Index(Split(p.Value, "~"), 1).Value, M: IfError(Value(Index(Split(p.Value, "~"), 2).Value), 0)})}), X));
+        ClearCollect(colLDT0, SortByColumns(AddColumns(GroupBy(colLDTR, R, G), Q, Sum(G, M)), "Q", SortOrder.Descending));
+        Set(varcolLDTT, Max(1, Coalesce(Sum(colLDT0, Q), 0)));
+        ClearCollect(colLDT, ForAll(Sequence(CountRows(colLDT0)) As i, With({r: Index(colLDT0, i.Value)}, With({cum: Sum(FirstN(colLDT0, i.Value), Q) / varcolLDTT * 100}, {N: r.R, Q: r.Q, Cum: cum, VF: cum - r.Q / varcolLDTT * 100 < 80}))));
+        ClearCollect(colLScR, Ungroup(ForAll(colLR As r, {X: ForAll(Filter(Split(Coalesce(r.SCR, ""), "|"), !IsBlank(Value)) As p, {R: Index(Split(p.Value, "~"), 1).Value, M: IfError(Value(Index(Split(p.Value, "~"), 2).Value), 0)})}), X));
+        ClearCollect(colLSc0, SortByColumns(AddColumns(GroupBy(colLScR, R, G), Q, Sum(G, M)), "Q", SortOrder.Descending));
+        Set(varcolLScT, Max(1, Coalesce(Sum(colLSc0, Q), 0)));
+        ClearCollect(colLSc, ForAll(Sequence(CountRows(colLSc0)) As i, With({r: Index(colLSc0, i.Value)}, With({cum: Sum(FirstN(colLSc0, i.Value), Q) / varcolLScT * 100}, {N: r.R, Q: r.Q, Cum: cum, VF: cum - r.Q / varcolLScT * 100 < 80}))));
+        ClearCollect(colLH, ForAll(Sequence(8) As i, With({hs: Filter(ForAll(Filter(colLR, HT > 0) As r, {U: IfError(Value(Index(Split(r.H, ","), i.Value).Value), Blank()), T: r.HT}), !IsBlank(U))},
+          {Hr: i.Value, N: CountRows(hs), U: Coalesce(Sum(hs, U), 0), T: Coalesce(Sum(hs, T), 0), Pct: If(Coalesce(Sum(hs, T), 0) > 0, Sum(hs, U) / Sum(hs, T) * 100, Blank())})));
+        If(varDTab = "S", ClearCollect(colLL, ForAll(SortByColumns(Filter(colLR, Coalesce(SR, 0) + Coalesce(SF, 0) + Coalesce(SN, 0) > 0), "D", SortOrder.Descending, "S", SortOrder.Ascending) As r,
+          {K: Upper(Text(r.D, "ddd m/d")) & "  ·  SHIFT " & r.S, K2: Trim(Coalesce(r.Prod, "") & If(IsBlank(r.WO), "", "   W/O " & r.WO) & If(IsBlank(r.Lead), "", "   " & r.Lead)), V: "Recordable " & Coalesce(r.SR, 0) & "     First aid " & Coalesce(r.SF, 0) & "     Near miss " & Coalesce(r.SN, 0),
+           V2: "From the board's safety box", St: If(r.SR > 0, "R", r.SF > 0, "A", "G")})));
+        If(varDTab = "Q", ClearCollect(colLL, ForAll(FirstN(SortByColumns(AddColumns(Filter(colLR, Act > 0 && Scrap > 0), Pc, Scrap / Act * 100), "Pc", SortOrder.Descending), 15) As r,
+          {K: Upper(Text(r.D, "ddd m/d")) & "  ·  SHIFT " & r.S, K2: Trim(Coalesce(r.Prod, "") & If(IsBlank(r.WO), "", "   W/O " & r.WO) & If(IsBlank(r.Lead), "", "   " & r.Lead)), V: Text(r.Pc, "0.00") & "% scrap  ·  " & Text(r.Scrap, "#,##0") & " of " & Text(r.Act, "#,##0") & " units",
+           V2: If(IsBlank(r.SCR), "", Substitute(Substitute(r.SCR, "~", " "), "|", ", ") & ""), St: If(r.Pc >= varSR, "R", r.Pc >= varSA, "A", "G")})));
+        If(varDTab = "D",
+          ClearCollect(colLL, ForAll(Sort(Distinct(colLR, S), Value) As s, With({sh: Filter(colLR, S = s.Value)}, With({tg: Coalesce(Sum(sh, Tgt), 0), ac: Coalesce(Sum(sh, Act), 0), n: CountRows(sh), dt: Coalesce(Sum(sh, DT), 0), sc: Coalesce(Sum(sh, Scrap), 0)},
+           {K: "SHIFT " & s.Value & "  ·  ALL DAYS", K2: n & " shift(s) in the window", V: Text(ac, "#,##0") & " / " & Text(tg, "#,##0") & If(tg > 0, "  ·  " & Text(ac / tg * 100, "0") & "%", ""),
+            V2: "Downtime " & Text(dt / Max(1, n), "0") & " min per shift   ·   scrap " & If(ac > 0, Text(sc / ac * 100, "0.00") & "%", "–") & "   ·   " & CountIf(sh, Tgt > 0 && Act >= Tgt) & " of " & CountIf(sh, Tgt > 0) & " at target",
+            St: If(tg = 0, "N", ac / tg * 100 >= varEG, "G", ac / tg * 100 >= varEA, "A", "R")}))));
+          Collect(colLL, ForAll(FirstN(SortByColumns(AddColumns(Filter(colLR, Tgt > 0), Ef, Act / Tgt * 100), "Ef", SortOrder.Ascending), 10) As r,
+           {K: Upper(Text(r.D, "ddd m/d")) & "  ·  SHIFT " & r.S, K2: Trim(Coalesce(r.Prod, "") & If(IsBlank(r.WO), "", "   W/O " & r.WO) & If(IsBlank(r.Lead), "", "   " & r.Lead)), V: Text(r.Act, "#,##0") & " / " & Text(r.Tgt, "#,##0") & "  ·  " & Text(r.Ef, "0") & "%",
+            V2: "Hours: " & Substitute(r.H, ",", " · ") & "   ·   downtime " & Coalesce(r.DT, 0) & " min", St: If(r.Ef >= varEG, "G", r.Ef >= varEA, "A", "R")})));
+        If(varDTab = "C", Clear(colLL));
+        If(varDTab = "S", ClearCollect(colKpi, With({lr: First(SortByColumns(Filter(colRows, L = varLine && SR > 0), "D", SortOrder.Descending)).D},
+          Table({L: "RECORDABLES", V: Text(varLW.SR), Sb: "logged in the window", St: If(varLW.SR > 0, "R", "G")},
+           {L: "FIRST AIDS", V: Text(varLW.SF), Sb: "logged in the window", St: If(varLW.SF > 0, "A", "G")},
+           {L: "NEAR MISSES", V: Text(varLW.SN), Sb: "logged in the window", St: "N"},
+           {L: "DAYS SINCE LAST RECORDABLE", V: If(IsBlank(lr), "–", Text(DateDiff(lr, Today(), TimeUnit.Days))),
+            Sb: If(IsBlank(lr), "none in the board data on file" & If(CountRows(colDates) > 0, " (since " & Text(Last(colDates).D, "m/d") & ")", ""), "last one " & Text(lr, "ddd m/d")), St: If(IsBlank(lr), "G", "N")},
+           {L: "GREEN DAYS", V: CountIf(colTr, StS = "G") & " of " & CountIf(colTr, N > 0), Sb: "days run with no first aid or recordable",
+            St: If(CountIf(colTr, N > 0) = 0, "N", CountIf(colTr, StS = "R") > 0, "R", CountIf(colTr, StS = "A") > 0, "A", "G")}))));
+        If(varDTab = "Q", ClearCollect(colKpi, With({wd: First(SortByColumns(Filter(colTr, !IsBlank(SP)), "SP", SortOrder.Descending))},
+          Table({L: "SCRAP", V: Text(varLW.Scrap, "#,##0"), Sb: "on " & Text(varLW.Act, "#,##0") & " units", St: "N"},
+           {L: "SCRAP % OF UNITS", V: If(IsBlank(varLW.SP), "–", Text(varLW.SP, "0.00") & "%"), Sb: "amber " & varSA & "%   ·   red " & varSR & "%",
+            St: If(IsBlank(varLW.SP), "N", varLW.SP >= varSR, "R", varLW.SP >= varSA, "A", "G")},
+           {L: "DAYS RED / AMBER / GREEN", V: CountIf(colTr, StQ = "R") & " / " & CountIf(colTr, StQ = "A") & " / " & CountIf(colTr, StQ = "G"), Sb: "of " & CountIf(colTr, N > 0) & " days run", St: "N"},
+           {L: "WORST DAY", V: If(IsBlank(wd), "–", Text(wd.D, "ddd m/d")), Sb: If(IsBlank(wd), "", Text(wd.SP, "0.00") & "% scrap"), St: If(IsBlank(wd), "N", wd.StQ)},
+           {L: "TOP COMPONENT", V: Coalesce(First(colLSc).N, "–"),
+            Sb: If(CountRows(colLSc) = 0, "no scrap logged", Text(First(colLSc).Q, "#,##0") & "  ·  " & Text(First(colLSc).Q / Max(1, Sum(colLSc, Q)) * 100, "0") & "% of the scrap"), St: "N"}))));
+        If(varDTab = "D", ClearCollect(colKpi, With({wh: First(SortByColumns(Filter(colLH, !IsBlank(Pct)), "Pct", SortOrder.Ascending))},
+          Table({L: "UNITS / TARGET", V: Text(varLW.Act, "#,##0") & " / " & Text(varLW.Tgt, "#,##0"), Sb: varLW.N & " shift(s)", St: "N"},
+           {L: "EFFICIENCY", V: If(IsBlank(varLW.Eff), "–", Text(varLW.Eff, "0") & "%"), Sb: "green " & varEG & "%   ·   amber " & varEA & "%",
+            St: If(IsBlank(varLW.Eff), "N", varLW.Eff >= varEG, "G", varLW.Eff >= varEA, "A", "R")},
+           {L: "SHIFTS AT TARGET", V: varLW.AtT & " of " & varLW.WithT, Sb: If(varLW.WithT > 0, Text(varLW.AtT / varLW.WithT * 100, "0") & "% of shifts", "no targets on the boards"), St: "N"},
+           {L: "WEAKEST HOUR OF SHIFT", V: If(IsBlank(wh), "–", "Hour " & wh.Hr), Sb: If(IsBlank(wh), "", Text(wh.Pct, "0") & "% of the hourly target"),
+            St: If(IsBlank(wh), "N", wh.Pct >= varEG, "G", wh.Pct >= varEA, "A", "R")},
+           {L: "DAYS GREEN", V: CountIf(colTr, StD = "G") & " of " & CountIf(colTr, Tgt > 0), Sb: "days at or above " & varEG & "%", St: "N"}))));
+        If(varDTab = "C", ClearCollect(colKpi,
+          Table({L: "DOWNTIME", V: Text(varLW.DT, "#,##0") & " min", Sb: If(varLW.N > 0, Text(varLW.DT / varLW.N, "0") & " min per shift", ""),
+            St: If(varLW.N = 0, "N", varLW.DT / varLW.N >= varDR, "R", varLW.DT / varLW.N >= varDA, "A", "G")},
+           {L: "TOP DOWNTIME REASON", V: Coalesce(First(colLDT).N, "–"),
+            Sb: If(CountRows(colLDT) = 0, "no downtime logged", Text(First(colLDT).Q, "#,##0") & " min  ·  " & Text(First(colLDT).Q / Max(1, Sum(colLDT, Q)) * 100, "0") & "% of the minutes"), St: "N"},
+           {L: "OEE", V: If(IsBlank(varLW.OEE), "–", Text(varLW.OEE, "0") & "%"),
+            Sb: If(IsBlank(varLW.A), "no Act. Speed on these boards", "A " & Text(varLW.A, "0") & "   P " & Text(varLW.P, "0") & "   Q " & Text(Coalesce(varLW.Q, 0), "0")),
+            St: If(IsBlank(varLW.OEE), "N", varLW.OEE >= varOG, "G", varLW.OEE >= varOA, "A", "R")},
+           {L: "UNITS PER PERSON", V: If(IsBlank(varLW.UPP), "–", Text(varLW.UPP, "#,##0")), Sb: "per person per shift", St: "N"},
+           {L: "SHIFTS SHORT-STAFFED", V: varLW.Short & " of " & varLW.Staffed, Sb: "actual crew below standard", St: If(varLW.Staffed = 0, "N", varLW.Short > 0, "A", "G")})))
+      X: |-
+        =0
+      Y: |-
+        =0
+      Width: |-
+        =1
+      Height: |-
+        =1
+      Visible: |-
+        =false
+- tabO:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="OVERVIEW"
+      OnSelect: |-
+        =Set(varDTab, "O")
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =If(varDTab = "O", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 0.08))
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      HoverFill: |-
+        =RGBA(0, 178, 169, 0.6)
+      BorderColor: |-
+        =If(varDTab = "O", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 0.35))
+      BorderThickness: |-
+        =1
+      X: |-
+        =812
+      Y: |-
+        =80
+      Width: |-
+        =164
+      Height: |-
+        =44
+      Visible: |-
+        =varDet
+- tabS:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="S · SAFETY"
+      OnSelect: |-
+        =Set(varDTab, "S"); Select(btnLT)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =If(varDTab = "S", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 0.08))
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      HoverFill: |-
+        =RGBA(0, 178, 169, 0.6)
+      BorderColor: |-
+        =If(varDTab = "S", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 0.35))
+      BorderThickness: |-
+        =1
+      X: |-
+        =984
+      Y: |-
+        =80
+      Width: |-
+        =164
+      Height: |-
+        =44
+      Visible: |-
+        =varDet
+- tabQ:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="Q · QUALITY"
+      OnSelect: |-
+        =Set(varDTab, "Q"); Select(btnLT)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =If(varDTab = "Q", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 0.08))
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      HoverFill: |-
+        =RGBA(0, 178, 169, 0.6)
+      BorderColor: |-
+        =If(varDTab = "Q", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 0.35))
+      BorderThickness: |-
+        =1
+      X: |-
+        =1156
+      Y: |-
+        =80
+      Width: |-
+        =164
+      Height: |-
+        =44
+      Visible: |-
+        =varDet
+- tabD:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="D · DELIVERY"
+      OnSelect: |-
+        =Set(varDTab, "D"); Select(btnLT)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =If(varDTab = "D", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 0.08))
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      HoverFill: |-
+        =RGBA(0, 178, 169, 0.6)
+      BorderColor: |-
+        =If(varDTab = "D", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 0.35))
+      BorderThickness: |-
+        =1
+      X: |-
+        =1328
+      Y: |-
+        =80
+      Width: |-
+        =164
+      Height: |-
+        =44
+      Visible: |-
+        =varDet
+- tabC:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="C · COST"
+      OnSelect: |-
+        =Set(varDTab, "C"); Select(btnLT)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =If(varDTab = "C", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 0.08))
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      HoverFill: |-
+        =RGBA(0, 178, 169, 0.6)
+      BorderColor: |-
+        =If(varDTab = "C", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 0.35))
+      BorderThickness: |-
+        =1
+      X: |-
+        =1500
+      Y: |-
+        =80
+      Width: |-
+        =164
+      Height: |-
+        =44
+      Visible: |-
+        =varDet
+- lblLWin:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Switch(varDTab, "S", "SAFETY", "Q", "QUALITY", "D", "DELIVERY", "COST  ·  DOWNTIME, OEE, LABOR") & "  ·  " & Text(varTW0, "ddd m/d") & " – " & Text(varTo, "ddd m/d") & "  (" & varTW & " days" & If(varTWSel, If(varFrom = varTo, ", ending on the selected day", ", the selected dates"), "") & ")" & If(ddShift.Selected.Value = "All", "  ·  all shifts", "  ·  shift " & ddShift.Selected.Value)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =13
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(7, 39, 45, 1)
+      Align: |-
+        =Align.Left
+      Wrap: |-
+        =false
+      X: |-
+        =104
+      Y: |-
+        =144
+      Width: =1000
+      Height: |-
+        =38
+      Visible: |-
+        =varDet && varDTab <> "O"
+- lblLWinT:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="WINDOW"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Right
+      X: =1108
+      Y: |-
+        =144
+      Width: =94
+      Height: |-
+        =38
+      Visible: |-
+        =varDet && varDTab <> "O"
+- btnWSel:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="SELECTED"
+      OnSelect: |-
+        =Set(varTWSel, true); Select(btnLT)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =If(varTWSel, RGBA(0, 72, 81, 1), RGBA(244, 244, 242, 1))
+      Color: |-
+        =If(varTWSel, RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: |-
+        =RGBA(230, 244, 244, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      BorderThickness: |-
+        =1
+      X: |-
+        =1210
+      Y: |-
+        =144
+      Width: |-
+        =112
+      Height: |-
+        =38
+      Visible: |-
+        =varDet && varDTab <> "O"
+      Tooltip: |-
+        ="The dates picked on the main screen (one day shows the 14 days ending on it)"
+- btnW7:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="7 DAYS"
+      OnSelect: |-
+        =Set(varTWSel, false); Set(varTW, 7); Select(btnLT)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =If(!varTWSel && varTW = 7, RGBA(0, 72, 81, 1), RGBA(244, 244, 242, 1))
+      Color: |-
+        =If(!varTWSel && varTW = 7, RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: |-
+        =RGBA(230, 244, 244, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      BorderThickness: |-
+        =1
+      X: =1332
+      Y: |-
+        =144
+      Width: =112
+      Height: |-
+        =38
+      Visible: |-
+        =varDet && varDTab <> "O"
+      Tooltip: |-
+        ="Trend window: the 7 days ending on the END date"
+- btnW14:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="14 DAYS"
+      OnSelect: |-
+        =Set(varTWSel, false); Set(varTW, 14); Select(btnLT)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =If(!varTWSel && varTW = 14, RGBA(0, 72, 81, 1), RGBA(244, 244, 242, 1))
+      Color: |-
+        =If(!varTWSel && varTW = 14, RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: |-
+        =RGBA(230, 244, 244, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      BorderThickness: |-
+        =1
+      X: =1454
+      Y: |-
+        =144
+      Width: =112
+      Height: |-
+        =38
+      Visible: |-
+        =varDet && varDTab <> "O"
+      Tooltip: |-
+        ="Trend window: the 14 days ending on the END date"
+- btnW30:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="30 DAYS"
+      OnSelect: |-
+        =Set(varTWSel, false); Set(varTW, 30); Select(btnLT)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =If(!varTWSel && varTW = 30, RGBA(0, 72, 81, 1), RGBA(244, 244, 242, 1))
+      Color: |-
+        =If(!varTWSel && varTW = 30, RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: |-
+        =RGBA(230, 244, 244, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      BorderThickness: |-
+        =1
+      X: =1576
+      Y: |-
+        =144
+      Width: =112
+      Height: |-
+        =38
+      Visible: |-
+        =varDet && varDTab <> "O"
+      Tooltip: |-
+        ="Trend window: the 30 days ending on the END date"
+- btnW40:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="40 DAYS"
+      OnSelect: |-
+        =Set(varTWSel, false); Set(varTW, 40); Select(btnLT)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =If(!varTWSel && varTW = 40, RGBA(0, 72, 81, 1), RGBA(244, 244, 242, 1))
+      Color: |-
+        =If(!varTWSel && varTW = 40, RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))
+      HoverFill: |-
+        =RGBA(230, 244, 244, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      BorderThickness: |-
+        =1
+      X: =1698
+      Y: |-
+        =144
+      Width: =112
+      Height: |-
+        =38
+      Visible: |-
+        =varDet && varDTab <> "O"
+      Tooltip: |-
+        ="Trend window: the 40 days ending on the END date"
+- galKpi:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =colKpi
+      WrapCount: |-
+        =5
+      TemplateSize: |-
+        =96
+      TemplatePadding: |-
+        =0
+      ShowScrollbar: |-
+        =false
+      BorderThickness: |-
+        =0
+      TemplateFill: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =104
+      Y: |-
+        =190
+      Width: |-
+        =1712
+      Height: |-
+        =96
+      Visible: |-
+        =varDet && varDTab <> "O"
+    Children:
+      - kBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =RGBA(244, 244, 242, 1)
+            X: |-
+              =0
+            Y: |-
+              =0
+            Width: |-
+              =332
+            Height: |-
+              =92
+      - kSt:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =Switch(ThisItem.St, "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+            X: |-
+              =0
+            Y: |-
+              =0
+            Width: |-
+              =8
+            Height: |-
+              =92
+      - kL:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.L
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =10
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(117, 120, 123, 1)
+            Align: |-
+              =Align.Left
+            Wrap: |-
+              =false
+            X: |-
+              =20
+            Y: |-
+              =4
+            Width: |-
+              =306
+            Height: |-
+              =24
+      - kV:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.V
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =22
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Left
+            Wrap: |-
+              =false
+            X: |-
+              =20
+            Y: |-
+              =26
+            Width: |-
+              =306
+            Height: |-
+              =40
+            Tooltip: |-
+              =ThisItem.V
+      - kSb:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.Sb
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =10
+            Color: |-
+              =RGBA(117, 120, 123, 1)
+            Align: |-
+              =Align.Left
+            Wrap: |-
+              =false
+            X: |-
+              =20
+            Y: |-
+              =64
+            Width: |-
+              =306
+            Height: |-
+              =24
+            Tooltip: |-
+              =ThisItem.Sb
+- lblTrT:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Switch(varDTab, "S", "SAFETY EVENTS PER DAY  ·  recordable + first aid + near miss  ·  bar color = worst event that day", "Q", "SCRAP % OF UNITS, BY DAY", "D", "EFFICIENCY % (UNITS VS TARGET), BY DAY", "DOWNTIME MINUTES PER SHIFT, BY DAY") & If(varTWSel && varFrom <> varTo, "", "     shaded = the dates selected on the main screen")
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =11
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Left
+      Wrap: |-
+        =false
+      X: |-
+        =104
+      Y: |-
+        =298
+      Width: |-
+        =1712
+      Height: |-
+        =26
+      Visible: |-
+        =varDet && varDTab <> "O"
+- galTrBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: |-
+        =RGBA(250, 250, 248, 1)
+      X: |-
+        =104
+      Y: |-
+        =326
+      Width: |-
+        =1712
+      Height: |-
+        =248
+      Visible: |-
+        =varDet && varDTab <> "O"
+- galTr:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Horizontal_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =colTr
+      TemplateSize: |-
+        =1712 / Max(1, Coalesce(varTW, 30))
+      TemplatePadding: |-
+        =0
+      ShowScrollbar: |-
+        =false
+      BorderThickness: |-
+        =0
+      TemplateFill: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =104
+      Y: |-
+        =326
+      Width: |-
+        =1712
+      Height: |-
+        =248
+      Visible: |-
+        =varDet && varDTab <> "O"
+    Children:
+      - TrSel:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =If(ThisItem.D >= varFrom && ThisItem.D <= varTo && !(varTWSel && varFrom <> varTo), RGBA(0, 178, 169, 0.14), RGBA(0, 0, 0, 0))
+            X: |-
+              =0
+            Y: |-
+              =0
+            Width: |-
+              =(1712 / Max(1, Coalesce(varTW, 30)))
+            Height: |-
+              =248
+      - TrBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =Switch(Switch(varDTab, "S", ThisItem.StS, "Q", ThisItem.StQ, "D", ThisItem.StD, ThisItem.StDT), "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+            X: |-
+              =Min(3, (1712 / Max(1, Coalesce(varTW, 30))) * 0.1)
+            Y: |-
+              =214 - If(IsBlank((Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs))), 0, Max(If(varDTab = "S", 6, 2), Min(1, (Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs)) / Max(0.0001, Switch(varDTab, "S", varTS.S, "Q", varTS.Q, "D", varTS.D, varTS.C))) * 190))
+            Width: |-
+              =Max(2, (1712 / Max(1, Coalesce(varTW, 30))) - 2 * Min(3, (1712 / Max(1, Coalesce(varTW, 30))) * 0.1))
+            Height: |-
+              =If(IsBlank((Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs))), 0, Max(If(varDTab = "S", 6, 2), Min(1, (Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs)) / Max(0.0001, Switch(varDTab, "S", varTS.S, "Q", varTS.Q, "D", varTS.D, varTS.C))) * 190))
+      - TrVal:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(IsBlank((Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs))), "", Switch(varDTab, "Q", Text(Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs), "0.0") & "%", "D", Text(Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs), "0") & "%", "S", Text(Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs), "0"), Text(Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs), "0") & " min"))
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =8
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Center
+            Wrap: |-
+              =false
+            X: |-
+              =0
+            Y: |-
+              =214 - If(IsBlank((Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs))), 0, Max(If(varDTab = "S", 6, 2), Min(1, (Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs)) / Max(0.0001, Switch(varDTab, "S", varTS.S, "Q", varTS.Q, "D", varTS.D, varTS.C))) * 190)) - 18
+            Width: |-
+              =(1712 / Max(1, Coalesce(varTW, 30)))
+            Height: |-
+              =16
+            Visible: |-
+              =!IsBlank((Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs))) && (1712 / Max(1, Coalesce(varTW, 30))) >= 30
+      - TrDay:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Text(ThisItem.D, "d")
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =9
+            FontWeight: |-
+              =If(Weekday(ThisItem.D) = 2, FontWeight.Bold, FontWeight.Normal)
+            Color: |-
+              =If(ThisItem.N = 0, RGBA(170, 170, 170, 1), RGBA(7, 39, 45, 1))
+            Align: |-
+              =Align.Center
+            Wrap: |-
+              =false
+            X: |-
+              =0
+            Y: |-
+              =216
+            Width: |-
+              =(1712 / Max(1, Coalesce(varTW, 30)))
+            Height: |-
+              =28
+            Tooltip: |-
+              =Text(ThisItem.D, "dddd m/d") & ":  " & If(IsBlank((Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs))), "no board data", Switch(varDTab, "Q", Text(Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs), "0.0") & "%", "D", Text(Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs), "0") & "%", "S", Text(Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs), "0"), Text(Switch(varDTab, "S", ThisItem.Ev, "Q", ThisItem.SP, "D", ThisItem.Eff, ThisItem.DTs), "0") & " min")) & "  ·  " & ThisItem.N & " shift(s)"
+- trBase:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: |-
+        =RGBA(190, 190, 186, 1)
+      X: |-
+        =104
+      Y: |-
+        =540
+      Width: |-
+        =1712
+      Height: |-
+        =1
+      Visible: |-
+        =varDet && varDTab <> "O"
+- trL1:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: |-
+        =Switch(varDTab, "D", RGBA(46, 160, 67, 1), RGBA(210, 153, 34, 1))
+      X: |-
+        =104
+      Y: |-
+        =326 + 214 - Min(1, Switch(varDTab, "Q", varSA, "D", varEG, "C", varDA, Blank()) / Max(0.0001, Switch(varDTab, "S", varTS.S, "Q", varTS.Q, "D", varTS.D, varTS.C))) * 190 - 1
+      Width: |-
+        =1712
+      Height: |-
+        =2
+      Visible: |-
+        =varDet && varDTab <> "O" && varDTab <> "S" && !IsBlank(Switch(varDTab, "Q", varSA, "D", varEG, "C", varDA, Blank()))
+- trL1T:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Switch(varDTab, "Q", "amber " & varSA & "%", "D", "green " & varEG & "%", "amber " & varDA & " min")
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =9
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =Switch(varDTab, "D", RGBA(46, 160, 67, 1), RGBA(210, 153, 34, 1))
+      Align: |-
+        =Align.Right
+      Wrap: |-
+        =false
+      X: |-
+        =1656
+      Y: |-
+        =326 + 214 - Min(1, Switch(varDTab, "Q", varSA, "D", varEG, "C", varDA, Blank()) / Max(0.0001, Switch(varDTab, "S", varTS.S, "Q", varTS.Q, "D", varTS.D, varTS.C))) * 190 - 18
+      Width: |-
+        =160
+      Height: |-
+        =16
+      Visible: |-
+        =varDet && varDTab <> "O" && varDTab <> "S" && !IsBlank(Switch(varDTab, "Q", varSA, "D", varEG, "C", varDA, Blank()))
+- trL2:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: |-
+        =Switch(varDTab, "D", RGBA(210, 153, 34, 1), RGBA(207, 34, 46, 1))
+      X: |-
+        =104
+      Y: |-
+        =326 + 214 - Min(1, Switch(varDTab, "Q", varSR, "D", varEA, "C", varDR, Blank()) / Max(0.0001, Switch(varDTab, "S", varTS.S, "Q", varTS.Q, "D", varTS.D, varTS.C))) * 190 - 1
+      Width: |-
+        =1712
+      Height: |-
+        =2
+      Visible: |-
+        =varDet && varDTab <> "O" && varDTab <> "S" && !IsBlank(Switch(varDTab, "Q", varSR, "D", varEA, "C", varDR, Blank()))
+- trL2T:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Switch(varDTab, "Q", "red " & varSR & "%", "D", "amber " & varEA & "%", "red " & varDR & " min")
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =9
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =Switch(varDTab, "D", RGBA(210, 153, 34, 1), RGBA(207, 34, 46, 1))
+      Align: |-
+        =Align.Right
+      Wrap: |-
+        =false
+      X: |-
+        =1656
+      Y: |-
+        =326 + 214 - Min(1, Switch(varDTab, "Q", varSR, "D", varEA, "C", varDR, Blank()) / Max(0.0001, Switch(varDTab, "S", varTS.S, "Q", varTS.Q, "D", varTS.D, varTS.C))) * 190 - 18
+      Width: |-
+        =160
+      Height: |-
+        =16
+      Visible: |-
+        =varDet && varDTab <> "O" && varDTab <> "S" && !IsBlank(Switch(varDTab, "Q", varSR, "D", varEA, "C", varDR, Blank()))
+- lblBL:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Switch(varDTab, "S", "SAFETY CROSS  ·  " & Upper(Text(varSM, "mmmm yyyy")), "Q", "SCRAP BY COMPONENT  ·  PARETO OVER THE WINDOW", "D", "HOUR OF SHIFT  ·  UNITS VS HOURLY TARGET OVER THE WINDOW", "DOWNTIME BY REASON  ·  PARETO OVER THE WINDOW")
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =11
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Left
+      Wrap: |-
+        =false
+      X: |-
+        =104
+      Y: |-
+        =600
+      Width: |-
+        =600
+      Height: |-
+        =34
+      Visible: |-
+        =varDet && varDTab <> "O"
+- lblBR:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Switch(varDTab, "S", "SAFETY EVENTS IN THE WINDOW  ·  newest first", "Q", "WORST SHIFTS BY SCRAP %", "D", "SHIFT 1 VS SHIFT 2, THEN THE LOWEST SHIFTS", "OEE % BY DAY  ·  the board's OEE Actual")
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =11
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Left
+      Wrap: |-
+        =false
+      X: |-
+        =986
+      Y: |-
+        =600
+      Width: |-
+        =830
+      Height: |-
+        =34
+      Visible: |-
+        =varDet && varDTab <> "O"
+- scPrev:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="<"
+      OnSelect: |-
+        =Set(varSM, DateAdd(varSM, -1, TimeUnit.Months))
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =14
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(0, 72, 81, 1)
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      X: |-
+        =724
+      Y: |-
+        =600
+      Width: |-
+        =44
+      Height: |-
+        =34
+      Visible: |-
+        =varDet && varDTab = "S"
+- scNext:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =">"
+      OnSelect: |-
+        =Set(varSM, DateAdd(varSM, 1, TimeUnit.Months))
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =14
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(0, 72, 81, 1)
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      X: |-
+        =776
+      Y: |-
+        =600
+      Width: |-
+        =44
+      Height: |-
+        =34
+      Visible: |-
+        =varDet && varDTab = "S"
+      DisplayMode: |-
+        =If(varSM >= Date(Year(Today()), Month(Today()), 1), DisplayMode.Disabled, DisplayMode.Edit)
+- scWd0:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="S"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =104 + 0 * 830 / 7
+      Y: |-
+        =638
+      Width: |-
+        =830 / 7
+      Height: |-
+        =24
+      Visible: |-
+        =varDet && varDTab = "S"
+- scWd1:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="M"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =104 + 1 * 830 / 7
+      Y: |-
+        =638
+      Width: |-
+        =830 / 7
+      Height: |-
+        =24
+      Visible: |-
+        =varDet && varDTab = "S"
+- scWd2:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="T"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =104 + 2 * 830 / 7
+      Y: |-
+        =638
+      Width: |-
+        =830 / 7
+      Height: |-
+        =24
+      Visible: |-
+        =varDet && varDTab = "S"
+- scWd3:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="W"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =104 + 3 * 830 / 7
+      Y: |-
+        =638
+      Width: |-
+        =830 / 7
+      Height: |-
+        =24
+      Visible: |-
+        =varDet && varDTab = "S"
+- scWd4:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="T"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =104 + 4 * 830 / 7
+      Y: |-
+        =638
+      Width: |-
+        =830 / 7
+      Height: |-
+        =24
+      Visible: |-
+        =varDet && varDTab = "S"
+- scWd5:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="F"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =104 + 5 * 830 / 7
+      Y: |-
+        =638
+      Width: |-
+        =830 / 7
+      Height: |-
+        =24
+      Visible: |-
+        =varDet && varDTab = "S"
+- scWd6:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="S"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =104 + 6 * 830 / 7
+      Y: |-
+        =638
+      Width: |-
+        =830 / 7
+      Height: |-
+        =24
+      Visible: |-
+        =varDet && varDTab = "S"
+- galSC:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =ForAll(Sequence(42) As i, With({dd: DateAdd(varSM, i.Value - Weekday(varSM), TimeUnit.Days)}, With({sh: Filter(colRows, L = varLine && D = dd && (ddShift.Selected.Value = "All" || Text(S) = ddShift.Selected.Value))}, {D: dd, N: CountRows(sh), SR: Coalesce(Sum(sh, SR), 0), SF: Coalesce(Sum(sh, SF), 0), SN: Coalesce(Sum(sh, SN), 0)})))
+      WrapCount: |-
+        =7
+      TemplateSize: |-
+        =52
+      TemplatePadding: |-
+        =0
+      ShowScrollbar: |-
+        =false
+      BorderThickness: |-
+        =0
+      TemplateFill: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =104
+      Y: |-
+        =664
+      Width: |-
+        =830
+      Height: |-
+        =312
+      Visible: |-
+        =varDet && varDTab = "S"
+    Children:
+      - scBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =If(Month(ThisItem.D) <> Month(varSM), RGBA(0, 0, 0, 0), ThisItem.D > Today(), RGBA(250, 250, 248, 1), ThisItem.N = 0, RGBA(217, 217, 214, 1), ThisItem.SR > 0, RGBA(207, 34, 46, 1), ThisItem.SF > 0, RGBA(210, 153, 34, 1), RGBA(46, 160, 67, 1))
+            X: |-
+              =3
+            Y: |-
+              =3
+            Width: |-
+              =(830 / 7) - 6
+            Height: |-
+              =46
+      - scDay:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Text(Day(ThisItem.D))
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =13
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =If(Month(ThisItem.D) <> Month(varSM), RGBA(205, 205, 205, 1), ThisItem.N = 0 || ThisItem.D > Today(), RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
+            Align: |-
+              =Align.Center
+            X: |-
+              =3
+            Y: |-
+              =3
+            Width: |-
+              =(830 / 7) - 6
+            Height: |-
+              =46
+            Tooltip: |-
+              =Text(ThisItem.D, "dddd m/d") & ":  " & If(ThisItem.N = 0, "no board data", "recordable " & ThisItem.SR & ", first aid " & ThisItem.SF & ", near miss " & ThisItem.SN & "  ·  " & ThisItem.N & " shift(s)")
+      - scNM:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(ThisItem.SN > 0, "NM " & ThisItem.SN, "")
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =8
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(255, 255, 255, 1)
+            Align: |-
+              =Align.Right
+            Wrap: |-
+              =false
+            X: |-
+              =3
+            Y: |-
+              =30
+            Width: |-
+              =(830 / 7) - 12
+            Height: |-
+              =18
+            Visible: |-
+              =Month(ThisItem.D) = Month(varSM) && ThisItem.SN > 0
+- scLeg:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="Green: ran, no first aid or recordable   ·   Amber: first aid   ·   Red: recordable   ·   Grey: no board data   ·   NM = near misses"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =9
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Left
+      Wrap: |-
+        =false
+      X: |-
+        =104
+      Y: |-
+        =980
+      Width: |-
+        =830
+      Height: |-
+        =24
+      Visible: |-
+        =varDet && varDTab = "S"
+- paHdr:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="Shaded rows = the few that make up 80% of the total.   Right: quantity, then cumulative %."
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =9
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Left
+      Wrap: |-
+        =false
+      X: |-
+        =112
+      Y: |-
+        =638
+      Width: |-
+        =820
+      Height: |-
+        =22
+      Visible: |-
+        =varDet && (varDTab = "Q" || varDTab = "C")
+- galPa:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =If(varDTab = "Q", colLSc, colLDT)
+      TemplateSize: |-
+        =42
+      TemplatePadding: |-
+        =0
+      ShowScrollbar: |-
+        =true
+      BorderThickness: |-
+        =0
+      TemplateFill: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =104
+      Y: |-
+        =662
+      Width: |-
+        =830
+      Height: |-
+        =340
+      Visible: |-
+        =varDet && (varDTab = "Q" || varDTab = "C")
+    Children:
+      - paRow:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =If(ThisItem.VF, RGBA(0, 178, 169, 0.10), RGBA(0, 0, 0, 0))
+            X: |-
+              =0
+            Y: |-
+              =2
+            Width: |-
+              =820
+            Height: |-
+              =38
+      - paN:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.N
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =11
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Left
+            Wrap: |-
+              =false
+            X: |-
+              =8
+            Y: |-
+              =2
+            Width: |-
+              =250
+            Height: |-
+              =38
+            Tooltip: |-
+              =ThisItem.N
+      - paBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =RGBA(236, 236, 234, 1)
+            X: |-
+              =264
+            Y: |-
+              =13
+            Width: |-
+              =360
+            Height: |-
+              =16
+      - paBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =If(varDTab = "Q", RGBA(210, 153, 34, 1), RGBA(207, 34, 46, 1))
+            X: |-
+              =264
+            Y: |-
+              =13
+            Width: |-
+              =Max(3, 360 * ThisItem.Q / Max(1, If(varDTab = "Q", Max(colLSc, Q), Max(colLDT, Q))))
+            Height: |-
+              =16
+      - paQ:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Text(ThisItem.Q, "#,##0") & If(varDTab = "C", " min", "")
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =11
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Right
+            Wrap: |-
+              =false
+            X: |-
+              =628
+            Y: |-
+              =2
+            Width: |-
+              =96
+            Height: |-
+              =38
+      - paCum:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Text(ThisItem.Cum, "0") & "%"
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =10
+            Color: |-
+              =RGBA(117, 120, 123, 1)
+            Align: |-
+              =Align.Right
+            Wrap: |-
+              =false
+            X: |-
+              =728
+            Y: |-
+              =2
+            Width: |-
+              =84
+            Height: |-
+              =38
+            Tooltip: |-
+              ="Cumulative share"
+- paEmpty:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varDTab = "Q", "No scrap logged in the window.", "No downtime logged in the window.")
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =13
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =104
+      Y: |-
+        =760
+      Width: |-
+        =830
+      Height: |-
+        =50
+      Visible: |-
+        =varDet && (varDTab = "Q" || varDTab = "C") && CountRows(If(varDTab = "Q", colLSc, colLDT)) = 0
+- galLH:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =colLH
+      TemplateSize: |-
+        =42
+      TemplatePadding: |-
+        =0
+      ShowScrollbar: |-
+        =false
+      BorderThickness: |-
+        =0
+      TemplateFill: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =104
+      Y: |-
+        =640
+      Width: |-
+        =830
+      Height: |-
+        =336
+      Visible: |-
+        =varDet && varDTab = "D"
+    Children:
+      - lhN:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              ="HOUR " & ThisItem.Hr
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =11
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Left
+            X: |-
+              =8
+            Y: |-
+              =2
+            Width: |-
+              =90
+            Height: |-
+              =38
+      - lhBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =RGBA(236, 236, 234, 1)
+            X: |-
+              =104
+            Y: |-
+              =11
+            Width: |-
+              =540
+            Height: |-
+              =20
+      - lhBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =If(IsBlank(ThisItem.Pct), RGBA(217, 217, 214, 1), ThisItem.Pct >= varEG, RGBA(46, 160, 67, 1), ThisItem.Pct >= varEA, RGBA(210, 153, 34, 1), RGBA(207, 34, 46, 1))
+            X: |-
+              =104
+            Y: |-
+              =11
+            Width: |-
+              =If(IsBlank(ThisItem.Pct), 0, 540 * Min(1, ThisItem.Pct / 130))
+            Height: |-
+              =20
+      - lhTgt:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =RGBA(7, 39, 45, 1)
+            X: |-
+              =104 + 540 * 100 / 130 - 1
+            Y: |-
+              =5
+            Width: |-
+              =3
+            Height: |-
+              =32
+      - lhV:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(IsBlank(ThisItem.Pct), "nothing entered", Text(ThisItem.Pct, "0") & "%   ·   avg " & Text(ThisItem.U / Max(1, ThisItem.N), "#,##0") & " / hr")
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =10
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Right
+            Wrap: |-
+              =false
+            X: |-
+              =650
+            Y: |-
+              =2
+            Width: |-
+              =170
+            Height: |-
+              =38
+            Tooltip: |-
+              ="Hour " & ThisItem.Hr & ":  " & Text(ThisItem.U, "#,##0") & " units vs " & Text(ThisItem.T, "#,##0") & " target over " & ThisItem.N & " shift(s)"
+- lhNote:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="Dark tick = the hourly target. Slow starts, breaks and shift changes show up here."
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =9
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Left
+      Wrap: |-
+        =false
+      X: |-
+        =104
+      Y: |-
+        =980
+      Width: |-
+        =830
+      Height: |-
+        =24
+      Visible: |-
+        =varDet && varDTab = "D"
+- galLL:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =colLL
+      TemplateSize: |-
+        =64
+      TemplatePadding: |-
+        =0
+      ShowScrollbar: |-
+        =true
+      BorderThickness: |-
+        =0
+      TemplateFill: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =986
+      Y: |-
+        =640
+      Width: |-
+        =830
+      Height: |-
+        =364
+      Visible: |-
+        =varDet && (varDTab = "S" || varDTab = "Q" || varDTab = "D")
+    Children:
+      - llBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =RGBA(244, 244, 242, 1)
+            X: |-
+              =0
+            Y: |-
+              =3
+            Width: |-
+              =810
+            Height: |-
+              =58
+      - llK:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.K
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =11
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Left
+            Wrap: |-
+              =false
+            X: |-
+              =12
+            Y: |-
+              =6
+            Width: |-
+              =236
+            Height: |-
+              =26
+      - llK2:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.K2
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =9
+            Color: |-
+              =RGBA(117, 120, 123, 1)
+            Align: |-
+              =Align.Left
+            Wrap: |-
+              =false
+            X: |-
+              =12
+            Y: |-
+              =32
+            Width: |-
+              =236
+            Height: |-
+              =24
+            Tooltip: |-
+              =ThisItem.K2
+      - llV:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.V
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =12
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Left
+            Wrap: |-
+              =false
+            X: |-
+              =254
+            Y: |-
+              =6
+            Width: |-
+              =500
+            Height: |-
+              =26
+            Tooltip: |-
+              =ThisItem.V
+      - llV2:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.V2
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =9
+            Color: |-
+              =RGBA(117, 120, 123, 1)
+            Align: |-
+              =Align.Left
+            Wrap: |-
+              =false
+            X: |-
+              =254
+            Y: |-
+              =32
+            Width: |-
+              =500
+            Height: |-
+              =24
+            Tooltip: |-
+              =ThisItem.V2
+      - llSt:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =Switch(ThisItem.St, "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+            X: |-
+              =764
+            Y: |-
+              =19
+            Width: |-
+              =34
+            Height: |-
+              =26
+- llEmpty:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Switch(varDTab, "S", "No safety events logged in the window.", "Q", "No scrap logged in the window.", "No shifts in the window.")
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =13
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =986
+      Y: |-
+        =760
+      Width: |-
+        =830
+      Height: |-
+        =50
+      Visible: |-
+        =varDet && (varDTab = "S" || varDTab = "Q" || varDTab = "D") && CountRows(colLL) = 0
+- galO2Bg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: |-
+        =RGBA(250, 250, 248, 1)
+      X: |-
+        =986
+      Y: |-
+        =640
+      Width: |-
+        =830
+      Height: |-
+        =248
+      Visible: |-
+        =varDet && varDTab = "C"
+- galO2:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Horizontal_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =colTr
+      TemplateSize: |-
+        =830 / Max(1, Coalesce(varTW, 30))
+      TemplatePadding: |-
+        =0
+      ShowScrollbar: |-
+        =false
+      BorderThickness: |-
+        =0
+      TemplateFill: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =986
+      Y: |-
+        =640
+      Width: |-
+        =830
+      Height: |-
+        =248
+      Visible: |-
+        =varDet && varDTab = "C"
+    Children:
+      - O2Sel:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =If(ThisItem.D >= varFrom && ThisItem.D <= varTo && !(varTWSel && varFrom <> varTo), RGBA(0, 178, 169, 0.14), RGBA(0, 0, 0, 0))
+            X: |-
+              =0
+            Y: |-
+              =0
+            Width: |-
+              =(830 / Max(1, Coalesce(varTW, 30)))
+            Height: |-
+              =248
+      - O2Bar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =Switch(ThisItem.StO, "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+            X: |-
+              =Min(3, (830 / Max(1, Coalesce(varTW, 30))) * 0.1)
+            Y: |-
+              =214 - If(IsBlank((ThisItem.OEE)), 0, Max(2, Min(1, (ThisItem.OEE) / Max(0.0001, varTS.O)) * 190))
+            Width: |-
+              =Max(2, (830 / Max(1, Coalesce(varTW, 30))) - 2 * Min(3, (830 / Max(1, Coalesce(varTW, 30))) * 0.1))
+            Height: |-
+              =If(IsBlank((ThisItem.OEE)), 0, Max(2, Min(1, (ThisItem.OEE) / Max(0.0001, varTS.O)) * 190))
+      - O2Val:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =If(IsBlank((ThisItem.OEE)), "", Text(ThisItem.OEE, "0") & "%")
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =8
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Center
+            Wrap: |-
+              =false
+            X: |-
+              =0
+            Y: |-
+              =214 - If(IsBlank((ThisItem.OEE)), 0, Max(2, Min(1, (ThisItem.OEE) / Max(0.0001, varTS.O)) * 190)) - 18
+            Width: |-
+              =(830 / Max(1, Coalesce(varTW, 30)))
+            Height: |-
+              =16
+            Visible: |-
+              =!IsBlank((ThisItem.OEE)) && (830 / Max(1, Coalesce(varTW, 30))) >= 26
+      - O2Day:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Text(ThisItem.D, "d")
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =8
+            FontWeight: |-
+              =If(Weekday(ThisItem.D) = 2, FontWeight.Bold, FontWeight.Normal)
+            Color: |-
+              =If(ThisItem.N = 0, RGBA(170, 170, 170, 1), RGBA(7, 39, 45, 1))
+            Align: |-
+              =Align.Center
+            Wrap: |-
+              =false
+            X: |-
+              =0
+            Y: |-
+              =216
+            Width: |-
+              =(830 / Max(1, Coalesce(varTW, 30)))
+            Height: |-
+              =28
+            Tooltip: |-
+              =Text(ThisItem.D, "dddd m/d") & ":  " & If(IsBlank((ThisItem.OEE)), "no board data", Text(ThisItem.OEE, "0") & "%") & "  ·  " & ThisItem.N & " shift(s)"
+- oL1:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: |-
+        =RGBA(46, 160, 67, 1)
+      X: |-
+        =986
+      Y: |-
+        =640 + 214 - Min(1, varOG / Max(0.0001, varTS.O)) * 190 - 1
+      Width: |-
+        =830
+      Height: |-
+        =2
+      Visible: |-
+        =varDet && varDTab = "C"
+- oL1T:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="green " & varOG & "%"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =9
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(46, 160, 67, 1)
+      Align: |-
+        =Align.Right
+      Wrap: |-
+        =false
+      X: |-
+        =1676
+      Y: |-
+        =640 + 214 - Min(1, varOG / Max(0.0001, varTS.O)) * 190 - 18
+      Width: |-
+        =140
+      Height: |-
+        =16
+      Visible: |-
+        =varDet && varDTab = "C"
+- oL2:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: |-
+        =RGBA(210, 153, 34, 1)
+      X: |-
+        =986
+      Y: |-
+        =640 + 214 - Min(1, varOA / Max(0.0001, varTS.O)) * 190 - 1
+      Width: |-
+        =830
+      Height: |-
+        =2
+      Visible: |-
+        =varDet && varDTab = "C"
+- oL2T:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="amber " & varOA & "%"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =9
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(210, 153, 34, 1)
+      Align: |-
+        =Align.Right
+      Wrap: |-
+        =false
+      X: |-
+        =1676
+      Y: |-
+        =640 + 214 - Min(1, varOA / Max(0.0001, varTS.O)) * 190 - 18
+      Width: |-
+        =140
+      Height: |-
+        =16
+      Visible: |-
+        =varDet && varDTab = "C"
+- oNote:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(IsBlank(varLW.OEE), "No OEE on these boards: Act. Speed (E4) is blank.", "Window: OEE " & Text(varLW.OEE, "0") & "%   ·   A " & Text(Coalesce(varLW.A, 0), "0") & "   P " & Text(Coalesce(varLW.P, 0), "0") & "   Q " & Text(Coalesce(varLW.Q, 0), "0") & "   (averages of the shifts)")
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =11
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(7, 39, 45, 1)
+      Align: |-
+        =Align.Left
+      Wrap: |-
+        =false
+      X: |-
+        =986
+      Y: |-
+        =900
+      Width: |-
+        =830
+      Height: |-
+        =30
+      Visible: |-
+        =varDet && varDTab = "C"
+- oNote2:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="Cost here means what drives it: lost minutes, OEE and labor per unit. The boards carry no dollar figures."
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =9
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Left
+      Wrap: |-
+        =false
+      X: |-
+        =986
+      Y: |-
+        =934
+      Width: |-
+        =830
+      Height: |-
+        =24
+      Visible: |-
+        =varDet && varDTab = "C"
+- cDim:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 0.55)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =1080
+      Visible: =varCfg
+- cPanel:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =560
+      Y: =150
+      Width: =800
+      Height: =700
+      Visible: =varCfg
+- cHdr:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(7, 39, 45, 1)
+      X: =560
+      Y: =150
+      Width: =800
+      Height: =64
+      Visible: =varCfg
+- cTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="TARGETS  ·  TIER 2 COLORS"
+      Font: =Font.Arial
+      Size: =16
+      Color: =RGBA(255, 255, 255, 1)
+      Align: =Align.Left
+      X: =584
+      Y: =150
+      Width: =700
+      Height: =64
+      FontWeight: =FontWeight.Bold
+      Visible: =varCfg
+- cfgOGL:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OEE GREEN AT OR ABOVE (%)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =584
+      Y: =236
+      Width: =360
+      Height: =22
+      FontWeight: =FontWeight.Bold
+      Visible: =varCfg
+- cfgOG:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Text(varOG)
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =16
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Visible: =varCfg
+      X: =584
+      Y: =260
+      Width: =360
+      Height: =52
+- cfgOAL:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="OEE AMBER AT OR ABOVE (%)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =964
+      Y: =236
+      Width: =360
+      Height: =22
+      FontWeight: =FontWeight.Bold
+      Visible: =varCfg
+- cfgOA:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Text(varOA)
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =16
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Visible: =varCfg
+      X: =964
+      Y: =260
+      Width: =360
+      Height: =52
+- cfgEGL:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="EFFICIENCY GREEN AT OR ABOVE (%)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =584
+      Y: =356
+      Width: =360
+      Height: =22
+      FontWeight: =FontWeight.Bold
+      Visible: =varCfg
+- cfgEG:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Text(varEG)
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =16
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Visible: =varCfg
+      X: =584
+      Y: =380
+      Width: =360
+      Height: =52
+- cfgEAL:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="EFFICIENCY AMBER AT OR ABOVE (%)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =964
+      Y: =356
+      Width: =360
+      Height: =22
+      FontWeight: =FontWeight.Bold
+      Visible: =varCfg
+- cfgEA:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Text(varEA)
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =16
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Visible: =varCfg
+      X: =964
+      Y: =380
+      Width: =360
+      Height: =52
+- cfgDAL:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DOWNTIME AMBER AT (MIN / SHIFT)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =584
+      Y: =476
+      Width: =360
+      Height: =22
+      FontWeight: =FontWeight.Bold
+      Visible: =varCfg
+- cfgDA:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Text(varDA)
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =16
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Visible: =varCfg
+      X: =584
+      Y: =500
+      Width: =360
+      Height: =52
+- cfgDRL:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="DOWNTIME RED AT (MIN / SHIFT)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =964
+      Y: =476
+      Width: =360
+      Height: =22
+      FontWeight: =FontWeight.Bold
+      Visible: =varCfg
+- cfgDR:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Text(varDR)
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =16
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Visible: =varCfg
+      X: =964
+      Y: =500
+      Width: =360
+      Height: =52
+- cfgSAL:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SCRAP AMBER AT (% OF UNITS)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =584
+      Y: =596
+      Width: =360
+      Height: =22
+      FontWeight: =FontWeight.Bold
+      Visible: =varCfg
+- cfgSA:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Text(varSA)
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =16
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Visible: =varCfg
+      X: =584
+      Y: =620
+      Width: =360
+      Height: =52
+- cfgSRL:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SCRAP RED AT (% OF UNITS)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =964
+      Y: =596
+      Width: =360
+      Height: =22
+      FontWeight: =FontWeight.Bold
+      Visible: =varCfg
+- cfgSR:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Text(varSR)
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =16
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Visible: =varCfg
+      X: =964
+      Y: =620
+      Width: =360
+      Height: =52
+- cNote:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Saved next to the boards (Production / _Tier2 / tier2_settings.json), so every Tier 2 screen uses the same levels."
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Left
+      X: =584
+      Y: =720
+      Width: =752
+      Height: =44
+      Visible: =varCfg
+- cCancel:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="CANCEL"
+      OnSelect: =Set(varCfg, false)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(217, 217, 214, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1004
+      Y: =776
+      Width: =160
+      Height: =52
+      Visible: =varCfg
+- cSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SAVE TARGETS"
+      OnSelect: |-
+        =With({og: Value(cfgOG.Text), oa: Value(cfgOA.Text), eg: Value(cfgEG.Text), ea: Value(cfgEA.Text), da: Value(cfgDA.Text), dr: Value(cfgDR.Text), sa: Value(cfgSA.Text), sr: Value(cfgSR.Text)},
+         If(IsBlank(og) || IsBlank(oa) || IsBlank(eg) || IsBlank(ea) || IsBlank(da) || IsBlank(dr) || IsBlank(sa) || IsBlank(sr) || oa > og || ea > eg || da > dr || sa > sr,
+          Notify("Fill in every box. Amber must be at or below green (OEE, efficiency) and at or below red (downtime, scrap).", NotificationType.Warning),
+          Set(varSaveErr, "");
+          IfError(Set(varSave, 'MDIXB-Tier2Data'.Run("SAVE", JSON({oeeGreen: og, oeeAmber: oa, effGreen: eg, effAmber: ea, dtAmber: da, dtRed: dr, scrapAmber: sa, scrapRed: sr}, JSONFormat.Compact))),
+            Set(varSaveErr, FirstError.Message));
+          If(IsBlank(varSaveErr) && varSave.ok = "1",
+           Set(varOG, og); Set(varOA, oa); Set(varEG, eg); Set(varEA, ea); Set(varDA, da); Set(varDR, dr); Set(varSA, sa); Set(varSR, sr);
+           Set(varCfg, false); Select(btnCalc); Notify("Targets saved. Every Tier 2 screen picks them up on its next refresh.", NotificationType.Success),
+           Notify("Could not save the targets: " & Coalesce(varSaveErr, varSave.err), NotificationType.Error))))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(46, 160, 67, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: =1176
+      Y: =776
+      Width: =160
+      Height: =52
+      Visible: =varCfg
+- mDim:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: |-
+        =RGBA(7, 39, 45, 0.55)
+      OnSelect: |-
+        =Set(varMetOpen, false)
+      X: |-
+        =0
+      Y: |-
+        =0
+      Width: |-
+        =1920
+      Height: |-
+        =1080
+      Visible: |-
+        =varMetOpen
+- mPanel:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: |-
+        =RGBA(255, 255, 255, 1)
+      X: |-
+        =260
+      Y: |-
+        =110
+      Width: |-
+        =1400
+      Height: |-
+        =860
+      Visible: |-
+        =varMetOpen
+- mHdr:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: |-
+        =RGBA(7, 39, 45, 1)
+      X: |-
+        =260
+      Y: |-
+        =110
+      Width: |-
+        =1400
+      Height: |-
+        =64
+      Visible: |-
+        =varMetOpen
+- mTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =varMetT & "  ·  " & If(varFrom = varTo, Text(varFrom, "dddd m/d"), Text(varFrom, "ddd m/d") & " – " & Text(varTo, "ddd m/d")) & If(ddShift.Selected.Value = "All", "", "  ·  shift " & ddShift.Selected.Value)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =18
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      Align: |-
+        =Align.Left
+      X: |-
+        =284
+      Y: |-
+        =110
+      Width: |-
+        =1000
+      Height: |-
+        =64
+      Visible: |-
+        =varMetOpen
+- mFull:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =Switch(varMetTab, "S", "SAFETY VIEW  ›", "Q", "QUALITY VIEW  ›", "D", "DELIVERY VIEW  ›", "C", "COST VIEW  ›", "FULL LINE VIEW")
+      OnSelect: |-
+        =Set(varMetOpen, false);
+        ClearCollect(colDetSh, SortByColumns(Filter(colRows, L = varLine && D >= varFrom && D <= varTo), "D", SortOrder.Descending, "S", SortOrder.Ascending));
+        Set(varDS, First(colDetSh));
+        ClearCollect(colDetDT, SortByColumns(AddColumns(GroupBy(ForAll(Filter(Split(Concat(colDetSh, DTR, "|"), "|"), !IsBlank(Value)) As p, {R: Index(Split(p.Value, "~"), 1).Value, M: Value(Index(Split(p.Value, "~"), 2).Value)}), R, G), Mn, Sum(G, M)), "Mn", SortOrder.Descending));
+        ClearCollect(colDetSc, SortByColumns(AddColumns(GroupBy(ForAll(Filter(Split(Concat(colDetSh, SCR, "|"), "|"), !IsBlank(Value)) As p, {I: Index(Split(p.Value, "~"), 1).Value, Q: Value(Index(Split(p.Value, "~"), 2).Value)}), I, G), Qty, Sum(G, Q)), "Qty", SortOrder.Descending));
+        Set(varTWSel, true); Set(varDTab, Coalesce(varMetTab, "O")); If(varDTab <> "O", Select(btnLT)); Set(varDet, true)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(255, 255, 255, 1)
+      Color: |-
+        =RGBA(7, 39, 45, 1)
+      BorderColor: |-
+        =RGBA(255, 255, 255, 1)
+      X: |-
+        =1330
+      Y: |-
+        =120
+      Width: |-
+        =180
+      Height: |-
+        =44
+      Visible: |-
+        =varMetOpen && !IsBlank(varLine)
+- mClose:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="CLOSE"
+      OnSelect: |-
+        =Set(varMetOpen, false)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(0, 178, 169, 1)
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      BorderColor: |-
+        =RGBA(0, 178, 169, 1)
+      X: |-
+        =1520
+      Y: |-
+        =120
+      Width: |-
+        =120
+      Height: |-
+        =44
+      Visible: |-
+        =varMetOpen
+- mSum:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =varMetSum
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =15
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(7, 39, 45, 1)
+      Align: |-
+        =Align.Left
+      X: |-
+        =284
+      Y: |-
+        =186
+      Width: |-
+        =1350
+      Height: |-
+        =40
+      Visible: |-
+        =varMetOpen
+- galMet:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =colMet
+      TemplateSize: |-
+        =64
+      TemplatePadding: |-
+        =0
+      ShowScrollbar: |-
+        =true
+      BorderThickness: |-
+        =0
+      TemplateFill: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =284
+      Y: |-
+        =236
+      Width: |-
+        =830
+      Height: |-
+        =716
+      Visible: |-
+        =varMetOpen
+    Children:
+      - mrBg:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =RGBA(244, 244, 242, 1)
+            X: |-
+              =0
+            Y: |-
+              =3
+            Width: |-
+              =820
+            Height: |-
+              =58
+      - mrK:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.K
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =12
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Left
+            Wrap: |-
+              =false
+            X: |-
+              =14
+            Y: |-
+              =6
+            Width: |-
+              =230
+            Height: |-
+              =26
+      - mrK2:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.K2
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =10
+            Color: |-
+              =RGBA(117, 120, 123, 1)
+            Align: |-
+              =Align.Left
+            Wrap: |-
+              =false
+            X: |-
+              =14
+            Y: |-
+              =32
+            Width: |-
+              =230
+            Height: |-
+              =24
+            Tooltip: |-
+              =ThisItem.K2
+      - mrV:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.V
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =13
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Left
+            Wrap: |-
+              =false
+            X: |-
+              =254
+            Y: |-
+              =6
+            Width: |-
+              =506
+            Height: |-
+              =26
+            Tooltip: |-
+              =ThisItem.V
+      - mrV2:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.V2
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =10
+            Color: |-
+              =RGBA(117, 120, 123, 1)
+            Align: |-
+              =Align.Left
+            Wrap: |-
+              =false
+            X: |-
+              =254
+            Y: |-
+              =32
+            Width: |-
+              =506
+            Height: |-
+              =24
+            Tooltip: |-
+              =ThisItem.V2
+      - mrSt:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =Switch(ThisItem.St, "G", RGBA(46, 160, 67, 1), "A", RGBA(210, 153, 34, 1), "R", RGBA(207, 34, 46, 1), RGBA(217, 217, 214, 1))
+            X: |-
+              =772
+            Y: |-
+              =19
+            Width: |-
+              =34
+            Height: |-
+              =26
+- mEmpty:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="No shifts on the boards for these dates."
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =15
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =284
+      Y: |-
+        =400
+      Width: |-
+        =830
+      Height: |-
+        =60
+      Visible: |-
+        =varMetOpen && CountRows(colMet) = 0
+- mBT:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =varMetB
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Left
+      X: |-
+        =1140
+      Y: |-
+        =236
+      Width: |-
+        =500
+      Height: |-
+        =30
+      Visible: |-
+        =varMetOpen && CountRows(colMetB) > 0
+- galMetB:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =colMetB
+      TemplateSize: |-
+        =48
+      TemplatePadding: |-
+        =0
+      ShowScrollbar: |-
+        =true
+      BorderThickness: |-
+        =0
+      TemplateFill: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =1140
+      Y: |-
+        =270
+      Width: |-
+        =510
+      Height: |-
+        =682
+      Visible: |-
+        =varMetOpen && CountRows(colMetB) > 0
+    Children:
+      - mbN:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.N
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =12
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Left
+            X: |-
+              =0
+            Y: |-
+              =0
+            Width: |-
+              =260
+            Height: |-
+              =48
+            Tooltip: |-
+              =ThisItem.N
+      - mbQ:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =Text(ThisItem.Q, "#,##0")
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =12
+            FontWeight: |-
+              =FontWeight.Bold
+            Color: |-
+              =RGBA(7, 39, 45, 1)
+            Align: |-
+              =Align.Right
+            X: |-
+              =262
+            Y: |-
+              =0
+            Width: |-
+              =80
+            Height: |-
+              =48
+      - mbBar:
+          Control: Rectangle@2.3.0
+          Properties:
+            Fill: |-
+              =RGBA(0, 178, 169, 1)
+            X: |-
+              =352
+            Y: |-
+              =16
+            Width: |-
+              =Max(4, ThisItem.Q / Max(1, Max(colMetB, Q)) * 150)
+            Height: |-
+              =16
+- calShade:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: |-
+        =RGBA(0, 0, 0, 0.35)
+      OnSelect: |-
+        =Set(varCal, false)
+      X: |-
+        =0
+      Y: |-
+        =0
+      Width: |-
+        =1920
+      Height: |-
+        =1080
+      Visible: |-
+        =varCal
+- calPanel:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: |-
+        =RGBA(255, 255, 255, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      BorderThickness: |-
+        =2
+      X: |-
+        =700
+      Y: |-
+        =88
+      Width: |-
+        =416
+      Height: |-
+        =548
+      Visible: |-
+        =varCal
+- calPrev:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="<"
+      OnSelect: |-
+        =Set(varCalM, DateAdd(varCalM, -1, TimeUnit.Months))
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =18
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(0, 72, 81, 1)
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      X: |-
+        =712
+      Y: |-
+        =100
+      Width: |-
+        =56
+      Height: |-
+        =44
+      Visible: |-
+        =varCal
+- calTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =Upper(Text(varCalM, "mmmm yyyy"))
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =16
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(7, 39, 45, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =768
+      Y: |-
+        =100
+      Width: |-
+        =280
+      Height: |-
+        =44
+      Visible: |-
+        =varCal
+- calNext:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        =">"
+      OnSelect: |-
+        =Set(varCalM, DateAdd(varCalM, 1, TimeUnit.Months))
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =18
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(0, 72, 81, 1)
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      X: |-
+        =1048
+      Y: |-
+        =100
+      Width: |-
+        =56
+      Height: |-
+        =44
+      Visible: |-
+        =varCal
+      DisplayMode: |-
+        =If(varCalM >= Date(Year(Today()), Month(Today()), 1), DisplayMode.Disabled, DisplayMode.Edit)
+- calWd0:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="S"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =712
+      Y: |-
+        =150
+      Width: |-
+        =56
+      Height: |-
+        =26
+      Visible: |-
+        =varCal
+- calWd1:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="M"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =768
+      Y: |-
+        =150
+      Width: |-
+        =56
+      Height: |-
+        =26
+      Visible: |-
+        =varCal
+- calWd2:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="T"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =824
+      Y: |-
+        =150
+      Width: |-
+        =56
+      Height: |-
+        =26
+      Visible: |-
+        =varCal
+- calWd3:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="W"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =880
+      Y: |-
+        =150
+      Width: |-
+        =56
+      Height: |-
+        =26
+      Visible: |-
+        =varCal
+- calWd4:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="T"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =936
+      Y: |-
+        =150
+      Width: |-
+        =56
+      Height: |-
+        =26
+      Visible: |-
+        =varCal
+- calWd5:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="F"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =992
+      Y: |-
+        =150
+      Width: |-
+        =56
+      Height: |-
+        =26
+      Visible: |-
+        =varCal
+- calWd6:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="S"
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =1048
+      Y: |-
+        =150
+      Width: |-
+        =56
+      Height: |-
+        =26
+      Visible: |-
+        =varCal
+- galCal:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =ForAll(Sequence(42) As i, {D: DateAdd(varCalM, i.Value - Weekday(varCalM), TimeUnit.Days)})
+      WrapCount: |-
+        =7
+      TemplateSize: |-
+        =50
+      TemplatePadding: |-
+        =0
+      ShowScrollbar: |-
+        =false
+      BorderThickness: |-
+        =0
+      TemplateFill: |-
+        =RGBA(0, 0, 0, 0)
+      X: |-
+        =712
+      Y: |-
+        =178
+      Width: |-
+        =392
+      Height: |-
+        =300
+      Visible: |-
+        =varCal
+    Children:
+      - calDay:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: |-
+              =Text(Day(ThisItem.D))
+            OnSelect: |-
+              =If(varCalMode = "F", Set(varTmpFrom, ThisItem.D); If(ThisItem.D > varTmpTo, Set(varTmpTo, ThisItem.D)), Set(varTmpTo, ThisItem.D); If(ThisItem.D < varTmpFrom, Set(varTmpFrom, ThisItem.D)))
+            DisplayMode: |-
+              =If(ThisItem.D > Today(), DisplayMode.Disabled, DisplayMode.Edit)
+            Font: |-
+              =Font.Arial
+            Size: |-
+              =14
+            FontWeight: |-
+              =FontWeight.Bold
+            Fill: |-
+              =If(ThisItem.D = If(varCalMode = "F", varTmpFrom, varTmpTo), RGBA(0, 178, 169, 1), ThisItem.D >= varTmpFrom && ThisItem.D <= varTmpTo, RGBA(0, 178, 169, 0.35), ThisItem.D in colDates.D, RGBA(7, 39, 45, 1), RGBA(244, 244, 242, 1))
+            Color: |-
+              =If(ThisItem.D = If(varCalMode = "F", varTmpFrom, varTmpTo), RGBA(255, 255, 255, 1), ThisItem.D >= varTmpFrom && ThisItem.D <= varTmpTo, RGBA(7, 39, 45, 1), ThisItem.D in colDates.D, RGBA(255, 255, 255, 1), Month(ThisItem.D) = Month(varCalM), RGBA(117, 120, 123, 1), RGBA(205, 205, 205, 1))
+            DisabledFill: |-
+              =RGBA(244, 244, 242, 1)
+            DisabledColor: |-
+              =RGBA(205, 205, 205, 1)
+            HoverFill: |-
+              =RGBA(0, 178, 169, 0.75)
+            BorderColor: |-
+              =RGBA(255, 255, 255, 1)
+            BorderThickness: |-
+              =2
+            X: |-
+              =0
+            Y: |-
+              =0
+            Width: |-
+              =56
+            Height: |-
+              =50
+            Tooltip: |-
+              =Text(ThisItem.D, "dddd m/d/yyyy") & If(ThisItem.D in colDates.D, "", " - no board data")
+- calNote:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        =If(varCalMode = "F", "Pick the START date", "Pick the END date") & "  ·  " & Text(varTmpFrom, "m/d") & " – " & Text(varTmpTo, "m/d") & If(CountRows(colDates) > 0 && varTmpFrom < Min(colDates, D), "  ·  board data starts " & Text(Min(colDates, D), "m/d"), "") & Char(10) & "Dark days have board data."
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =11
+      Color: |-
+        =RGBA(117, 120, 123, 1)
+      Align: |-
+        =Align.Center
+      X: |-
+        =712
+      Y: |-
+        =482
+      Width: |-
+        =392
+      Height: |-
+        =34
+      Visible: |-
+        =varCal
+- calPY:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="YESTERDAY"
+      OnSelect: |-
+        =Set(varTmpFrom, DateAdd(Today(), -1, TimeUnit.Days)); Set(varTmpTo, DateAdd(Today(), -1, TimeUnit.Days)); Set(varCalM, Date(Year(varTmpTo), Month(varTmpTo), 1))
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(244, 244, 242, 1)
+      Color: |-
+        =RGBA(7, 39, 45, 1)
+      HoverFill: |-
+        =RGBA(230, 244, 244, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      BorderThickness: |-
+        =1
+      X: |-
+        =712
+      Y: |-
+        =522
+      Width: |-
+        =92
+      Height: |-
+        =40
+      Visible: |-
+        =varCal
+- calP7:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="LAST 7 DAYS"
+      OnSelect: |-
+        =Set(varTmpFrom, DateAdd(Today(), -7, TimeUnit.Days)); Set(varTmpTo, DateAdd(Today(), -1, TimeUnit.Days)); Set(varCalM, Date(Year(varTmpTo), Month(varTmpTo), 1))
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(244, 244, 242, 1)
+      Color: |-
+        =RGBA(7, 39, 45, 1)
+      HoverFill: |-
+        =RGBA(230, 244, 244, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      BorderThickness: |-
+        =1
+      X: |-
+        =812
+      Y: |-
+        =522
+      Width: |-
+        =92
+      Height: |-
+        =40
+      Visible: |-
+        =varCal
+- calPM:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="MONTH"
+      OnSelect: |-
+        =Set(varTmpFrom, Date(Year(Today()), Month(Today()), 1)); Set(varTmpTo, Today()); Set(varCalM, Date(Year(varTmpTo), Month(varTmpTo), 1))
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(244, 244, 242, 1)
+      Color: |-
+        =RGBA(7, 39, 45, 1)
+      HoverFill: |-
+        =RGBA(230, 244, 244, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      BorderThickness: |-
+        =1
+      X: |-
+        =912
+      Y: |-
+        =522
+      Width: |-
+        =92
+      Height: |-
+        =40
+      Visible: |-
+        =varCal
+- calPL:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="TODAY"
+      OnSelect: |-
+        =Set(varTmpFrom, Today()); Set(varTmpTo, Today()); Set(varCalM, Date(Year(varTmpTo), Month(varTmpTo), 1))
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =10
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(244, 244, 242, 1)
+      Color: |-
+        =RGBA(7, 39, 45, 1)
+      HoverFill: |-
+        =RGBA(230, 244, 244, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      BorderThickness: |-
+        =1
+      X: |-
+        =1012
+      Y: |-
+        =522
+      Width: |-
+        =92
+      Height: |-
+        =40
+      Visible: |-
+        =varCal
+- calCancel:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="CANCEL"
+      OnSelect: |-
+        =Set(varCal, false)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(244, 244, 242, 1)
+      Color: |-
+        =RGBA(7, 39, 45, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      X: |-
+        =712
+      Y: |-
+        =576
+      Width: |-
+        =120
+      Height: |-
+        =44
+      Visible: |-
+        =varCal
+- calClose:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: |-
+        ="SHOW " & Upper(If(varTmpFrom = varTmpTo, Text(varTmpFrom, "ddd m/d"), Text(varTmpFrom, "m/d") & " – " & Text(varTmpTo, "m/d")))
+      OnSelect: |-
+        =Set(varFrom, varTmpFrom); Set(varTo, varTmpTo); Set(varCal, false); Select(btnCalc)
+      Font: |-
+        =Font.Arial
+      Size: |-
+        =12
+      FontWeight: |-
+        =FontWeight.Bold
+      Fill: |-
+        =RGBA(0, 72, 81, 1)
+      Color: |-
+        =RGBA(255, 255, 255, 1)
+      BorderColor: |-
+        =RGBA(0, 72, 81, 1)
+      X: |-
+        =844
+      Y: |-
+        =576
+      Width: |-
+        =260
+      Height: |-
+        =44
+      Visible: |-
+        =varCal

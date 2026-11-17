@@ -1,5 +1,5 @@
 # Generates HxH_Board_v10.pa.yaml (1920x1080)
-exec(open("/tmp/claude-0/gen/theme.py").read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/theme.py").read())
 DARK="RGBA(7, 39, 45, 1)"; TEAL_D="RGBA(0, 72, 81, 1)"; TEAL="RGBA(0, 178, 169, 1)"; AQUA="RGBA(176, 227, 228, 1)"
 G9="RGBA(117, 120, 123, 1)"; G5="RGBA(177, 179, 179, 1)"; G1="RGBA(217, 217, 214, 1)"; WHITE="RGBA(255, 255, 255, 1)"
 GREEN="RGBA(46, 160, 67, 1)"; MUTE="RGBA(243, 244, 244, 1)"; INK="RGBA(60, 64, 67, 1)"; NOW="RGBA(229, 243, 243, 1)"; AMBER="RGBA(210, 153, 34, 1)"; RED="RGBA(207, 34, 46, 1)"; CLEAR="RGBA(0, 0, 0, 0)"

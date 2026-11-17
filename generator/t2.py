@@ -218,5 +218,5 @@ out.append(btn("btnASave",'"SAVE ACTION"',SAVEA,1176,790,160,52,size=14,color=WH
 out.append(btn("btnACancel",'"CANCEL"','Set(varAdd, false)',1004,790,160,52,size=14,color=DARK,fill=G1,extra=vx(None)))
 out.append(label("ocReq",'"Action and owner are required."',584,800,400,30,size=11,color=G9,extra=V))
 
-open("/mnt/user-data/outputs/T2_Board_v1.pa.yaml","w").write("".join(out))
+open(__import__("os").environ["MDI_OUTDIR"]+"/T2_Board_v1.pa.yaml","w").write("".join(out))
 print("ok",sum(len(x) for x in out))

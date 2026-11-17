@@ -1,11 +1,11 @@
 # Generates HxH_Board_v10.pa.yaml (1920x1080)
-exec(open("/tmp/claude-0/gen/theme.py").read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/theme.py").read())
 DARK="RGBA(7, 39, 45, 1)"; TEAL_D="RGBA(0, 72, 81, 1)"; TEAL="RGBA(0, 178, 169, 1)"; AQUA="RGBA(176, 227, 228, 1)"
 G9="RGBA(117, 120, 123, 1)"; G5="RGBA(177, 179, 179, 1)"; G1="RGBA(217, 217, 214, 1)"; WHITE="RGBA(255, 255, 255, 1)"
 GREEN="RGBA(46, 160, 67, 1)"; MUTE="RGBA(243, 244, 244, 1)"; INK="RGBA(60, 64, 67, 1)"; NOW="RGBA(229, 243, 243, 1)"; AMBER="RGBA(210, 153, 34, 1)"; RED="RGBA(207, 34, 46, 1)"; CLEAR="RGBA(0, 0, 0, 0)"
 out=[]
 EXTRA={}
-exec(open('/tmp/claude-0/gen/ux6.py').read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/ux6.py").read())
 def ind(s,n): return "\n".join((" "*n+l) if l else l for l in s.split("\n"))
 def ctrl(name, ctype, props, indent=0, children=None, variant=None):
     p=" "*indent
@@ -289,7 +289,7 @@ SAVESHIFT=(SUMW.replace("varDurM","With({d0: ddDate.Selected.D}, With({d1: If(dd
  '     StaffingReasonCode: ddStaff.Selected.Value, SpeedLossReasonCode: ddSpeedLoss.Selected.Value,\n'
  '     EnteredBy: User().Email}), Notify("Shift totals not saved yet (no connection?). They update on the next save.", NotificationType.Warning))'+SUMEND+';\n'
  'Set(varSavedAt, Now())')
-exec(open('/tmp/claude-0/gen/ux_tail6.py').read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/ux_tail6.py").read())
 FLUSH=('If(CountRows(colPending) > 0,\n'
  ' IfError(ForAll(colPending As p, Patch(HxH_Hourly, Coalesce(LookUp(HxH_Hourly, Title = p.K), Defaults(HxH_Hourly)), p.Rec)),\n'
  '  Notify("Still not connected: " & CountRows(colPending) & " hour(s) waiting on this tablet. Keep the app open.", NotificationType.Warning),\n'
@@ -300,5 +300,5 @@ out.append(label("lblPending",'"⚠  " & CountRows(colPending) & If(CountRows(co
 out.append(btn("btnRetry",'"RETRY NOW"','Select(btnFlush)',1196,94,150,40,size=13,fill=WHITE,color=RED,extra={"Visible":"=CountRows(colPending) > 0","BorderColor":F(RED),"BorderThickness":"=2"}))
 out.append(btn("btnSaveRow",'""',SAVEROW,0,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
 out.append(btn("btnSaveShift",'""',SAVESHIFT,2,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
-write_themed("/mnt/user-data/outputs/deploy/apps/HxH_Board_v22.pa.yaml", "".join(out))
+write_themed(__import__("os").environ["MDI_OUTDIR"]+"/HxH_Board_v22.pa.yaml", "".join(out))
 print("ok", sum(len(x) for x in out))

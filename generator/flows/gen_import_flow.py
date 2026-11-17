@@ -1,6 +1,6 @@
 """MDI - Import History: lists workbooks in <site>/Shared Documents/MDI_Imports and returns the Log_ tables
 (Tbl_Production, Tbl_Downtime, Tbl_Shift) of one workbook as JSON text for the MDI Settings app to import."""
-import json, sys
+import json, sys, os
 SITEVAR = "craf4_shared_sharepointonline_116804f493f543e68b7c121bf1791461"
 SITEP = f"MDI SharePoint site ({SITEVAR})"
 SITE = f"@parameters('{SITEP}')"
@@ -74,5 +74,5 @@ flow = {"properties": {
         "triggers": trig, "actions": actions, "outputs": {}}},
     "schemaVersion": "1.0.0.0"}
 s = json.dumps(flow, separators=(",", ":"))
-open(sys.argv[1], "w").write(json.dumps(flow, indent=1))
+os.makedirs(os.path.dirname(sys.argv[1]) or ".", exist_ok=True); open(sys.argv[1], "w").write(json.dumps(flow, indent=1))
 print("ok", len(s))

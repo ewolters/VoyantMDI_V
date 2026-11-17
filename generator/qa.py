@@ -1,6 +1,6 @@
 # Generates QA_Rework_v4.pa.yaml (1920x1080) — QA rework entry + quality dashboard
-exec(open("/tmp/claude-0/gen/theme.py").read())
-src=open('/tmp/claude-0/gen/build6.py').read()
+exec(open(__import__("os").environ["MDI_GEN"]+"/theme.py").read())
+src=open(__import__("os").environ["MDI_GEN"]+"/build6.py").read()
 exec(src[:src.index("DT_OLD=")])
 EXTRA.clear()
 MUTE="RGBA(243, 244, 244, 1)"; PANEL="RGBA(248, 249, 249, 1)"
@@ -169,5 +169,5 @@ out.append(btn("btnQCtx",'""',CTX,0,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
 for _ in range(2):
     out=[]
     exec(BODY)
-write_themed("/mnt/user-data/outputs/QA_Rework_v4.pa.yaml", "".join(out))
+write_themed(__import__("os").environ["MDI_OUTDIR"]+"/QA_Rework_v4.pa.yaml", "".join(out))
 print("ok", len(out))

@@ -1,6 +1,6 @@
 """Adds KPI_Daily (Tier 3 history) + Tier 3 settings to deploy/mdi_package.json. Idempotent."""
 import json, html
-P = '/mnt/user-data/outputs/deploy/mdi_package.json'
+P = __import__("os").environ["MDI_DEPLOY"]+"/mdi_package.json"
 p = json.load(open(P))
 def text(n): return f'<Field Type="Text" Name="{n}" DisplayName="{n}" StaticName="{n}"/>'
 def num(n, dec=0): return f'<Field Type="Number" Name="{n}" DisplayName="{n}" Decimals="{dec}" StaticName="{n}"/>'

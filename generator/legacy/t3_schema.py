@@ -1,6 +1,6 @@
 """Adds ValueStreams (configurable hierarchy) and Variances (Tier 3 variance boards) to deploy/mdi_package.json. Idempotent."""
 import json, html
-P = '/mnt/user-data/outputs/deploy/mdi_package.json'
+P = __import__("os").environ["MDI_DEPLOY"]+"/mdi_package.json"
 p = json.load(open(P))
 def fx(fmt): return f' CustomFormatter="{html.escape(fmt, quote=True)}"' if fmt else ''
 def text(n): return f'<Field Type="Text" Name="{n}" DisplayName="{n}" StaticName="{n}"/>'
@@ -42,7 +42,7 @@ S['Variances'] = {"base": 100,
   "view": ["Title", "Kind", "SQDCP", "ValueStream", "Line", "Magnitude", "Unit", "Owner", "RaisedDate", "ShowUntil", "MonthOf", "Status"],
   "query": '<OrderBy><FieldRef Name="RaisedDate" Ascending="FALSE" /></OrderBy>', "rows": 100}
 p['indexes']['Variances'] = ["RaisedDate", "Status", "ValueStream"]
-exec(open("/tmp/claude-0/gen/t3_metrics.py").read())
+exec(open(__import__("os").environ["MDI_GEN"]+"/t3_metrics.py").read())
 S['KPI_Metrics'] = {"base": 100,
   "desc": "Tier 3 metric catalog. Each SQDCP letter holds several metrics. Title = metric code (fixed; the calculation is built into the apps). Turn metrics on/off (Active), order them, and set Green/Amber thresholds here. Better = Higher or Lower.",
   "title": {"name": "Title", "req": True, "fmt": ""},

@@ -3,3 +3,5 @@ deploy/customers/
 !solution/*.zip
 __pycache__/
 *.bak
+build/
+!holmdel/package/*.zip

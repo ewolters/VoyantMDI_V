@@ -1,0 +1,86 @@
+"""Regenerate app screens and flows from the generators.
+
+    python generator/make.py              # list targets
+    python generator/make.py hxh t2       # build some
+    python generator/make.py all          # build everything
+    python generator/make.py check        # build everything, then compare with deploy/apps
+    python generator/make.py lint         # run the Power Fx checks on everything in build/
+
+Output goes to build/ (never straight into deploy/). Copy a file into deploy/apps under a new
+version number once it has been pasted, published and tested in the MDI Dev environment.
+"""
+import os, sys, subprocess, filecmp, shutil
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+GEN = os.path.join(ROOT, "generator")
+OUT = os.path.join(ROOT, "build")
+TMP = os.path.join(OUT, "tmp")
+ENV = dict(os.environ, MDI_GEN=GEN, MDI_DEPLOY=os.path.join(ROOT, "deploy"), MDI_OUTDIR=OUT, MDI_TMP=TMP,
+           PYTHONIOENCODING="utf-8", PYTHONUTF8="1")   # UTF-8 files on Windows too
+
+# target: (what it builds, command line after "python")
+TARGETS = {
+    "hxh":      ("Tier 1 Hour x Hour  -> HxH_Board_v22.pa.yaml", ["build6.py"]),
+    "t2":       ("Tier 2 daily board  -> T2_Board_v19.pa.yaml", ["t2v2.py"]),
+    "t2periods":("Tier 2 WEEKS & MONTHS screen -> T2_Periods_v2.pa.yaml", ["t2per.py"]),
+    "t3":       ("Tier 3 War Room board -> T3_Board_v9.pa.yaml", ["t3.py", "{OUT}/T3_Board_v9.pa.yaml"]),
+    "t3screens":("Tier 3 Bowler + Variances screens", ["t3screens.py", "{OUT}/T3_Bowler_v6.pa.yaml", "{OUT}/T3_Variances_v7.pa.yaml"]),
+    "quality":  ("Quality app: REWORK + NCR screens", ["quality.py", "{OUT}/Quality_v5.pa.yaml", "{OUT}/Quality_NCR_v2.pa.yaml"]),
+    "qa":       ("QA Rework (standalone, older)", ["qa.py"]),
+    "mt":       ("TS Maintenance", ["mt.py"]),
+    "bd":       ("TS Binder", ["bd.py"]),
+    "np":       ("Newspaper", ["np.py"]),
+    "pc":       ("PC Audit", ["pc.py"]),
+    "sw":       ("SW Manager", ["sw.py", "{OUT}/SW_Manager_v4.pa.yaml"]),
+    "fa":       ("Frontier Audit", ["fa.py", "{OUT}/Frontier_Audit_v2.pa.yaml"]),
+    "settings": ("MDI Settings: all screens incl. IMPORT HISTORY", ["settings_imp.py"]),
+    "flows":    ("Flow JSON (HxH escalation, photo, sync, nightly, frontier)", ["flows.py", "{OUT}/flows"]),
+    "flow-import": ("Flow JSON: MDI - Import History", ["flows/gen_import_flow.py", "{OUT}/flows/07_MDI - Import History.json"]),
+}
+
+def run(name):
+    desc, cmd = TARGETS[name]
+    cmd = [sys.executable] + [os.path.join(GEN, cmd[0])] + [c.replace("{OUT}", OUT) for c in cmd[1:]]
+    print(f"== {name}: {desc}")
+    r = subprocess.run(cmd, cwd=GEN, env=ENV)
+    if r.returncode:
+        print(f"!! {name} failed (exit {r.returncode})"); return False
+    return True
+
+def check():
+    apps = os.path.join(ROOT, "deploy", "apps")
+    alias = {"Settings_Thresholds_v2.pa.yaml": "Settings_scrCfg_v2.pa.yaml",
+             "Settings_scrImport_v2.pa.yaml": "Settings_scrImport_v2.pa.yaml",
+             **{f"Settings_{n}_v2.pa.yaml": f"Settings_{n}_v1.pa.yaml" for n in ("Dropdowns", "Escalation", "Lines", "People", "Standards")}}
+    same = diff = 0
+    for f in sorted(os.listdir(OUT)):
+        if not f.endswith(".pa.yaml"): continue
+        ref = os.path.join(apps, alias.get(f, f))
+        if not os.path.exists(ref): continue
+        ok = filecmp.cmp(os.path.join(OUT, f), ref, shallow=False)
+        same += ok; diff += not ok
+        print(("  same  " if ok else "  DIFF  ") + f + ("" if alias.get(f, f) == f else f"  (vs {alias[f]})"))
+    print(f"{same} identical, {diff} different")
+    return diff == 0
+
+if __name__ == "__main__":
+    os.makedirs(TMP, exist_ok=True)
+    args = sys.argv[1:]
+    if not args:
+        print(__doc__); [print(f"  {k:10} {v[0]}") for k, v in TARGETS.items()]; sys.exit(0)
+    if args[0] == "lint":
+        bad = 0
+        for f in sorted(os.listdir(OUT)):
+            if f.endswith(".pa.yaml"):
+                for tool in ("fxcheck.py", "dupcheck.py"):
+                    r = subprocess.run([sys.executable, os.path.join(GEN, "lint", tool), os.path.join(OUT, f)], env=ENV, capture_output=True, text=True)
+                    last = (r.stdout.strip().splitlines() or [""])[-1]
+                    print(f"  {f:40} {tool:12} {last}")
+                    bad += r.returncode != 0
+        sys.exit(1 if bad else 0)
+    names = list(TARGETS) if args[0] in ("all", "check") else args
+    bad = [n for n in names if n not in TARGETS]
+    if bad: sys.exit(f"unknown target(s): {bad}")
+    ok = all([run(n) for n in names])
+    if args[0] == "check": ok = check() and ok
+    sys.exit(0 if ok else 1)

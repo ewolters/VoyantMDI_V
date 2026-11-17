@@ -2,7 +2,7 @@
 # usage: python3 quality.py OUT_REWORK OUT_NCR
 import sys
 OUTR, OUTN = sys.argv[1], sys.argv[2]
-src = open('/tmp/claude-0/gen/qa.py').read()
+src = open(__import__("os").environ["MDI_GEN"]+"/qa.py").read()
 TABS_CODE = r'''
 QTABS = [("REWORK", "Screen1"), ("NCR LOG", "scrNCR")]
 def qtabs(pfx, cur):
@@ -15,7 +15,7 @@ def qtabs(pfx, cur):
 out.extend(qtabs("q", "Screen1"))
 '''
 src = src.replace("\n'''\nfor _ in range(2):", TABS_CODE + "'''\nfor _ in range(2):")
-src = src.replace('write_themed("/mnt/user-data/outputs/QA_Rework_v4.pa.yaml", "".join(out))', 'write_themed(OUTR, "".join(out))')
+src = src.replace('write_themed(__import__("os").environ["MDI_OUTDIR"]+"/QA_Rework_v4.pa.yaml", "".join(out))', 'write_themed(OUTR, "".join(out))')
 assert 'write_themed(OUTR' in src and 'QTABS' in src
 exec(src)
 
