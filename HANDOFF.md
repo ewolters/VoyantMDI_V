@@ -13,7 +13,7 @@ From Eric Wolters to Kenny, November 2026. This is the "if it's gone, here's how
 | **Your editable copy** (unmanaged **MDI**) | Environment **MDI Dev** (you create it; START_HERE Part 1.5) | `solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` (§3B) |
 | **Setup flow** (solution **MDI Setup**) | Vee Pak default environment | `solution/MDISetup_UNMANAGED_v1.0.0.0.zip` |
 | **Source code** for every screen and flow | This repo | It *is* the backup. Keep your copy pushed to GitHub. |
-| **Holmdel Tier 2** (solution **MDI Tier 2 - Excel boards (no lists)** 1.0.0.19) | Vee Pak default environment, owned by Christina DeRamos; data = the Tier 1 Excel boards in `https://veepak1.sharepoint.com/holmdel` | `holmdel/package/…1.0.0.19_managed.zip` (§4) |
+| **Holmdel Tier 2** (solution **MDI Tier 2 - Excel boards (no lists)** 1.0.0.19) | Vee Pak default environment, owned by Christina DeRamos; data = the Tier 1 Excel boards in `https://veepak1.sharepoint.com/holmdel` | `holmdel/package/…1.0.0.19_managed.zip` (§4); source + `holmdel/make.py` to rebuild or change it |
 
 **Accounts that matter:** every flow runs on the connections of whoever set it up (Kenny at New Albany, Christina at Holmdel). If that person's account is disabled, the flows stop. Do §6 before anyone else leaves.
 
@@ -101,7 +101,17 @@ Nothing at Holmdel lives outside the Excel boards and two small files the sync w
 5. **GitHub:** at least two people with access to the repo.
 6. **Kiosk/TV accounts:** record in a password manager (not this repo) which account each TV uses.
 
-## 7. Facts worth keeping
+## 7. Open items at handoff (Nov 17, 2026)
+- **Back-fill history:** run MDI Settings → IMPORT HISTORY on each line's newest data-entry workbook. Built and fixed during the 1.1.4.x releases; a full run at Ohio hasn't been confirmed.
+- **Archive older than 6 months:** Voyant's team planned a data-dump script; Tier 2 never reads further back than 6 months either way.
+- **Old hand-built flows:** if any flows from the first, hand-built New Albany setup are still on, turn them off (the MDI solution's flows replace them).
+- **Tier 3 Root cause tab:** placeholder only.
+- **Frontier Audit:** optional; its alert flow ships off.
+- **Escalation start minutes:** the Settings field `Escalation_FirstLevelMin` doesn't change the flow's fixed 60-minute trigger (SYSTEM_REFERENCE §5).
+- **Holmdel:** app-change route via an unmanaged dev import is documented but untested (`holmdel/README.md`). The TV account's password label is on the back of the Holmdel TV.
+- **Ownership:** second flow owners / service account (§6) not yet done.
+
+## 8. Facts worth keeping
 
 | | |
 |---|---|

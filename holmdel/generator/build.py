@@ -89,6 +89,7 @@ for k, disp in EV.items():
 </environmentvariabledefinition>'''.encode("utf-8")
     roots.append(f'<RootComponent type="380" schemaName="{k}" behavior="0" />')
 s = re.sub(r"<UniqueName>MDISetup</UniqueName>", "<UniqueName>MDITier2ExcelBoardsLite</UniqueName>", sol, count=1)
+s = s.replace("<Managed>0</Managed>", "<Managed>1</Managed>")  # template may be an unmanaged MDI Setup export; the output is always managed
 s = re.sub(r'(<LocalizedNames>\s*<LocalizedName description=")[^"]*(" languagecode="1033" />)', r"\1MDI Tier 2 - Excel boards (no lists)\2", s, count=1)
 s = re.sub(r"<Version>[^<]*</Version>", f"<Version>{VERSION}</Version>", s, count=1)
 s = re.sub(r"<RootComponents>.*?</RootComponents>", "<RootComponents>\n      " + "\n      ".join(roots) + "\n    </RootComponents>", s, flags=re.S)

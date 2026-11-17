@@ -17,7 +17,7 @@ You are helping **Kenny** (Voyant, Vee Pak tenant) own and change a virtual MDI 
 | SharePoint site | `https://veepak1.sharepoint.com/sites/OhioContinuousImprovement` (about 33 lists: HxH_Hourly, HxH_Shift, Lines, PLAYBOOK, Lookups, MDI_Config, Newspaper, …). Schema: `deploy/mdi_package.json`. |
 | Apps (10) | Tier 1 Hour x Hour, Tier 2 SQDC (+ WEEKS & MONTHS screen `scrPeriods`), Tier 3 War Room (Board, Bowler, Variances), Quality (REWORK + NCR), TS Maintenance, TS Binder, Newspaper, SW Manager, PC Audit, MDI Settings. |
 | Flows (7 + setup) | HxH - Downtime Escalation, MDI - Upload Photo, MDI - Sync Permissions, MDI - Nightly Board Check, MDI - Frontier Critical Alert (off), MDI - Connect Site (needs Premium; not used at Ohio), MDI - Import History; MDI - Set Up Site (in MDI Setup). |
-| Holmdel | A separate Tier 2-only package reading Excel boards, owned by Christina DeRamos. See `holmdel/README.md`. Support it (permissions, sync); don't redesign it without Eric's generator inputs (see that README). |
+| Holmdel | A separate Tier 2-only package reading Excel boards, owned by Christina DeRamos. See `holmdel/README.md`. Rebuild with `py holmdel/make.py` (see that README for flow-only vs app changes). |
 
 ## Repo map
 - `deploy/apps/*.pa.yaml`: the current screen source for every app (one file per screen; `deploy/apps/APP_BUILD_GUIDE.md` says which file goes on which app/screen).

@@ -1307,3 +1307,12 @@ Eric asked for a lite version of his SVEND Safety HIRARC / Frontier program (DuP
 - **Kenny (Vee Pak, LLC (default), site veepak1…/sites/OhioContinuousImprovement): installed** — MDI Setup zip + MDI_OhioContinuousImprovement_managed_v1.1.2.0.zip; 4 flows on (Frontier off); real HxH data showing on Tier 3. Lesson: importing the generic package before the variables point at the customer's site leaves the flows off ("GetTable Unauthorized").
 - To ship a fix: change in sandbox → Publish → raise MDI version → export (or build per customer) → customer imports as **Upgrade**.
 - Open: Tier 3 Variances shows blank RAISE rows under Biggest Misses; rename sandbox app "Tier 1 Hour x Hour_202610221040"; builder page for non-premium customers; one-page install guide (two zips, order, turn off old flows, `&hidenavbar=true` links); Kenny's old hand-built flows to turn off; optional Kenny playground dev env (unmanaged copy); GitHub staging-branch question still open.
+
+
+## 2026-11-17: Handoff to Kenny
+- Eric is off the Voyant engagement. Kenny (Voyant) owns New Albany; Christina DeRamos runs Holmdel day to day with Kenny as the contact.
+- State at handoff: MDI 1.1.4.1 + MDI Setup 1.0.0.0 in Vee Pak (default); Holmdel `MDI Tier 2 - Excel boards (no lists)` 1.0.0.19.
+- Repo became the developer kit: START_HERE (setup for Kenny), CLAUDE.md + skills (/change-app, /ship-upgrade, /troubleshoot), HANDOFF (rebuild from scratch, backups, ownership, open items), SYSTEM_REFERENCE, TROUBLESHOOTING.
+- `generator/make.py check` rebuilds all 23 app screens identical to deploy/apps; `holmdel/make.py check` rebuilds Holmdel 1.0.0.19 identical apart from the platform version stamp.
+- Kenny's editable copy: import `solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` into a new **MDI Dev** environment; ship changes as managed upgrades from there. Eric's sandbox is no longer the golden copy.
+- Open items: HANDOFF.md §7.
