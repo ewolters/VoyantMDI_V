@@ -7,6 +7,7 @@ Virtual MDI boards for Voyant New Albany, built entirely on Microsoft 365: Share
 | `deploy/` | Everything needed to install: app screens (`apps/`, newest version of each), flow definitions (`flows/`), the site/list schema and provisioner (`mdi_package.json`, `provision_mdi.js`), the per-customer package builder (`package/`), console tools (`tools/`), and the install guide (`README.md`). |
 | `deploy/apps/APP_BUILD_GUIDE.md` | Which file goes on which app and screen. |
 | `generator/` | The Python generators that write the `.pa.yaml` screens and flow JSON, plus the lint checks (`generator/lint/`). |
+| `solution/` | Unmanaged solution zips (MDI, MDI Setup) for the owner's dev environment, the starting point for building managed upgrades. |
 | `log.md` | Engineering log for the build. |
 | `TROUBLESHOOTING.md` | Owner's guide: how changes ship, permission errors (incl. Holmdel), blank-board checks, Power Fx traps, and a starter prompt for the owner's Claude. |
 
