@@ -87,7 +87,7 @@ Open **Settings** (gear icon or ⋯ in the top bar).
 ### 1. HxH Board: hour-by-hour production board (line tablet / TV)
 | | |
 |---|---|
-| **File** | `HxH_Board_v21.pa.yaml` |
+| **File** | `HxH_Board_v22.pa.yaml` |
 | **Name / format** | `MDI HxH Board`, **Tablet** 1920 × 1080 |
 | **Lists** | PLAYBOOK, HxH_Hourly, HxH_Shift, Lookups |
 | **Flow** | no |
@@ -173,7 +173,7 @@ Open **Settings** (gear icon or ⋯ in the top bar).
 ### 8. Tier 2 Board: daily Tier 2 meeting (meeting-room TV)
 | | |
 |---|---|
-| **File** | `T2_Board_v18.pa.yaml` |
+| **Files** | `T2_Board_v19.pa.yaml` → **Screen1** · `T2_Periods_v2.pa.yaml` → new blank screen **scrPeriods** (create it first; set its OnVisible to `If(IsEmpty(colPer), Select(btnPLoad))`) |
 | **Name / format** | `MDI Tier 2 Board`, **Tablet** 1920 × 1080 |
 | **Lists** (19) | HxH_Shift, HxH_Hourly, QA_Rework, TS_Occurrences, TS_Issues, TS_Fixes, PC_Audits, PC_Results, PC_Cards, SW_Elements, Escalation_Log, Newspaper, Lines, MDI_Config, PLAYBOOK, Lookups, People, SAF_Audits, SAF_Results |
 | **Flow** | no |
@@ -218,7 +218,7 @@ Open **Settings** (gear icon or ⋯ in the top bar).
 > Tier 3 computes the last 7 days with Tier 2's formulas and saves closed days to **KPI_Daily**, so trends build up from the first day it is opened. Root cause is a placeholder tab for now.
 
 ---|---|
-| **File** | `T3_Board_v4.pa.yaml` |
+| **File** | `T3_Board_v9.pa.yaml` → **Screen1** · `T3_Bowler_v6.pa.yaml` → **scrBowler** · `T3_Variances_v7.pa.yaml` → **scrVariance** |
 | **Name / format** | `MDI Tier 3 Board`, **Tablet** 1920 × 1080 |
 | **Lists** (20) | the 19 Tier 2 lists (HxH_Shift, HxH_Hourly, QA_Rework, TS_Occurrences, TS_Issues, TS_Fixes, PC_Audits, PC_Results, PC_Cards, SW_Elements, Escalation_Log, Newspaper, Lines, MDI_Config, PLAYBOOK, Lookups, People, SAF_Audits, SAF_Results) **+ KPI_Daily** |
 | **Flow** | no |
@@ -232,12 +232,12 @@ Open **Settings** (gear icon or ⋯ in the top bar).
 ### 11. MDI Settings: escalation rules, dropdown lists, lines, standards, thresholds, people (office)
 | | |
 |---|---|
-| **Files** | 6 screens: `Settings_Escalation_v1` → **Screen1** · `Settings_Dropdowns_v1` → **scrDrop** · `Settings_Lines_v1` → **scrLines** · `Settings_Standards_v1` → **scrStd** · `Settings_Thresholds_v1` → **scrCfg** · `Settings_People_v1` → **scrPeople** |
+| **Files** | 6 screens: `Settings_Escalation_v1` → **Screen1** · `Settings_Dropdowns_v1` → **scrDrop** · `Settings_Lines_v1` → **scrLines** · `Settings_Standards_v1` → **scrStd** · `Settings_scrCfg_v2` → **scrCfg** · `Settings_People_v1` → **scrPeople** · `Settings_scrImport_v2` → **scrImport** |
 | **Name / format** | `MDI Settings`, **Tablet** 1920 × 1080. Create it from **Solutions → MDI → New → App → Canvas app** so it lands in the MDI solution. |
 | **Lists** (8) | Escalation_Contacts, MDI_Config, Lookups, Lines, ValueStreams, PLAYBOOK, KPI_Metrics, People. Turn on Settings → General → *Automatically create environment variables when adding data sources* first; pick the existing variables when offered. |
-| **Flow** | no |
-| **Screens** | Add 5 blank screens named exactly scrDrop, scrLines, scrStd, scrCfg, scrPeople. Paste each file onto its screen; paste Screen1 last. |
-| **OnVisible** | Screen1 `Select(eLoad)` · scrDrop `Select(dLoad)` · scrLines `Select(lLoad)` · scrStd `Select(sLoad)` · scrCfg `Select(cLoad)` · scrPeople `Select(pLoad)` |
+| **Flow** | **MDI - Import History** (Power Automate pane → Add flow; used by scrImport) |
+| **Screens** | Add 6 blank screens named exactly scrDrop, scrLines, scrStd, scrCfg, scrPeople, scrImport. Paste each file onto its screen; paste Screen1 last. |
+| **OnVisible** | Screen1 `Select(eLoad)` · scrDrop `Select(dLoad)` · scrLines `Select(lLoad)` · scrStd `Select(sLoad)` · scrCfg `Select(cLoad)` · scrPeople `Select(pLoad)` · scrImport `Select(iLoad)` |
 | **Share with** | MDI admins and config editors (everyone else sees it view-only) |
 | **Who can edit** | People list: **CanEditConfig** or **MDIAdmin**. Only an MDI admin can grant those. If nobody is MDI admin yet, the app opens in SETUP MODE so the first admin can tick themselves. |
 | **Check** | PEOPLE: tick MDI ADMIN on yourself, SAVE. ESCALATION: add a contact at 60 min. DROPDOWN LISTS → Downtime: add a reason, move it up with ▲, and see it in Hour x Hour after REFRESH. |

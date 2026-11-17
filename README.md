@@ -1,6 +1,6 @@
 # Voyant Virtual MDI (Microsoft 365 build)
 
-**New owner? Read [START_HERE.md](START_HERE.md).** Claude reads [CLAUDE.md](CLAUDE.md) automatically.
+**New owner? Read [START_HERE.md](START_HERE.md).** Rebuilding from scratch: [HANDOFF.md](HANDOFF.md). How it works: [SYSTEM_REFERENCE.md](SYSTEM_REFERENCE.md). Errors: [TROUBLESHOOTING.md](TROUBLESHOOTING.md). Claude reads [CLAUDE.md](CLAUDE.md) automatically.
 
 Virtual MDI boards for Voyant New Albany, built entirely on Microsoft 365: SharePoint lists, Power Apps canvas apps (pasted from `.pa.yaml`), and Power Automate flows, packaged as the **MDI** managed solution.
 

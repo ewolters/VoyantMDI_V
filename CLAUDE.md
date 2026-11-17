@@ -25,7 +25,10 @@ You are helping **Kenny** (Voyant, Vee Pak tenant) own and change a virtual MDI 
 - `generator/`: Python that **writes** the `.pa.yaml` and flow JSON. **The generators are the source of truth**, not the YAML.
 - `generator/make.py`: the only entry point you need.
 - `solution/`: unmanaged solution zips for the dev environment.
-- `TROUBLESHOOTING.md`: error → cause → fix. `log.md`: build history and decisions.
+- `TROUBLESHOOTING.md`: error → cause → fix. **Read it first for any reported problem.**
+- `SYSTEM_REFERENCE.md`: how each flow and app works, the keys that link records, MDI_Config settings, where each board's math lives.
+- `HANDOFF.md`: rebuilding from scratch (production, MDI Dev, a new site, Holmdel), backups, ownership.
+- `log.md`: build history and decisions.
 
 ## Changing an app (the normal loop)
 1. Find the generator: `py generator/make.py` lists targets (hxh, t2, t2periods, t3, t3screens, quality, mt, bd, np, pc, sw, fa, settings, flows, flow-import).

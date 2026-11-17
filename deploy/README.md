@@ -1,10 +1,12 @@
 # Virtual MDI — Deployment Package
+
+> **This is the original hand-build install** (lists by console script, flows by console script, apps pasted one by one). It still works and is the fallback if packages won't import. The faster package route, and every recovery scenario, is in `../HANDOFF.md`.
 *Built in the SVEND sandbox (Verxted tenant), packaged for Voyant New Albany. All Microsoft 365: SharePoint lists + Power Apps + Power Automate. No premium connectors.*
 
 ## What's in the box
 | Module | App (file) | Who uses it | Device |
 |---|---|---|---|
-| Hour x Hour | **HxH Board** (`apps/HxH_Board_v21.pa.yaml`) | Line leads / operators, every hour | Line tablet / TV |
+| Hour x Hour | **HxH Board** (`apps/HxH_Board_v22.pa.yaml`) | Line leads / operators, every hour | Line tablet / TV |
 | Downtime escalation | Flow **HxH - Downtime Escalation** | Automatic (Teams to contacts at 60/120/240 min) | — |
 | QA rework | **QA Rework** (`apps/QA_Rework_v4.pa.yaml`) | QA | Tablet / PC |
 | Troubleshooting | **TS Maintenance** (`apps/TS_Maintenance_v5.pa.yaml`) | Maintenance (QR at machine) | Phone |
@@ -14,7 +16,7 @@
 | Action register | **Newspaper** (`apps/Newspaper_v7.pa.yaml`) | Tier 1/2 meetings, owners | Tablet / PC / TV |
 | Photos | Flow **MDI - Upload Photo** (shared by all apps) | — | — |
 | Safety + 5S (optional) | **Frontier Audit** (`apps/Frontier_Audit_v2.pa.yaml`) + flow **MDI - Frontier Critical Alert**: DuPont STOP-style zone audits, 5S against the zone's standard photos. See `FRONTIER_LITE.md` | Frontier auditors (QR at zone) | Phone |
-| Tier 2 roll-up | **Tier 2 Board** (`apps/T2_Board_v18.pa.yaml`): floor → line / domain → line × domain, 7-day trend, downtime events; Safety includes Frontier hazards | Tier 2 meeting | TV / PC |
+| Tier 2 roll-up | **Tier 2 Board** (`apps/T2_Board_v19.pa.yaml`): floor → line / domain → line × domain, 7-day trend, downtime events; Safety includes Frontier hazards | Tier 2 meeting | TV / PC |
 
 Data: 28 SharePoint lists/libraries (24 core + 4 Frontier: SAF_Zones, SAF_Items, SAF_Audits, SAF_Results) (see `provision_mdi.js.txt` / `mdi_package.json`). Shared lists: Lines, Lookups, People, Assets, MDI_Config, PLAYBOOK, Newspaper, TS_Photos.
 
