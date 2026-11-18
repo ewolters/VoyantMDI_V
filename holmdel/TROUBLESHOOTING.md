@@ -42,7 +42,7 @@
 **Traps:**
 - Only **Tier 2 Data** needs run-only users. **Sync Excel Boards** is scheduled and runs on the owner's connections; it has no Run only users box. Sharing it does nothing for viewers.
 - **Co-owner** also clears the error but lets the person edit and delete the flow. Viewers = run-only.
-- People who "already work" got access earlier (as of Nov 18 the run-only list was only Rene Gonzalez and Christian Algarin, while the app was shared with 10). Every account the app is shared with needs the same step; compare the app's **Share** list with this card.
+- People who "already work" got access earlier (as of Nov 18 the run-only list was only Rene and Christian, while the app was shared with 10). Every account the app is shared with needs the same step; compare the app's **Share** list with this card.
 - Sharing the app and adding run-only are two separate steps. Do both for every new viewer, or add one M365 group to both once.
 
 ### App opens but REFRESH says it can't reach the flow
