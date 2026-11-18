@@ -9,8 +9,8 @@ From Eric Wolters to Kenny, November 2026. This is the "if it's gone, here's how
 | Thing | Where it lives | Rebuild from |
 |---|---|---|
 | **Data** (about 33 lists) | SharePoint: `https://veepak1.sharepoint.com/sites/OhioContinuousImprovement` | Lists: the **MDI - Set Up Site** flow (§3C). **The data itself only exists in SharePoint: back it up (§5).** |
-| **Apps + flows** (managed solution **MDI** 1.1.4.1) | Power Platform environment **Vee Pak, LLC (default)** | A managed export from **MDI Dev** (§3A) |
-| **Your editable copy** (unmanaged **MDI**) | Environment **MDI Dev** (Kenny's: `MDI_Sandbox`; START_HERE Part 1, step 3) | `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` (§3B) |
+| **Apps + flows** (managed solution **MDI** 1.1.4.2 since Nov 18, 2026) | Power Platform environment **Vee Pak, LLC (default)** | A managed export from **MDI Dev** (§3A) |
+| **Your editable copy** (unmanaged **MDI**) | Environment **MDI Dev** (Kenny's: `MDI_Sandbox`; START_HERE Part 1, step 3) | `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.2.zip` (§3B) |
 | **Setup flow** (solution **MDI Setup**) | Vee Pak default environment | `newalbany/solution/MDISetup_UNMANAGED_v1.0.0.0.zip` |
 | **Source code** for every screen and flow | This repo | It *is* the backup. Keep your copy pushed to GitHub. |
 | **Holmdel Tier 2** (solution **MDI Tier 2 - Excel boards (no lists)** 1.0.0.19) | Vee Pak default environment, owned by Christina DeRamos; data = the Tier 1 Excel boards in `https://veepak1.sharepoint.com/holmdel` | `holmdel/solution/…1.0.0.19_managed.zip` (§4); source + `holmdel/generator/make.py` to rebuild or change it |
@@ -48,7 +48,7 @@ From Eric Wolters to Kenny, November 2026. This is the "if it's gone, here's how
 ### 3B. Rebuild MDI Dev
 *About 20 minutes.* Follow START_HERE Part 1, step 3: create a Developer (or Sandbox) environment for MDI Dev (Kenny's is named `MDI_Sandbox`), import the newest `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v*.zip` **with its flows off**, sign in to its five connections, check every flow is Off, open and **Publish** each app.
 
-If you've shipped changes since 1.1.4.1, that zip is out of date. Rebuild from it, then re-apply your later screens from `newalbany/deploy/apps/` (they're the current versions, and `python3 newalbany/generator/make.py check` proves the repo matches them). Better: after every release, **export MDI Dev unmanaged** too and commit it to `newalbany/solution/` so this zip is always current.
+If you've shipped changes since the newest zip there (1.1.4.2), it's out of date. Rebuild from it, then re-apply your later screens from `newalbany/deploy/apps/` (they're the current versions, and `python3 newalbany/generator/make.py check` proves the repo matches them). Better: after every release, **export MDI Dev unmanaged** too and commit it to `newalbany/solution/` so this zip is always current.
 
 ### 3C. New or rebuilt SharePoint site
 *About 1 hour plus data entry.* The lists are created by a flow; the apps and flows are then repointed at the new lists.
@@ -108,7 +108,7 @@ Nothing at Holmdel lives outside the Excel boards and two small files the sync w
 - **Old hand-built flows:** if any flows from the first, hand-built New Albany setup are still on, turn them off (the MDI solution's flows replace them).
 - **Tier 3 Root cause tab:** placeholder only.
 - **Frontier Audit:** optional; its alert flow ships off.
-- **Escalation start minutes:** fixed in MDI 1.1.4.2 (the flow now reads `Escalation_FirstLevelMin`); live once 1.1.4.2 is tested in MDI Dev and shipped to production.
+- **Escalation start minutes:** fixed in MDI 1.1.4.2 (the flow now reads `Escalation_FirstLevelMin`), live in production since Nov 18, 2026.
 - **Holmdel:** app-change route via an unmanaged dev import is documented but untested (`holmdel/README.md`). The TV account's password label is on the back of the Holmdel TV.
 - **Ownership:** second flow owners / service account (§6) not yet done.
 
@@ -122,3 +122,4 @@ Nothing at Holmdel lives outside the Excel boards and two small files the sync w
 | Connection references | `craf4_sharedsharepointonline_17d15`, `craf4_sharedoffice365_mdi`, `craf4_sharedteams_a7259`, `craf4_shareddataverse_mdi`, `craf4_sharedexcelonlinebusiness_mdi` |
 | Licenses | Standard Microsoft 365 only in production. Premium is needed only for Connect Site (use it in MDI Dev). |
 | Version at handoff | MDI 1.1.4.1 · MDI Setup 1.0.0.0 · Holmdel 1.0.0.19 |
+| Current (Nov 18, 2026) | MDI **1.1.4.2** (escalation start follows FIRST LEVEL) · MDI Setup 1.0.0.0 · Holmdel 1.0.0.19 |
