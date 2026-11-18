@@ -21,6 +21,7 @@ O365_REF = os.environ.get("MDI_O365_REF", "craf4_sharedoffice365_mdi")
 SP_API = "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
 O365_API = "/providers/Microsoft.PowerApps/apis/shared_office365"
 AUTH = "@parameters('$authentication')"
+ESC_FLOOR = 15  # escalation flow wakes at this many cumulative minutes, then applies Escalation_FirstLevelMin
 
 
 def refs(*names):
@@ -101,11 +102,24 @@ def flow01():
         "inputs": {"parameters": {"dataset": SITE, "table": L["HxH_Hourly"]},
                    "host": {"apiId": SP_API, "connectionName": "shared_sharepointonline", "operationId": "GetOnUpdatedItems"},
                    "authentication": AUTH},
-        "conditions": [{"expression": "@greaterOrEquals(coalesce(triggerBody()?['EscCumMin'],0),60)"}],
+        # Wake at the escalation plan's first tier (15 min); the real start is MDI_Config Escalation_FirstLevelMin,
+        # checked below, so MDI Settings -> ESCALATION -> FIRST LEVEL works. Settings below 15 act as 15.
+        "conditions": [{"expression": f"@greaterOrEquals(coalesce(triggerBody()?['EscCumMin'],0),{ESC_FLOOR})"}],
         "runtimeConfiguration": {"concurrency": {"runs": 1}}}}
     a = {}
+    a["Get_first_level"] = sp("GetItems", {"table": L["MDI_Config"],
+                              "$filter": "Title eq 'Escalation_FirstLevelMin'", "$top": 1})
+    fl = "first(body('Get_first_level')?['value'])?['SettingValue']"
+    # Terminate (Succeeded) rather than skipping: a skipped Notify_each would fire the Catch failure alert.
+    a["Below_first_level"] = {"type": "If", "runAfter": {"Get_first_level": ["Succeeded"]},
+        "expression": {"and": [{"less": [f"@float(coalesce({tb}?['EscCumMin'],0))",
+                                         f"@if(empty({fl}), 60.0, float({fl}))"]}]},
+        "actions": {"Stop_below_first_level": {"type": "Terminate", "runAfter": {},
+                                               "inputs": {"runStatus": "Succeeded"}}},
+        "else": {"actions": {}}}
     a["Get_contacts"] = sp("GetItems", {"table": L["Escalation_Contacts"],
-                           "$filter": f"Active eq 1 and Level le @{{{tb}?['EscCumMin']}}"})
+                           "$filter": f"Active eq 1 and Level le @{{{tb}?['EscCumMin']}}"},
+                           {"Below_first_level": ["Succeeded"]})
     a["Get_log"] = sp("GetItems", {"table": L["Escalation_Log"],
                       "$filter": f"startswith(Title,'@{{{tb}?['ShiftKey']}}|@{{{tb}?['EscReason']}}|')"},
                       {"Get_contacts": ["Succeeded"]})

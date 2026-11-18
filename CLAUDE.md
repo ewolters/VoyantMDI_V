@@ -33,8 +33,8 @@ Rules for these parts:
 ## What exists
 | | |
 |---|---|
-| Production environment | **Vee Pak, LLC (default)**. Managed solution **MDI** (publisher `Cr21560`, prefix `craf4`), version 1.1.4.1 at hand-off, plus **MDI Setup**. |
-| Dev environment | **MDI Dev**, where Kenny imports `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip`. All changes are made here. See START_HERE.md if it doesn't exist yet. |
+| Production environment | **Vee Pak, LLC (default)**. Managed solution **MDI** (publisher `Cr21560`, prefix `craf4`), version **1.1.4.2** in production since Nov 18, 2026 (1.1.4.1 at hand-off), plus **MDI Setup**. |
+| Dev environment | **MDI Dev**: Kenny's is actually named **`MDI_Sandbox`** (same thing; use his name when giving him directions). Keep its flows **Off**: it points at the real Ohio lists. Kenny imports `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip`. All changes are made here. See START_HERE.md if it doesn't exist yet. |
 | SharePoint site | `https://veepak1.sharepoint.com/sites/OhioContinuousImprovement` (about 33 lists: HxH_Hourly, HxH_Shift, Lines, PLAYBOOK, Lookups, MDI_Config, Newspaper, …). Schema: `newalbany/deploy/mdi_package.json`. |
 | Apps (10) | Tier 1 Hour x Hour, Tier 2 SQDC (+ WEEKS & MONTHS screen `scrPeriods`), Tier 3 War Room (Board, Bowler, Variances), Quality (REWORK + NCR), TS Maintenance, TS Binder, Newspaper, SW Manager, PC Audit, MDI Settings. |
 | Flows (7 + setup) | HxH - Downtime Escalation, MDI - Upload Photo, MDI - Sync Permissions, MDI - Nightly Board Check, MDI - Frontier Critical Alert (off), MDI - Connect Site (needs Premium; not used at Ohio), MDI - Import History; MDI - Set Up Site (in MDI Setup). |
@@ -46,7 +46,7 @@ One folder per plant, same layout. **All paths in these docs are from the repo r
 ```
 README.md  START_HERE.md  CLAUDE.md  HANDOFF.md     both plants
 RISK_REGISTER.md                                    what can break, how you'd know, how to fix (both plants)
-.claude/skills/                                     /change-app  /ship-upgrade  /troubleshoot  /new-app
+.claude/skills/                                     /change-app  /change-flow  /ship-upgrade  /troubleshoot  /new-app
 newalbany/                    holmdel/
   README.md                     README.md           overview, where to look
   TROUBLESHOOTING.md            TROUBLESHOOTING.md  error -> cause -> fix
@@ -80,6 +80,16 @@ Holmdel details:
 8. Commit with a message that says what changed and the new file versions; add a dated line to `newalbany/log.md`.
 
 Small one-formula fixes can be given to Kenny to paste directly into a property in Studio, but **make the same change in the generator** in the same session so the next rebuild doesn't undo it.
+
+## Changing a flow (the repack route, proven Nov 18, 2026)
+Flows can be changed without Kenny touching the flow designer: patch the unmanaged solution zip, he imports it into MDI Dev. Use the `/change-flow` skill. In short:
+1. `python3 newalbany/generator/make.py flows` (and `flow-import` for Import History), then compare `newalbany/build/flows/` with `newalbany/deploy/flows/json/`: must be identical before you edit.
+2. Edit `newalbany/generator/flows.py` (or `flows/gen_import_flow.py`). Rebuild; only the intended flow should differ. Copy it into `newalbany/deploy/flows/json/`.
+3. `python3 newalbany/generator/patch_solution.py <current> <next> "<Flow display name>"` builds `newalbany/build/MDI_OhioContinuousImprovement_UNMANAGED_v<next>.zip`: the newest zip in `newalbany/solution/` with only `solution.xml` (version) and the named flows changed, re-pointed to the environment variables. It refuses if a flow needs a list with no environment variable, or if sandbox references remain.
+4. Copy the zip into `newalbany/solution/`, update `newalbany/solution/README.md`, the flow spec in `newalbany/deploy/flows/`, SYSTEM_REFERENCE and the log; push; give Kenny the download link.
+5. Kenny imports it into MDI Dev (`MDI_Sandbox`) **with flows off** and checks the flow in the designer (close without saving). Then `/ship-upgrade`.
+
+What a zip patch can't do: app changes (`.msapp` is loaded from `Controls/*.json`, not the readable `Src/*.pa.yaml`; apps go through Studio paste), new environment variables or connection references, or making a **managed** zip (only a Dataverse export does that). Testing a flow *running* in MDI Dev means real data and real alerts (it points at the Ohio lists), so check the structure there and either test live on a scratch site or ship changes that are behavior-neutral at current settings.
 
 ## Rules
 - **Never tell Kenny to edit or save anything in the production environment's managed solution** (apps or flows). It creates an unmanaged layer that blocks future upgrades. All edits happen in MDI Dev.

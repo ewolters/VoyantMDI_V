@@ -68,7 +68,7 @@
      },
      "conditions": [
       {
-       "expression": "@greaterOrEquals(coalesce(triggerBody()?['EscCumMin'],0),60)"
+       "expression": "@greaterOrEquals(coalesce(triggerBody()?['EscCumMin'],0),15)"
       }
      ],
      "runtimeConfiguration": {
@@ -79,8 +79,60 @@
     }
    },
    "actions": {
-    "Get_contacts": {
+    "Get_first_level": {
      "runAfter": {},
+     "type": "OpenApiConnection",
+     "inputs": {
+      "host": {
+       "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+       "connectionName": "shared_sharepointonline",
+       "operationId": "GetItems"
+      },
+      "parameters": {
+       "dataset": "https://verxted.sharepoint.com/sites/MDISandbox",
+       "table": "1ce134d3-335f-415c-8ae0-e8cf7c0d9e16",
+       "$filter": "Title eq 'Escalation_FirstLevelMin'",
+       "$top": 1
+      },
+      "authentication": "@parameters('$authentication')"
+     }
+    },
+    "Below_first_level": {
+     "type": "If",
+     "runAfter": {
+      "Get_first_level": [
+       "Succeeded"
+      ]
+     },
+     "expression": {
+      "and": [
+       {
+        "less": [
+         "@float(coalesce(triggerBody()?['EscCumMin'],0))",
+         "@if(empty(first(body('Get_first_level')?['value'])?['SettingValue']), 60.0, float(first(body('Get_first_level')?['value'])?['SettingValue']))"
+        ]
+       }
+      ]
+     },
+     "actions": {
+      "Stop_below_first_level": {
+       "type": "Terminate",
+       "runAfter": {},
+       "inputs": {
+        "runStatus": "Succeeded"
+       }
+      }
+     },
+     "else": {
+      "actions": {}
+     }
+    },
+    "Get_contacts": {
+     "runAfter": {
+      "Below_first_level": [
+       "Succeeded"
+      ]
+     },
      "type": "OpenApiConnection",
      "inputs": {
       "host": {

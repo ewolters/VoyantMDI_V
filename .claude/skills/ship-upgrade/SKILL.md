@@ -7,7 +7,7 @@ Walk Kenny through these steps one block at a time, waiting for him to confirm e
 
 **A. In MDI Dev** (make.powerapps.com, environment picker top right = MDI Dev)
 1. Solutions → **MDI** → Apps: every app he changed must be **Published**. An export ships each app's *published* version; a saved-but-unpublished change is left behind.
-2. Solutions → MDI → ⋯ → **Settings** (or Overview → version): raise the version, e.g. 1.1.4.1 → **1.1.4.2**. It must be higher than what production has.
+2. Solutions → MDI → ⋯ → **Settings** (or Overview → version): raise the version, e.g. 1.1.4.2 → **1.1.4.3**. It must be higher than what production has.
 3. Solutions → MDI → **Export solution** → Next → **Managed** → Export. Download the zip when it's ready (keep it; name shows the version).
 
 **B. In production** (environment = Vee Pak, LLC (default))

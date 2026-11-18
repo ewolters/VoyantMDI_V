@@ -33,14 +33,14 @@ For Kenny (and his Claude) as the owner of the New Albany MDI and the Holmdel Ti
 
 **One-time setup (about 30 minutes):**
 1. **Create a development environment** in the Vee Pak tenant: make.powerapps.com → ⚙ → Admin center → Environments → **New** → type **Developer** (free for the developer; includes Dataverse and Premium connectors for that one person). Name it `MDI Dev`. If Developer isn't allowed by the tenant, ask IT for a **Sandbox** environment.
-2. **Import the unmanaged golden copy** into `MDI Dev`: Solutions → Import → `MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` (supplied by Eric; already pointed at the Ohio site and lists). Create/pick the connections it asks for. Do **not** import it into the default (production) environment: the managed MDI is there and the two collide.
+2. **Import the unmanaged golden copy** into `MDI Dev`: Solutions → Import → the newest `MDI_OhioContinuousImprovement_UNMANAGED_v*.zip` in `newalbany/solution/` (1.1.4.2 as of Nov 18, 2026; already pointed at the Ohio site and lists). Untick *Enable plug-in steps and flows* under Advanced settings if offered, then check every flow is **Off** after import (MDI Dev points at the real Ohio lists). Create/pick the connections it asks for. Do **not** import it into the default (production) environment: the managed MDI is there and the two collide.
 3. Optional: also import `MDISetup_UNMANAGED_v1.0.0.0.zip` there, so the setup flow can be edited too.
 4. In `MDI Dev`, open each app once and **Publish** it.
 
 **Shipping a change from then on:**
 1. Make the change in `MDI Dev` (Studio for apps; the flow designer for flows; it's unmanaged there, so saving is fine).
 2. **Publish** every app you touched.
-3. Solutions → MDI → ⋯ → **Settings** → raise the version (1.1.4.1 → 1.1.4.2…).
+3. Solutions → MDI → ⋯ → **Settings** → raise the version (e.g. 1.1.4.2 → 1.1.4.3).
 4. Solutions → MDI → **Export** → **Managed** → download.
 5. In the production (default) environment: Solutions → Import → that zip → **Upgrade** (the default). Check every flow is **On** afterwards.
 

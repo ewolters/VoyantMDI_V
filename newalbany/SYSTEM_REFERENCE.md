@@ -22,7 +22,7 @@ Line tablets / phones / TVs ──► 10 canvas apps (solution MDI) ──► Sh
 
 | Flow | Trigger | Reads → writes | Sends | Notes |
 |---|---|---|---|---|
-| **HxH - Downtime Escalation** | HxH_Hourly item created/modified, only when `EscCumMin ≥ 60` (trigger condition); concurrency 1 | Escalation_Contacts (Active, Level ≤ minutes, shift match), Escalation_Log (already notified?) → Escalation_Log row per contact+level | Teams Flow bot message to each contact | Log Title = `<ShiftKey>\|<EscReason>\|<Level>\|<email>` stops repeats. Levels and contacts are edited in MDI Settings → ESCALATION. The 60-minute start is the trigger condition in the flow itself. |
+| **HxH - Downtime Escalation** | HxH_Hourly item created/modified when `EscCumMin ≥ 15` (trigger condition); stops (Succeeded) if below MDI_Config `Escalation_FirstLevelMin` (default 60); concurrency 1 | MDI_Config (first level), Escalation_Contacts (Active, Level ≤ minutes, shift match), Escalation_Log (already notified?) → Escalation_Log row per contact+level | Teams Flow bot message to each contact | Log Title = `<ShiftKey>\|<EscReason>\|<Level>\|<email>` stops repeats. Levels and contacts are edited in MDI Settings → ESCALATION. The start is `Escalation_FirstLevelMin` (since 1.1.4.2; before that a fixed 60 in the trigger). Values below 15 act as 15. |
 | **MDI - Upload Photo** | Called by apps (PowerApps V2) with base64 text + tags | → TS_Photos library (file + Module/RefID/StepNo/Kind tags) | | Shared by Quality NCR, TS Maintenance, Newspaper, SW Manager, PC Audit, Frontier. Apps send the image as **text** (base64); a version taking a file input will break them. |
 | **MDI - Sync Permissions** | People item created/modified | People → SharePoint groups via HTTP | | Active → site Members (contribute, no delete); CanEditConfig → "MDI Config Editors"; MDIAdmin → site Owners. Keep one IT site owner **not** in People so nobody can be locked out. |
 | **MDI - Nightly Board Check** | Daily 6:30 AM Central | HxH_Hourly, HxH_Shift, Lines (yesterday) → Newspaper action for any shift with ≥ `NB_MinMissing` (2) hours missing | Digest email to `Alert_Email` | |
@@ -74,7 +74,7 @@ Saving the same key twice updates rather than duplicates. Hour x Hour and IMPORT
 | `Site_URL` | apps | the SharePoint site |
 | `Alert_Email` | all flows' Catch, Nightly Board Check | where failures and the digest go |
 | `Safety_Email` | Frontier Critical Alert | extra recipients for Critical findings |
-| `Escalation_FirstLevelMin` | MDI Settings (display/edit only) | intended first escalation level (60). The flow's trigger condition is fixed at 60; changing this setting alone doesn't change when the flow fires. |
+| `Escalation_FirstLevelMin` | MDI Settings → ESCALATION → FIRST LEVEL; read by HxH - Downtime Escalation | cumulative minutes before the first escalation (default 60 if blank). The flow wakes at 15 min, so values below 15 act as 15. Contacts still need a Level at or below the minutes reached to be notified. (Before 1.1.4.2 the flow ignored this setting.) |
 | `NB_MinMissing` | Nightly Board Check | missing hours before an action is raised (2) |
 | `TS_RankWindowDays` | (seeded, not read by the current apps) | |
 | `T2_AttainGreen` / `T2_AttainAmber` | Tier 2/3 | attainment % thresholds (90 / 80) |

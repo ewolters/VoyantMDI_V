@@ -24,16 +24,30 @@ Claude runs in the cloud, not on your PC, so files reach you through GitHub:
 
 ### 3. Your development environment (MDI Dev)
 Production stays untouched; every change is built and tested in a separate environment first.
+
+**Kenny's is named `MDI_Sandbox`** (created Nov 2026). Everywhere these docs say **MDI Dev**, that's `MDI_Sandbox`. If it already exists, skip step 1. (Not the same thing as Eric's old `MDISandbox` SharePoint site in the Verxted tenant, which is no longer used.)
+
 1. **make.powerapps.com** → ⚙ (top right) → **Admin center** → **Environments** → **+ New**.
    - Name: `MDI Dev` · Type: **Developer** (free; if your tenant blocks it, ask IT for a **Sandbox**) · Add a Dataverse data store: **Yes**.
 2. Back in make.powerapps.com, switch to **MDI Dev** (environment picker, top right).
-3. Download `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` from GitHub (`main`). **Solutions → Import solution → Browse →** that zip → **Next**. Sign in to the connections it asks for (SharePoint, Outlook, Teams, Dataverse, Excel Online) → **Import**.
-4. Optional: import `newalbany/solution/MDISetup_UNMANAGED_v1.0.0.0.zip` the same way.
-5. When it finishes: **Solutions → MDI → Apps**, open each app once and **Publish**.
+3. Download the newest `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v*.zip` from GitHub (`main`). **Solutions → Import solution → Browse →** that zip → **Next**.
+   - **Flows off:** if the next screen has **Advanced settings**, untick *Enable plug-in steps and flows included in the solution*. MDI Dev points at the real Ohio lists, so flows running here would send real escalations and change real site permissions alongside production.
+   - Sign in to the connections it asks for (SharePoint, Outlook, Teams, Dataverse, Excel Online) → **Import**.
+4. When it finishes: **Solutions → MDI → Cloud flows**: every flow must say **Off**. Turn off any that are on.
+5. Optional: import `newalbany/solution/MDISetup_UNMANAGED_v1.0.0.0.zip` the same way.
+6. **Solutions → MDI → Apps**, open each app once and **Publish**.
 
 **Never import the UNMANAGED zip into your production (default) environment.** The managed MDI already lives there and the two collide.
 
-**Heads-up:** MDI Dev points at the real Ohio SharePoint lists, so testing there writes real data. For risky changes, ask Claude to help you point MDI Dev at a scratch site first.
+**Heads-up:** MDI Dev points at the real Ohio SharePoint lists, so testing there writes real data. Keep its flows **off**. For risky changes, or to test a flow for real, ask Claude to help you point MDI Dev at a scratch site first.
+
+### 4. Managed vs unmanaged (and Power Apps vs Power Automate)
+- A **solution** (MDI) is one package stored in an **environment**. It holds the apps, the flows, the 32 environment variables and the connection references together.
+- **make.powerapps.com** and **make.powerautomate.com** show the **same** Solutions list for the environment you've picked. Import MDI in one and it shows in the other. Apps open in Power Apps Studio; flows open in the flow designer. Do solution work (import, export, version, environment variables) in **make.powerapps.com**; these instructions are written for it.
+- **Managed** = the locked, installed copy. Production (**Vee Pak, LLC (default)**) has managed MDI. **Never edit it**: an edit there creates an "unmanaged layer" that blocks future upgrades.
+- **Unmanaged** = the editable copy. MDI Dev has unmanaged MDI. Edit freely.
+- A change moves: edit in MDI Dev (unmanaged) → **Export as Managed** → import into production as an **Upgrade**. The export is where unmanaged becomes managed.
+- **My flows** in Power Automate lists flows *outside* any solution, e.g. old hand-built ones. The real MDI flows are inside the MDI solution (Solutions → MDI → Cloud flows).
 
 ---
 
@@ -47,8 +61,9 @@ Start a session on this repo and say what you want. Say **which plant** (New Alb
 - *"New Albany: I want a new app to log start-of-shift line checks, with its own list."* → `/new-app`: Claude proposes the list, builds the installer and a starter screen, then walks you through creating the list, the app and the upgrade (`newalbany/NEW_APP_GUIDE.md`).
 - *"Explain how the Tier 2 downtime number is calculated."* → Claude reads the code and answers in plain words.
 
-**Three skills are built in.** Type `/` in the prompt box to see them:
+**Five skills are built in.** Type `/` in the prompt box to see them:
 - `/change-app`: change a screen or formula, start to finish.
+- `/change-flow`: change a flow; Claude sends you a patched solution zip to import into MDI Dev (no flow designer editing).
 - `/ship-upgrade`: move a tested change from MDI Dev to production.
 - `/troubleshoot`: diagnose an error message or a board that looks wrong.
 - `/new-app`: a new list and a new app, start to finish (New Albany).
