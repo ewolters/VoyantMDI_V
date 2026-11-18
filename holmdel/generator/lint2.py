@@ -12,9 +12,10 @@ Usage: python3 lint2.py flow.json [flow.json ...]
 import json, re, sys
 
 ARITY = {  # name: (min, max)
+ "base64": (1, 1), "base64ToBinary": (1, 1), "decodeBase64": (1, 1), "float": (1, 1),
  "trim": (1, 1), "toLower": (1, 1), "toUpper": (1, 1), "length": (1, 1), "empty": (1, 1), "first": (1, 1), "last": (1, 1),
  "int": (1, 1), "string": (1, 1), "json": (1, 1), "uriPath": (1, 1), "uriHost": (1, 1), "base64ToString": (1, 1), "not": (1, 1),
- "substring": (3, 3), "replace": (3, 3), "startsWith": (2, 2), "endsWith": (2, 2), "contains": (2, 2), "equals": (2, 2),
+ "substring": (2, 3), "replace": (3, 3), "startsWith": (2, 2), "endsWith": (2, 2), "contains": (2, 2), "equals": (2, 2),
  "greater": (2, 2), "greaterOrEquals": (2, 2), "less": (2, 2), "lessOrEquals": (2, 2), "add": (2, 2), "sub": (2, 2), "mul": (2, 2), "div": (2, 2),
  "if": (3, 3), "split": (2, 2), "take": (2, 2), "skip": (2, 2), "addProperty": (3, 3), "setProperty": (3, 3), "removeProperty": (2, 2),
  "formatDateTime": (1, 3), "addDays": (2, 3), "addMinutes": (2, 3), "convertFromUtc": (2, 3), "utcNow": (0, 1),

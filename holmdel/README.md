@@ -86,7 +86,7 @@ After the import, open the solution and check that **both flows show On**. An up
 ## Lessons learned
 
 ### Sharing the app doesn't share the flow (2026-10-29)
-**Symptom:** a viewer (Christian Algarin) presses Refresh and gets `MDIXB-Tier2Data.Run failed: … user … does not have ReadAccess right(s) for record with id b2321e1e-… of entity Process`. He owns everything in SharePoint, and the error still appears.
+**Symptom:** a viewer (Christian) presses Refresh and gets `MDIXB-Tier2Data.Run failed: … user … does not have ReadAccess right(s) for record with id b2321e1e-… of entity Process`. He owns everything in SharePoint, and the error still appears.
 
 **Cause:** the error is about Power Platform, not SharePoint. `Process` is the flow record, and `b2321e1e-d0f5-5596-9d3a-65dcc95a8161` is **MDI XB - Tier 2 Data**. The app runs that flow as the person using the app. Sharing the app gives no permission on the flow, so every viewer other than the flow's owner hits this, including the TV account.
 
@@ -129,6 +129,7 @@ After the import, open the solution and check that **both flows show On**. An up
 ## For the new owner (Nov 2026)
 - **Supporting it** (permissions, sync, stale boards) needs nothing but this README, `holmdel/TROUBLESHOOTING.md` and the Power Platform admin screens.
 - **Reinstalling or upgrading** uses `holmdel/solution/MDI_Tier2_ExcelBoards_NoLists_1.0.0.19_managed.zip` as described above.
+- **After shipping any Holmdel version,** commit the new zip to `holmdel/solution/` (and remove the old one only after it's live). `make.py` refuses to build a version that isn't higher than the newest zip there, and it checks the board script compiles (`tsc`).
 - **Changing it.** Everything needed is in this folder; `holmdel/generator/make.py` rebuilds the package (`python3 holmdel/generator/make.py check` proves the package reproduces the shipped 1.0.0.19, apart from a platform version stamp, and that `holmdel/deploy/Tier2_XB_v7.pa.yaml` matches the app inside it).
   - **Flow or board-reading changes** (what's read from the boards, the sync schedule, the data file): edit `holmdel/deploy/ReadProductionBoard.ts` or `holmdel/generator/flows.py` → `python3 holmdel/generator/make.py 1.0.0.20` (it lints the flows) → import `holmdel/build/…_1.0.0.20_managed.zip` into Vee Pak (default) as an **Upgrade** → check both flows On. The app inside is the same compiled app as 1.0.0.19.
   - **App (screen) changes:** `python3 holmdel/generator/make.py 1.0.0.20 unmanaged` → import that zip into **MDI Dev** (a separate solution, no clash with MDI) → **turn Sync Excel Boards Off in MDI Dev** (otherwise it reads the real boards from a second place) → edit the app in Studio (the screen source is `holmdel/deploy/Tier2_XB_v7.pa.yaml`) → Publish → export that solution **unmanaged** → `python3 holmdel/generator/make.py 1.0.0.21 managed <path to the export zip>` → import the managed zip into production as an Upgrade.

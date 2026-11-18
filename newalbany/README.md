@@ -8,6 +8,7 @@ The full virtual MDI on Microsoft 365 for the Ohio Continuous Improvement site: 
 | Errors and fixes | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
 | Build history and decisions | [log.md](log.md) |
 | Which screen file goes on which app | [deploy/apps/APP_BUILD_GUIDE.md](deploy/apps/APP_BUILD_GUIDE.md) |
+| Adding a list or a new app; how the install works | [NEW_APP_GUIDE.md](NEW_APP_GUIDE.md) |
 | Original hand-build install (lists, flows, apps one by one) | [deploy/README.md](deploy/README.md) |
 | Rebuilding production, MDI Dev or a new site | [../HANDOFF.md](../HANDOFF.md) |
 

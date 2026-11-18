@@ -27,3 +27,5 @@ Proven end to end on Nov 18, 2026 with MDI 1.1.4.2 (escalation flow reads `Escal
 
    MDI Dev points at the real Ohio lists, so don't turn flows on there. A live run test needs a scratch site.
 9. When it checks out: `/ship-upgrade` (export managed from MDI Dev, upgrade production, check flows On). Then mark the zip tested in `newalbany/solution/README.md`, log it, and open a PR to `main`.
+
+**Every reply in this skill ends with** the three parts in CLAUDE.md: *Question for you*, *Next step*, *You could ask me* (2–3 ready-to-copy prompts for this exact moment).
