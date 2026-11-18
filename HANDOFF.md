@@ -10,7 +10,7 @@ From Eric Wolters to Kenny, November 2026. This is the "if it's gone, here's how
 |---|---|---|
 | **Data** (about 33 lists) | SharePoint: `https://veepak1.sharepoint.com/sites/OhioContinuousImprovement` | Lists: the **MDI - Set Up Site** flow (§3C). **The data itself only exists in SharePoint: back it up (§5).** |
 | **Apps + flows** (managed solution **MDI** 1.1.4.1) | Power Platform environment **Vee Pak, LLC (default)** | A managed export from **MDI Dev** (§3A) |
-| **Your editable copy** (unmanaged **MDI**) | Environment **MDI Dev** (you create it; START_HERE Part 1.5) | `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` (§3B) |
+| **Your editable copy** (unmanaged **MDI**) | Environment **MDI Dev** (Kenny's: `MDI_Sandbox`; START_HERE Part 1, step 3) | `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` (§3B) |
 | **Setup flow** (solution **MDI Setup**) | Vee Pak default environment | `newalbany/solution/MDISetup_UNMANAGED_v1.0.0.0.zip` |
 | **Source code** for every screen and flow | This repo | It *is* the backup. Keep your copy pushed to GitHub. |
 | **Holmdel Tier 2** (solution **MDI Tier 2 - Excel boards (no lists)** 1.0.0.19) | Vee Pak default environment, owned by Christina DeRamos; data = the Tier 1 Excel boards in `https://veepak1.sharepoint.com/holmdel` | `holmdel/solution/…1.0.0.19_managed.zip` (§4); source + `holmdel/generator/make.py` to rebuild or change it |
@@ -46,7 +46,7 @@ From Eric Wolters to Kenny, November 2026. This is the "if it's gone, here's how
 6. Re-pin the TV links: each app's link (Apps → ⋯ → Details → Web link) with `&hidenavbar=true` on the end for kiosk TVs.
 
 ### 3B. Rebuild MDI Dev
-*About 20 minutes.* Follow START_HERE Part 1.5: create a Developer (or Sandbox) environment named **MDI Dev**, import `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip`, sign in to its five connections, open and **Publish** each app.
+*About 20 minutes.* Follow START_HERE Part 1, step 3: create a Developer (or Sandbox) environment for MDI Dev (Kenny's is named `MDI_Sandbox`), import the newest `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v*.zip` **with its flows off**, sign in to its five connections, check every flow is Off, open and **Publish** each app.
 
 If you've shipped changes since 1.1.4.1, that zip is out of date. Rebuild from it, then re-apply your later screens from `newalbany/deploy/apps/` (they're the current versions, and `python3 newalbany/generator/make.py check` proves the repo matches them). Better: after every release, **export MDI Dev unmanaged** too and commit it to `newalbany/solution/` so this zip is always current.
 

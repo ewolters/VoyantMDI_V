@@ -18,7 +18,7 @@ Always establish **which plant** first. They share almost nothing:
 | | |
 |---|---|
 | Production environment | **Vee Pak, LLC (default)**. Managed solution **MDI** (publisher `Cr21560`, prefix `craf4`), version 1.1.4.1 at hand-off, plus **MDI Setup**. |
-| Dev environment | **MDI Dev**, where Kenny imports `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip`. All changes are made here. See START_HERE.md if it doesn't exist yet. |
+| Dev environment | **MDI Dev**: Kenny's is actually named **`MDI_Sandbox`** (same thing; use his name when giving him directions). Keep its flows **Off**: it points at the real Ohio lists. Kenny imports `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip`. All changes are made here. See START_HERE.md if it doesn't exist yet. |
 | SharePoint site | `https://veepak1.sharepoint.com/sites/OhioContinuousImprovement` (about 33 lists: HxH_Hourly, HxH_Shift, Lines, PLAYBOOK, Lookups, MDI_Config, Newspaper, …). Schema: `newalbany/deploy/mdi_package.json`. |
 | Apps (10) | Tier 1 Hour x Hour, Tier 2 SQDC (+ WEEKS & MONTHS screen `scrPeriods`), Tier 3 War Room (Board, Bowler, Variances), Quality (REWORK + NCR), TS Maintenance, TS Binder, Newspaper, SW Manager, PC Audit, MDI Settings. |
 | Flows (7 + setup) | HxH - Downtime Escalation, MDI - Upload Photo, MDI - Sync Permissions, MDI - Nightly Board Check, MDI - Frontier Critical Alert (off), MDI - Connect Site (needs Premium; not used at Ohio), MDI - Import History; MDI - Set Up Site (in MDI Setup). |
