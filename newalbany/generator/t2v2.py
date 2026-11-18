@@ -5,7 +5,7 @@ HERE=os.path.dirname(os.path.abspath(__file__))
 src=open(os.path.join(HERE,"t2.py")).read().split("# ---------------- header")[0]
 exec(src)   # palette + ctrl/label/btn/rect/dd/ti helpers
 exec(open(os.path.join(HERE,"harvey.py")).read())
-OUT=os.environ.get("T2OUT", os.path.join(HERE,"..","T2_Board_v19.pa.yaml"))
+OUT=os.environ.get("T2OUT", os.path.join(HERE,"..","T2_Board_v20.pa.yaml"))
 LIGHT="RGBA(244, 245, 245, 1)"
 HELP={"Color":F(CLEAR),"BorderColor":F(CLEAR),"HoverFill":"=RGBA(0, 178, 169, 0.08)","PressedFill":"=RGBA(0, 178, 169, 0.15)","TabIndex":"=-1",
       "RadiusTopLeft":"=0","RadiusTopRight":"=0","RadiusBottomLeft":"=0","RadiusBottomRight":"=0"}
@@ -226,11 +226,13 @@ out.append(V(btn("bcDomC",'"›  " & '+DNAME,'Set(varLayer, "domain")',284,96,19
              extra={"Tooltip":'="Compare all lines in this domain"'}),CELL))
 out.append(btn("btnHome",'"⌂  HOME"','Set(varLayer, "floor"); Set(varLine, Blank()); Set(varDom, Blank()); Set(varAdd, false)',1796,96,112,32,size=11,
    fill=f'If(varLayer = "floor", {G1}, {TEAL})',color=DARK,extra={"Tooltip":'="Back to the full-floor view"',"DisplayMode":F('If(varLayer = "floor", DisplayMode.Disabled, DisplayMode.Edit)'),"DisabledFill":F(G1),"DisabledColor":F(G5)}))
+out.append(V(btn("btnByForm",'"BY FORM  ▸"','Navigate(scrForm, ScreenTransition.None)',1556,96,112,32,size=11,fill=TEAL_D,color=WHITE,
+   extra={"Tooltip":'="Performance grouped by form (Body Wash, Body Lotion, ...) using the product each shift picked"'}),'varLayer = "floor"'))
 out.append(btn("btnTrends",'"TRENDS  ▸"','Navigate(scrPeriods, ScreenTransition.None)',1676,96,112,32,size=11,fill=TEAL_D,color=WHITE,
    extra={"Tooltip":'="Weeks and months: compare lines over a date range (up to 6 months back)"'}))
 out.append(label("lblHint",'Switch(varLayer, "floor", "Tap a LINE for its detail  ·  tap a DOMAIN heading to compare lines  ·  tap a TILE for that line in that domain",'
    ' "line", "Line " & varLine & ": every domain over 7 days. Tap a card to open it.", "domain", ' + DNAME + ' & " across lines. Tap a line to open its detail.",'
-   ' "cell", "Line " & varLine & "  ·  " & ' + DNAME + ' & "  ·  7 days ending " & Text(varD, "m/d"), "")',500,96,1160,32,size=11,color=G9,align="Right"))
+   ' "cell", "Line " & varLine & "  ·  " & ' + DNAME + ' & "  ·  7 days ending " & Text(varD, "m/d"), "")',500,96,'If(varLayer = "floor", 1046, 1160)',32,size=11,color=G9,align="Right"))
 
 # =========================== FLOOR ===========================
 GX=12; LW=130; CW=146; CS=150

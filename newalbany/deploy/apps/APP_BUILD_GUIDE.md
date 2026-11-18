@@ -173,14 +173,14 @@ Open **Settings** (gear icon or ⋯ in the top bar).
 ### 8. Tier 2 Board: daily Tier 2 meeting (meeting-room TV)
 | | |
 |---|---|
-| **Files** | `T2_Board_v19.pa.yaml` → **Screen1** · `T2_Periods_v2.pa.yaml` → new blank screen **scrPeriods** (create it first; set its OnVisible to `If(IsEmpty(colPer), Select(btnPLoad))`) |
+| **Files** | `T2_Board_v20.pa.yaml` → **Screen1** · `T2_Periods_v2.pa.yaml` → new blank screen **scrPeriods** (create it first; set its OnVisible to `If(IsEmpty(colPer), Select(btnPLoad))`) · `T2_Form_v1.pa.yaml` → new blank screen **scrForm** (create it first; set its OnVisible to `If(IsEmpty(colFShiftAll), Select(btnFLoad))`) |
 | **Name / format** | `MDI Tier 2 Board`, **Tablet** 1920 × 1080 |
 | **Lists** (19) | HxH_Shift, HxH_Hourly, QA_Rework, TS_Occurrences, TS_Issues, TS_Fixes, PC_Audits, PC_Results, PC_Cards, SW_Elements, Escalation_Log, Newspaper, Lines, MDI_Config, PLAYBOOK, Lookups, People, SAF_Audits, SAF_Results |
 | **Flow** | no |
 | **Screen1.OnVisible** | `Select(btnRefresh)` |
 | **Share with** | managers, OpEx, Tier 2 attendees, kiosk account on the meeting TV |
 | **MDI_Config row** | `App_Tier2` |
-| **Check** | Opens on **yesterday**, floor level. Tap a line, then an SQDC letter, to drill down. **Home** returns to the top. |
+| **Check** | Opens on **yesterday**, floor level. Tap a line, then an SQDC letter, to drill down. **Home** returns to the top. **BY FORM ▸** (floor view) opens performance by form for the day reviewed. |
 
 > Tier 2 is the largest app (300 KB). The paste takes 5–10 seconds, and the first Alt+REFRESH takes a few more.
 

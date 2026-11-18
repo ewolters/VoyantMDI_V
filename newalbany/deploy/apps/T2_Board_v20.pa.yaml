@@ -421,6 +421,28 @@
       Y: =96
       Width: =112
       Height: =32
+- btnByForm:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Visible: =varLayer = "floor"
+      Text: ="BY FORM  ▸"
+      OnSelect: =Navigate(scrForm, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      Tooltip: ="Performance grouped by form (Body Wash, Body Lotion, ...) using the product each shift picked"
+      X: =1556
+      Y: =96
+      Width: =112
+      Height: =32
 - btnTrends:
     Control: Classic/Button@2.2.0
     Properties:
@@ -454,7 +476,7 @@
       Align: =Align.Right
       X: =500
       Y: =96
-      Width: =1160
+      Width: =If(varLayer = "floor", 1046, 1160)
       Height: =32
 - fHdr:
     Control: Rectangle@2.3.0

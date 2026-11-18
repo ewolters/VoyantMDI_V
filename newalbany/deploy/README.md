@@ -16,7 +16,7 @@
 | Action register | **Newspaper** (`apps/Newspaper_v7.pa.yaml`) | Tier 1/2 meetings, owners | Tablet / PC / TV |
 | Photos | Flow **MDI - Upload Photo** (shared by all apps) | — | — |
 | Safety + 5S (optional) | **Frontier Audit** (`apps/Frontier_Audit_v2.pa.yaml`) + flow **MDI - Frontier Critical Alert**: DuPont STOP-style zone audits, 5S against the zone's standard photos. See `FRONTIER_LITE.md` | Frontier auditors (QR at zone) | Phone |
-| Tier 2 roll-up | **Tier 2 Board** (`apps/T2_Board_v19.pa.yaml`): floor → line / domain → line × domain, 7-day trend, downtime events; Safety includes Frontier hazards | Tier 2 meeting | TV / PC |
+| Tier 2 roll-up | **Tier 2 Board** (`apps/T2_Board_v20.pa.yaml`, plus `T2_Periods_v2` and `T2_Form_v1` screens): floor → line / domain → line × domain, 7-day trend, downtime events; Safety includes Frontier hazards | Tier 2 meeting | TV / PC |
 
 Data: 28 SharePoint lists/libraries (24 core + 4 Frontier: SAF_Zones, SAF_Items, SAF_Audits, SAF_Results) (see `provision_mdi.js.txt` / `mdi_package.json`). Shared lists: Lines, Lookups, People, Assets, MDI_Config, PLAYBOOK, Newspaper, TS_Photos.
 
