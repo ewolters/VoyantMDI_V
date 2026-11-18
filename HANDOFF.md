@@ -107,7 +107,7 @@ Nothing at Holmdel lives outside the Excel boards and two small files the sync w
 - **Old hand-built flows:** if any flows from the first, hand-built New Albany setup are still on, turn them off (the MDI solution's flows replace them).
 - **Tier 3 Root cause tab:** placeholder only.
 - **Frontier Audit:** optional; its alert flow ships off.
-- **Escalation start minutes:** the Settings field `Escalation_FirstLevelMin` doesn't change the flow's fixed 60-minute trigger (SYSTEM_REFERENCE §5).
+- **Escalation start minutes:** fixed in MDI 1.1.4.2 (the flow now reads `Escalation_FirstLevelMin`); live once 1.1.4.2 is tested in MDI Dev and shipped to production.
 - **Holmdel:** app-change route via an unmanaged dev import is documented but untested (`holmdel/README.md`). The TV account's password label is on the back of the Holmdel TV.
 - **Ownership:** second flow owners / service account (§6) not yet done.
 

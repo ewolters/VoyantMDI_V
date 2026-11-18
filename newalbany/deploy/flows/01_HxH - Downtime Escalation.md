@@ -1,13 +1,15 @@
 # Flow: HxH - Downtime Escalation
 
-**What it does:** whenever an HxH row is saved with 60+ cumulative minutes on the same downtime issue this shift, it notifies every active contact whose level has been reached (and who covers that shift), once per contact per issue per level, and logs it.
+**What it does:** whenever an HxH row is saved with cumulative minutes on the same downtime issue this shift at or above the first escalation level (MDI_Config `Escalation_FirstLevelMin`, default 60; set in MDI Settings → ESCALATION → FIRST LEVEL), it notifies every active contact whose level has been reached (and who covers that shift), once per contact per issue per level, and logs it.
 
 **Build (new designer, ~10 min).** Connections needed: SharePoint, Microsoft Teams.
 
 1. **Trigger:** SharePoint → *When an item is created or modified*. Site = your MDI site, List = **HxH_Hourly**.
-   - Settings → **Trigger conditions** → add: `@greaterOrEquals(coalesce(triggerBody()?['EscCumMin'],0),60)`
+   - Settings → **Trigger conditions** → add: `@greaterOrEquals(coalesce(triggerBody()?['EscCumMin'],0),15)` (15 = the plan's first tier; the real start is checked in step 1b, so a FIRST LEVEL below 15 acts as 15)
    - Settings → **Concurrency control** on, degree = **1**.
-2. **Get_contacts** — SharePoint *Get items*, List = **Escalation_Contacts**, Filter Query:
+   1a. **Get_first_level** — SharePoint *Get items*, List = **MDI_Config**, Filter Query `Title eq 'Escalation_FirstLevelMin'`, Top Count 1.
+   1b. **Below_first_level** — *Condition*: `@float(coalesce(triggerBody()?['EscCumMin'],0))` **is less than** `@if(empty(first(body('Get_first_level')?['value'])?['SettingValue']), 60.0, float(first(body('Get_first_level')?['value'])?['SettingValue']))`. **If yes:** *Terminate*, Status **Succeeded**. If no: nothing. (Terminate, not an empty branch, so the Catch alert doesn't fire.)
+2. **Get_contacts** (runs after Below_first_level) — SharePoint *Get items*, List = **Escalation_Contacts**, Filter Query:
    `Active eq 1 and Level le @{triggerBody()?['EscCumMin']}`
 3. **Get_log** — SharePoint *Get items*, List = **Escalation_Log**, Filter Query:
    `startswith(Title,'@{triggerBody()?['ShiftKey']}|@{triggerBody()?['EscReason']}|')`
