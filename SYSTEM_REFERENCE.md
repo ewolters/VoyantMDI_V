@@ -105,5 +105,5 @@ To explain any number on a screen: search the generator for the label text, find
 - **Teams Flow bot** can only message people in the Voyant tenant.
 - **Kiosk/TV accounts** are ordinary users: they need site membership, the app shared, and run-only on any flow the app calls.
 
-## 8. Holmdel in one paragraph
+## 8. Holmdel in one paragraph (details: holmdel/README.md, holmdel/TROUBLESHOOTING.md, holmdel/HISTORY.md)
 A separate managed solution reads the Tier 1 Excel boards directly; no lists. **MDI XB - Sync Excel Boards** (every 30 min, owner's connections) copies changed boards to `Production/_Tier2/board copies…`, runs the Office Script `ReadProductionBoard.ts` on each copy, and merges results into `Production/_Tier2/tier2_data.json` (40 days). **MDI XB - Tier 2 Data** serves that file to the app (and saves target colors to `tier2_settings.json`). Viewers need the app shared **and** run-only on Tier 2 Data. Freshness depends on boards being **saved** (desktop Excel with AutoSave off holds data locally). Details, rules and known limits: `holmdel/README.md`.

@@ -1,5 +1,7 @@
 # Holmdel Tier 2, built from the Tier 1 boards (no lists)
 
+Problems: [TROUBLESHOOTING.md](TROUBLESHOOTING.md) · How it got here (and the two earlier designs): [HISTORY.md](HISTORY.md)
+
 **The Tier 1 Excel boards are the only record.** Nothing is copied into SharePoint lists. A flow reads the boards and keeps one small data file next to them. The Tier 2 screen shows only what the Tier 1 board captures.
 
 ```

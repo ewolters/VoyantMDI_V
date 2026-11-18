@@ -1,5 +1,7 @@
 # Virtual MDI: owner's troubleshooting guide
 
+> **Holmdel is a different system** (Excel boards → flow → JSON file → app; no lists). For Holmdel problems use **[holmdel/TROUBLESHOOTING.md](holmdel/TROUBLESHOOTING.md)** first. This guide is New Albany, plus the Power Platform permission basics both plants share (§2.1).
+
 For Kenny (and his Claude) as the owner of the New Albany MDI and the Holmdel Tier 2 board. Written from what actually broke during the build and both installs. Read **Section 0** first; most problems trace back to it.
 
 ---

@@ -75,7 +75,7 @@ If solution imports are blocked, `deploy/README.md` is the original install: lis
 
 ## 4. Holmdel (Tier 2 only, reads the Excel boards)
 
-Full notes: [holmdel/README.md](holmdel/README.md). Reinstall in about 30 minutes:
+Holmdel is a different architecture from New Albany: no lists, the Excel boards are the record. Full notes: [holmdel/README.md](holmdel/README.md) · problems: [holmdel/TROUBLESHOOTING.md](holmdel/TROUBLESHOOTING.md) · why it's built this way: [holmdel/HISTORY.md](holmdel/HISTORY.md). Reinstall in about 30 minutes:
 1. make.powerapps.com → environment **Vee Pak, LLC (default)** → Solutions → Import → `holmdel/package/MDI_Tier2_ExcelBoards_NoLists_1.0.0.19_managed.zip`.
 2. Connections: **SharePoint** and **Excel Online (Business)**, signed in as the board owner (today Christina). That account needs **Read with download** on Documents/Production and edit rights on `Production/_Tier2` (TROUBLESHOOTING §2.2).
 3. Settings it asks for: site `https://veepak1.sharepoint.com/holmdel` · board folder `Production` · shift 1 `07:00-15:15` · shift 2 `15:15-23:30` · lunch `30` · break `15`. If they show greyed out, type each one in.

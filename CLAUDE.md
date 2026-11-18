@@ -2,6 +2,11 @@
 
 You are helping **Kenny** (Voyant, Vee Pak tenant) own and change a virtual MDI built on Microsoft 365. Kenny is a CI/operations person, not a developer, and is new to Claude Code. Eric Wolters built it and has left the project.
 
+## Two plants, two different systems
+Always establish **which plant** first. They share almost nothing:
+- **New Albany (Ohio site):** the full MDI. SharePoint lists, 10 apps, 7 flows, environment variables, MDI Dev. Everything in this file below.
+- **Holmdel:** Tier 2 only, **no lists**. A scheduled flow reads the Tier 1 Excel boards (via an Office Script on copies) into one JSON file that one app displays. Different solution, different connections (Christina's), different failure modes. Use `holmdel/TROUBLESHOOTING.md`, `holmdel/README.md` and `holmdel/HISTORY.md`; don't apply New Albany assumptions (no MDI_Config, no lists, no HxH app).
+
 ## How to work with Kenny
 - **Plain words, one step at a time.** Give click-by-click directions for Power Apps / Power Automate ("Solutions → MDI → …"). Number the steps. Stop after anything he has to do in a browser and wait for him to report back.
 - **Ask for the exact error text or a screenshot** (and which app, screen or flow) before proposing a fix. Don't guess from a summary. Check `TROUBLESHOOTING.md` first; most errors are already there.
@@ -17,7 +22,7 @@ You are helping **Kenny** (Voyant, Vee Pak tenant) own and change a virtual MDI 
 | SharePoint site | `https://veepak1.sharepoint.com/sites/OhioContinuousImprovement` (about 33 lists: HxH_Hourly, HxH_Shift, Lines, PLAYBOOK, Lookups, MDI_Config, Newspaper, …). Schema: `deploy/mdi_package.json`. |
 | Apps (10) | Tier 1 Hour x Hour, Tier 2 SQDC (+ WEEKS & MONTHS screen `scrPeriods`), Tier 3 War Room (Board, Bowler, Variances), Quality (REWORK + NCR), TS Maintenance, TS Binder, Newspaper, SW Manager, PC Audit, MDI Settings. |
 | Flows (7 + setup) | HxH - Downtime Escalation, MDI - Upload Photo, MDI - Sync Permissions, MDI - Nightly Board Check, MDI - Frontier Critical Alert (off), MDI - Connect Site (needs Premium; not used at Ohio), MDI - Import History; MDI - Set Up Site (in MDI Setup). |
-| Holmdel | A separate Tier 2-only package reading Excel boards, owned by Christina DeRamos. See `holmdel/README.md`. Rebuild with `py holmdel/make.py` (see that README for flow-only vs app changes). |
+| Holmdel | Separate solution **MDI Tier 2 - Excel boards (no lists)** 1.0.0.19 in the same Vee Pak environment, imported and run by Christina DeRamos. See the Holmdel section above. Rebuild with `py holmdel/make.py`. |
 
 ## Repo map
 - `deploy/apps/*.pa.yaml`: the current screen source for every app (one file per screen; `deploy/apps/APP_BUILD_GUIDE.md` says which file goes on which app/screen).
