@@ -8,7 +8,7 @@ The repo has one folder per plant, laid out the same way:
 
 ```
 README.md  START_HERE.md  CLAUDE.md  HANDOFF.md     both plants
-.claude/skills/                                     /change-app  /ship-upgrade  /troubleshoot
+.claude/skills/                                     /change-app  /change-flow  /ship-upgrade  /troubleshoot
 newalbany/                    holmdel/
   README.md                     README.md           overview, where to look
   TROUBLESHOOTING.md            TROUBLESHOOTING.md  error -> cause -> fix

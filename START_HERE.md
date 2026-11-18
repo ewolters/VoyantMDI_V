@@ -60,8 +60,9 @@ Start a session on this repo and say what you want. Say **which plant** (New Alb
 - *"The change works in MDI Dev. Ship it to production."* → Claude walks you through the version bump, managed export and upgrade.
 - *"Explain how the Tier 2 downtime number is calculated."* → Claude reads the code and answers in plain words.
 
-**Three skills are built in.** Type `/` in the prompt box to see them:
+**Four skills are built in.** Type `/` in the prompt box to see them:
 - `/change-app`: change a screen or formula, start to finish.
+- `/change-flow`: change a flow; Claude sends you a patched solution zip to import into MDI Dev (no flow designer editing).
 - `/ship-upgrade`: move a tested change from MDI Dev to production.
 - `/troubleshoot`: diagnose an error message or a board that looks wrong.
 
