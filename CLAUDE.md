@@ -46,11 +46,12 @@ One folder per plant, same layout. **All paths in these docs are from the repo r
 ```
 README.md  START_HERE.md  CLAUDE.md  HANDOFF.md     both plants
 RISK_REGISTER.md                                    what can break, how you'd know, how to fix (both plants)
-.claude/skills/                                     /change-app  /ship-upgrade  /troubleshoot
+.claude/skills/                                     /change-app  /ship-upgrade  /troubleshoot  /new-app
 newalbany/                    holmdel/
   README.md                     README.md           overview, where to look
   TROUBLESHOOTING.md            TROUBLESHOOTING.md  error -> cause -> fix
   SYSTEM_REFERENCE.md           HISTORY.md          how it works in depth / how it got here
+  NEW_APP_GUIDE.md                                  adding a list or an app (New Albany only)
   log.md                        log.md              dated build log
   generator/make.py             generator/make.py   build + `check` (repo == what's installed)
   deploy/apps/*.pa.yaml         deploy/*.pa.yaml    screen source
@@ -61,14 +62,15 @@ newalbany/                    holmdel/
 New Albany details:
 - `newalbany/deploy/apps/*.pa.yaml`: the current screen source for every app (one file per screen; `newalbany/deploy/apps/APP_BUILD_GUIDE.md` says which file goes on which app/screen).
 - `newalbany/deploy/flows/json/`: flow definitions. `newalbany/deploy/tools/`: browser-console scripts. `newalbany/deploy/package/build_package.js`: rewires a managed export to another site (only needed for a new plant).
-- `newalbany/generator/`: Python that **writes** the `.pa.yaml` and flow JSON. **The generators are the source of truth**, not the YAML. `newalbany/generator/make.py` is the only entry point you need.
+- `newalbany/generator/`: Python that **writes** the `.pa.yaml` and flow JSON. **The generators are the source of truth**, not the YAML. `newalbany/generator/make.py` is the entry point; `setup_package.py` rebuilds the MDI Setup zip and `starter_app.py` writes a starter screen for a new list.
+- **New list or new app:** `newalbany/NEW_APP_GUIDE.md` (how the install works: package → Set Up Site → environment variables → apps) and the `/new-app` skill.
 
 Holmdel details:
 - `holmdel/deploy/Tier2_XB_v7.pa.yaml` **is** the screen source (no generator; `holmdel/generator/legacy/` is history). `holmdel/deploy/ReadProductionBoard.ts` is the board-reading script. `holmdel/generator/flows.py` writes the two flows; `holmdel/generator/make.py` builds the package (it borrows only the empty publisher skeleton from `newalbany/solution/MDISetup_UNMANAGED_*.zip`).
 - `python3 holmdel/generator/make.py check` must say the package and the app source both match the shipped 1.0.0.19. Run it before and after any Holmdel change.
 
 ## Changing an app (the normal loop)
-1. Find the generator: `python3 newalbany/generator/make.py` lists targets (hxh, t2, t2periods, t3, t3screens, quality, mt, bd, np, pc, sw, fa, settings, flows, flow-import).
+1. Find the generator: `python3 newalbany/generator/make.py` lists targets (hxh, t2, t2periods, t3, t3screens, quality, mt, bd, np, pc, sw, fa, settings, flows, flow-import, flow-setup, flow-connect).
 2. Before editing, run `python3 newalbany/generator/make.py check`. It must say **all identical**; if not, someone hand-edited `newalbany/deploy/apps` and you must reconcile first.
 3. Edit the generator. Rebuild only that target: `python3 newalbany/generator/make.py hxh`. Output lands in `newalbany/build/` (git-ignored).
 4. `python3 newalbany/generator/make.py lint`. Fix anything reported. Also read the Power Fx traps in newalbany/TROUBLESHOOTING.md §4; the lint doesn't catch them all.

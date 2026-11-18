@@ -54,6 +54,7 @@ If you've shipped changes since 1.1.4.1, that zip is out of date. Rebuild from i
 *About 1 hour plus data entry.* The lists are created by a flow; the apps and flows are then repointed at the new lists.
 1. **Create the site** (SharePoint → + Create site → Team site). Add members: everyone who enters data, plus the kiosk/TV accounts.
 2. **Import MDI Setup** into the environment where you'll run it (production or MDI Dev): Solutions → Import → `newalbany/solution/MDISetup_UNMANAGED_v1.0.0.0.zip`. Connections: SharePoint + Outlook. Turn the flow **MDI - Set Up Site** on.
+   - If lists were added since 1.0.0.0, use the newest `newalbany/solution/MDISetup_UNMANAGED_v*.zip` (or rebuild it: `python3 newalbany/generator/setup_package.py <version>`). How the flow, the package and the environment variables fit together: `newalbany/NEW_APP_GUIDE.md` Part 1.
 3. **Run it:** open **MDI - Set Up Site** → **Run** → paste the new site's address (`https://veepak1.sharepoint.com/sites/<name>`). Run it as a **site owner**. It creates every list, column, view and permission, seeds Lines, Lookups, MDI_Config, Escalation_Contacts and PLAYBOOK, then **emails you an `MDI2:…` setup code** (also saved in the new site's MDI_Config list, row Setup_Code). It's safe to run again; it only adds what's missing.
    - Save the code privately (not in this public repo): it's the site address plus every list's ID.
 4. **Repoint MDI Dev at the new site.** The apps and flows find the site and lists through **32 environment variables**. In MDI Dev, either:

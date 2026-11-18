@@ -9,11 +9,12 @@ The repo has one folder per plant, laid out the same way:
 ```
 README.md  START_HERE.md  CLAUDE.md  HANDOFF.md     both plants
 RISK_REGISTER.md                                    what can break, how you'd know, how to fix (both plants)
-.claude/skills/                                     /change-app  /ship-upgrade  /troubleshoot
+.claude/skills/                                     /change-app  /ship-upgrade  /troubleshoot  /new-app
 newalbany/                    holmdel/
   README.md                     README.md           overview, where to look
   TROUBLESHOOTING.md            TROUBLESHOOTING.md  error -> cause -> fix
   SYSTEM_REFERENCE.md           HISTORY.md          how it works in depth / how it got here
+  NEW_APP_GUIDE.md                                  adding a list or an app (New Albany only)
   log.md                        log.md              dated build log
   generator/make.py             generator/make.py   build + `check` (repo == what's installed)
   deploy/apps/*.pa.yaml         deploy/*.pa.yaml    screen source

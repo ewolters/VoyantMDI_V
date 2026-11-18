@@ -31,8 +31,8 @@
 ## 1. Permission errors in the app
 
 ### "…does not have ReadAccess right(s) for record with id b2321e1e-… of entity Process"
-**Seen:** Oct 29 (Christian), Nov 16 (new TV account "HM").
-**Cause:** the app runs **MDI XB - Tier 2 Data** as the signed-in user. Sharing the app doesn't share the flow. `Process` = the flow record; `b2321e1e-d0f5-5596-9d3a-65dcc95a8161` = Tier 2 Data. Owning the SharePoint files doesn't help: it isn't SharePoint.
+**Seen:** Oct 29 (Christian), Nov 16 (new TV account "HM"), Nov 18 (every viewer except Rene and Christian; IT had re-shared the app for 90 minutes; fixed in about 16 minutes by adding run-only users on Tier 2 Data, confirmed by Christina).
+**Cause:** the app runs **MDI XB - Tier 2 Data** as the signed-in user. Sharing the app doesn't share the flow. **Re-sharing the app never fixes this;** check the flow's Run only users card against the app's Share list. `Process` = the flow record; `b2321e1e-d0f5-5596-9d3a-65dcc95a8161` = Tier 2 Data. Owning the SharePoint files doesn't help: it isn't SharePoint.
 **Fix (flow owner):**
 1. Power Automate → **Solutions** → **MDI Tier 2 - Excel boards (no lists)** → **Cloud flows** → **MDI XB - Tier 2 Data** → its **details page** (not the editor). **Seen Nov 18:** Tier 2 Data didn't appear in Christina's My flows at all (only Sync Excel Boards did), and from My flows the Run only users card loaded and then vanished. Through Solutions the card stayed. Direct link: `https://make.powerautomate.com/environments/Default-674a846e-c4b8-4ad5-93be-705ef8d7c576/flows/b2321e1e-d0f5-5596-9d3a-65dcc95a8161/details`. **Check the page title says Tier 2 Data**; adding people to Sync Excel Boards does nothing for viewers.
 2. **Run only users → Edit** → add the user, the TV account, or better a group of all viewers.

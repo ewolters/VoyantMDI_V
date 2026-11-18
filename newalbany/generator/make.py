@@ -37,6 +37,8 @@ TARGETS = {
     "settings": ("MDI Settings: all screens incl. IMPORT HISTORY", ["settings_imp.py"]),
     "flows":    ("Flow JSON (HxH escalation, photo, sync, nightly, frontier)", ["flows.py", "{OUT}/flows"]),
     "flow-import": ("Flow JSON: MDI - Import History", ["flows/gen_import_flow.py", "{OUT}/flows/07_MDI - Import History.json"]),
+    "flow-setup": ("Flow JSON: MDI - Set Up Site (creates every list in deploy/mdi_package.json)", ["flows/gen_setup_flow.py", "{OUT}/flows/00_MDI-SetUpSite.json"]),
+    "flow-connect": ("Flow JSON: MDI - Connect Site (MDI2 code -> environment variables)", ["flows/gen_connect_flow.py", "{OUT}/flows/06_MDI-ConnectSite.json"]),
 }
 
 def run(name):
@@ -83,12 +85,14 @@ def check():
         if f.endswith(".json") and f != "catch_block.json":
             r = subprocess.run([sys.executable, os.path.join(GEN, "lint", "flowlint.py"), os.path.join(flows, f)], env=ENV, capture_output=True, text=True)
             if r.returncode: fl_bad += 1; print("  FLOW LINT  " + r.stdout.strip())
+    sp = subprocess.run([sys.executable, os.path.join(GEN, "setup_package.py"), "check"], env=ENV, capture_output=True, text=True)
+    print("  " + sp.stdout.strip())
     print(f"{same} identical, {diff} different" + (f", {len(orphans)} not rebuilt" if orphans else "")
           + f"; flows {fl_same} identical, {fl_diff} different" + (f", {fl_bad} fail lint" if fl_bad else ", lint clean"))
-    return diff == 0 and not orphans and fl_diff == 0 and fl_bad == 0
+    return diff == 0 and not orphans and fl_diff == 0 and fl_bad == 0 and sp.returncode == 0
 
 if __name__ == "__main__":
-    os.makedirs(TMP, exist_ok=True)
+    os.makedirs(TMP, exist_ok=True); os.makedirs(os.path.join(OUT, "flows"), exist_ok=True)
     args = sys.argv[1:]
     if not args:
         print(__doc__); [print(f"  {k:10} {v[0]}") for k, v in TARGETS.items()]; sys.exit(0)
@@ -106,7 +110,7 @@ if __name__ == "__main__":
     if args[0] == "check":   # start clean, so a generator that fails can't hide behind last run's output
         for f in os.listdir(OUT):
             if f.endswith(".pa.yaml"): os.remove(os.path.join(OUT, f))
-        shutil.rmtree(os.path.join(OUT, "flows"), ignore_errors=True)
+        shutil.rmtree(os.path.join(OUT, "flows"), ignore_errors=True); os.makedirs(os.path.join(OUT, "flows"))
     bad = [n for n in names if n not in TARGETS]
     if bad: sys.exit(f"unknown target(s): {bad}")
     ok = all([run(n) for n in names])

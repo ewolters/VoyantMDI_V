@@ -61,6 +61,10 @@ Both plants. Written Nov 18, 2026 at hand-off, after deliberately breaking the r
 
 | What breaks | You'd notice | Likely | Impact | Fix | Prevent |
 |---|---|---|---|---|---|
+| **Set Up Site re-run on the live site** (to add a new list) | Default views and list permissions on every MDI list go back to the package's | Med (whenever a list is added) | Med | Re-apply hand-made views/permissions, or add them to `mdi_package.json` | Ask before running; keep customizations in the package (NEW_APP_GUIDE Part 1) |
+| New app's environment variable named differently from its list (`Shift Checks`) | Connect Site skips it; a rebuilt or new site leaves the app pointing at the old list | Med | Med | Rename the variable's display name to exactly the list name | NEW_APP_GUIDE Step 7 |
+| New app created outside the MDI solution, or its lists added without environment variables | App works in MDI Dev but isn't in the export, or is hard-wired to one site | Med | Med | Create it from Solutions → MDI; re-add the data sources with the setting on | NEW_APP_GUIDE Step 5 |
+| A list made by hand in SharePoint, not in the package | Works now; missing after a site rebuild or at a new plant | Med | Med | Add it to `mdi_package.json`, rebuild MDI Setup | NEW_APP_GUIDE Step 2 |
 | A list column renamed or deleted in SharePoint | App errors "column not found", or a field goes blank | Low–Med | High | Recreate the column with the original **internal name** (schema: `newalbany/deploy/mdi_package.json`), or re-run **MDI - Set Up Site** (adds what's missing) | Only site owners can change columns; keep owners few |
 | A list deleted | App shows nothing on that screen; flow GetTable 404 | Low | High | Restore from the SharePoint **site recycle bin** (93 days), else Set Up Site recreates it empty | Never delete lists (CLAUDE.md rule) |
 | A line deleted or renamed in Lines/Lookups | History for that line vanishes from Tier 2/3, keys stop matching (`ShiftKey = <Line>-<yyyymmdd>-S<n>`) | Med | Med | Restore the old name; for retired lines set `Active = No` | Retire with Active = No, never rename a line that has history |

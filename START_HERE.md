@@ -44,12 +44,14 @@ Start a session on this repo and say what you want. Say **which plant** (New Alb
 - *"New Albany, Hour x Hour: make the downtime reason box wider."* → Claude changes the generator, rebuilds, checks, pushes, and tells you which file to paste on which screen in MDI Dev.
 - *"Holmdel: the TV says 'does not have ReadAccess right(s) … entity Process'."* → Claude walks you through the fix in `holmdel/TROUBLESHOOTING.md`.
 - *"The change works in MDI Dev. Ship it to production."* → Claude walks you through the version bump, managed export and upgrade.
+- *"New Albany: I want a new app to log start-of-shift line checks, with its own list."* → `/new-app`: Claude proposes the list, builds the installer and a starter screen, then walks you through creating the list, the app and the upgrade (`newalbany/NEW_APP_GUIDE.md`).
 - *"Explain how the Tier 2 downtime number is calculated."* → Claude reads the code and answers in plain words.
 
 **Three skills are built in.** Type `/` in the prompt box to see them:
 - `/change-app`: change a screen or formula, start to finish.
 - `/ship-upgrade`: move a tested change from MDI Dev to production.
 - `/troubleshoot`: diagnose an error message or a board that looks wrong.
+- `/new-app`: a new list and a new app, start to finish (New Albany).
 
 **Habits that keep this safe**
 - Paste only into **MDI Dev**. Production only ever gets a managed **Upgrade** import.
