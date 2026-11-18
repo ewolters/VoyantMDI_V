@@ -84,6 +84,8 @@ LASTEND="))"
 
 ROWSAVE='Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));\nSelect(btnSaveRow)'
 PH='"— PICK PRODUCT —"'
+PHL='"— PICK LINE —"'  # LINE starts here: the operator must choose their line (nothing saves until they do)
+NOLINE='ddLine.Selected.Value = '+PHL+''
 LINEKEY='If(varProd = '+PH+', "", ddLine.Selected.Value & "|" & varPB.Size & "|" & varPB.Form)'
 
 # ---------- header ----------
@@ -91,7 +93,8 @@ out.append(rect("hdrBar",DARK,0,0,1920,90))
 out.append(label("lblBrand",'"voyant"',24,6,170,52,size=34,color=WHITE,font="Georgia"))
 out.append(label("lblBrandSub",'"NEW ALBANY"',27,56,170,24,size=10,bold=True,color=TEAL))
 out.append(label("lblTitle",'"HOUR x HOUR"',190,20,240,50,size=26,bold=True,color=WHITE,font="Georgia"))
-out.append(cap("cLine","LINE",440,6,120,color=G5)); out.append(dd("ddLine","Distinct(PLAYBOOK, Line)",440,28,120,52,default='"209"',onchange="Select(btnRefresh)",size=20,bold=True))
+out.append(cap("cLine","LINE",440,6,120,color=G5)); out.append(dd("ddLine",'Ungroup(Table({t: Table({Value: '+PHL+'})}, {t: Distinct(PLAYBOOK, Line)}), t)',440,28,120,52,default=PHL,onchange="Select(btnRefresh)",size=20,bold=True,
+   extra={"Fill":F('If('+NOLINE+', RGBA(255, 236, 179, 1), '+WHITE+')'),"BorderColor":F('If('+NOLINE+', '+AMBER+', '+G5+')')}))
 out.append(cap("cProd","PRODUCT  (SIZE | FORM)",570,6,340,color=G5))
 out.append(dd("ddProduct",'Ungroup(Table({t: Table({Value: '+PH+', Size: "", Form: ""})}, {t: Filter(ForAll(Filter(PLAYBOOK, Line = ddLine.Selected.Value), {Value: Size & " | " & Form, Size: Size, Form: Form}), IsBlank(txtProdFind.Text) || txtProdFind.Text in Value)}), t)',570,28,256,52,
    default='Coalesce(varProdDef, '+PH+')',onchange="If(ddProduct.Selected.Value <> Coalesce(varProd, \"\"), Set(varProd, ddProduct.Selected.Value); Select(btnRefresh))",size=18,
@@ -171,8 +174,8 @@ for i,(t,x,w,a) in enumerate(COLS):
     out.append(label(f"h{i:02d}",f'"{t}"',12+x,182,w,36,size=10,bold=True,color=G9,align=a))
 
 # ---------- gallery ----------
-IN='If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)'
-INSAFE='If(ThisItem.InShift, DisplayMode.Edit, DisplayMode.Disabled)'
+IN='If(ThisItem.InShift && !('+NOLINE+') && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)'
+INSAFE='If(ThisItem.InShift && !('+NOLINE+'), DisplayMode.Edit, DisplayMode.Disabled)'
 HRACT='If(IsBlank(ThisItem.Cum), Blank(), ThisItem.Cum - Coalesce(LookUp(colHours, HourNo = ThisItem.HourNo - 1).Cum, 0))'
 CUMT='Sum(Filter(colHours, HourNo <= ThisItem.HourNo), Tgt)'
 kids=[]
@@ -210,9 +213,9 @@ gprops.update(box(12,218,1528,720))
 out.append(ctrl("galHours","Gallery@2.15.0",gprops,0,kids,variant="BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0"))
 
 NOPROD='Coalesce(varProd, '+PH+') = '+PH
-GATE=NOPROD+' || Coalesce(Value(txtCrew.Text), 0) <= 0'
-out.append(label("lblCrewGate",'If('+NOPROD+', "▲  PICK THE PRODUCT RUNNING NOW" & Char(10) & "Choose it in PRODUCT (top), then enter ACTUAL CREW. Safety can always be logged.", "▲  ENTER ACTUAL CREW TO START THE SHIFT" & Char(10) & "Hour entry unlocks once crew is in. Safety can always be logged.")',12,218,1376,720,size=26,bold=True,color=DARK,align="Center",
-   fill="RGBA(255, 255, 255, 0.82)",extra={"Visible":F(GATE),"Tooltip":'="Pick the PRODUCT and type the number of people actually on the line in ACTUAL CREW (top). Both are required before hourly entry."'}))
+GATE=NOLINE+' || '+NOPROD+' || Coalesce(Value(txtCrew.Text), 0) <= 0'
+out.append(label("lblCrewGate",'If('+NOLINE+', "▲  PICK YOUR LINE" & Char(10) & "Choose it in LINE (top left), then the product and ACTUAL CREW. Safety opens as soon as the line is picked.", '+NOPROD+', "▲  PICK THE PRODUCT RUNNING NOW" & Char(10) & "Choose it in PRODUCT (top), then enter ACTUAL CREW. Safety can always be logged.", "▲  ENTER ACTUAL CREW TO START THE SHIFT" & Char(10) & "Hour entry unlocks once crew is in. Safety can always be logged.")',12,218,1376,720,size=26,bold=True,color=DARK,align="Center",
+   fill="RGBA(255, 255, 255, 0.82)",extra={"Visible":F(GATE),"Tooltip":'="Pick your LINE and the PRODUCT, and type the number of people actually on the line in ACTUAL CREW (top). Both are required before hourly entry."'}))
 # ---------- bottom shift summary strip ----------
 out.append(rect("botBar","RGBA(244, 245, 245, 1)",12,946,1528,124))
 out.append(label("lblSumTitle",'"SHIFT SUMMARY"',20,950,300,24,size=11,bold=True,color=G9))
@@ -298,7 +301,8 @@ out.append(btn("btnFlush",'""',FLUSH,4,1079,1,1,fill=CLEAR,color=CLEAR,extra=HEL
 out.append(label("lblPending",'"⚠  " & CountRows(colPending) & If(CountRows(colPending) = 1, " HOUR", " HOURS") & " NOT SAVED YET (hour " & Concat(Sort(colPending, HourNo), Text(HourNo), ", ") & ")  ·  kept on this tablet, retrying on every save. KEEP THIS APP OPEN."',
    12,92,1180,44,size=14,bold=True,color=WHITE,fill=RED,extra={"Visible":"=CountRows(colPending) > 0","PaddingLeft":"=16"}))
 out.append(btn("btnRetry",'"RETRY NOW"','Select(btnFlush)',1196,94,150,40,size=13,fill=WHITE,color=RED,extra={"Visible":"=CountRows(colPending) > 0","BorderColor":F(RED),"BorderThickness":"=2"}))
-out.append(btn("btnSaveRow",'""',SAVEROW,0,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
-out.append(btn("btnSaveShift",'""',SAVESHIFT,2,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
-write_themed(__import__("os").environ["MDI_OUTDIR"]+"/HxH_Board_v22.pa.yaml", "".join(out))
+NOSAVE='Notify("Pick your LINE first (top left). Nothing was saved.", NotificationType.Warning)'
+out.append(btn("btnSaveRow",'""','If('+NOLINE+', '+NOSAVE+',\n'+SAVEROW+';\ntrue)',0,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
+out.append(btn("btnSaveShift",'""','If('+NOLINE+', '+NOSAVE+',\n'+SAVESHIFT+';\ntrue)',2,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
+write_themed(__import__("os").environ["MDI_OUTDIR"]+"/HxH_Board_v23.pa.yaml", "".join(out))
 print("ok", sum(len(x) for x in out))

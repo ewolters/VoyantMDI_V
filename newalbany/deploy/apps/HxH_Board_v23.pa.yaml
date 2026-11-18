@@ -57,8 +57,9 @@
 - ddLine:
     Control: Classic/DropDown@2.3.1
     Properties:
-      Items: =Distinct(PLAYBOOK, Line)
-      Default: ="209"
+      Items: |-
+        =Ungroup(Table({t: Table({Value: "— PICK LINE —"})}, {t: Distinct(PLAYBOOK, Line)}), t)
+      Default: ="— PICK LINE —"
       OnChange: =Select(btnRefresh)
       Font: =Font.Arial
       Size: =20
@@ -75,6 +76,8 @@
       FocusedBorderColor: =RGBA(0, 72, 81, 1)
       HoverBorderColor: =RGBA(117, 120, 123, 1)
       FontWeight: =FontWeight.Bold
+      Fill: =If(ddLine.Selected.Value = "— PICK LINE —", RGBA(255, 236, 179, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =If(ddLine.Selected.Value = "— PICK LINE —", RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
       X: =440
       Y: =28
       Width: =120
@@ -899,7 +902,7 @@
               =Patch(colHours, ThisItem, {Job: Self.Text});
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow)
-            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =146
             Y: =9
             Width: =80
@@ -950,7 +953,7 @@
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow)
             FontWeight: =FontWeight.Bold
-            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             BorderThickness: =If(ThisItem.InShift && (IsBlank(ThisItem.Cum)) && Now() >= ThisItem.StartT, 3, 1)
             X: =400
             Y: =7
@@ -1020,7 +1023,7 @@
               =Patch(colHours, ThisItem, {BPM: If(IsBlank(Self.Text), Blank(), Value(Self.Text))});
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow)
-            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             Fill: =If(!ThisItem.InShift, RGBA(236, 236, 234, 1), !(IsBlank(ThisItem.BPM)), If(ThisItem.BPM < varTmax, RGBA(253, 236, 200, 1), RGBA(255, 255, 255, 1)), Now() >= DateAdd(ThisItem.StartT, ThisItem.SlotMin, TimeUnit.Minutes), RGBA(249, 214, 213, 1), Now() >= ThisItem.StartT, RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
             X: =812
             Y: =9
@@ -1045,7 +1048,7 @@
               =With({p: Coalesce(Value(Self.Text), 0)}, Patch(colHours, ThisItem, {Planned: p, Tgt: Max(0, varUPH * (ThisItem.SlotMin - p) / 60)}));
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow)
-            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =880
             Y: =9
             Width: =56
@@ -1068,7 +1071,7 @@
               =Patch(colHours, ThisItem, {DT: If(IsBlank(Self.Text), Blank(), Value(Self.Text))});
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow)
-            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =940
             Y: =9
             Width: =56
@@ -1101,7 +1104,7 @@
             PressedFill: =RGBA(176, 227, 228, 1)
             FocusedBorderColor: =RGBA(0, 72, 81, 1)
             HoverBorderColor: =RGBA(117, 120, 123, 1)
-            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =1000
             Y: =9
             Width: =160
@@ -1126,7 +1129,7 @@
               =Patch(colHours, ThisItem, {DT2: If(IsBlank(Self.Text), Blank(), Value(Self.Text))});
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow)
-            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =1164
             Y: =9
             Width: =56
@@ -1159,7 +1162,7 @@
             PressedFill: =RGBA(176, 227, 228, 1)
             FocusedBorderColor: =RGBA(0, 72, 81, 1)
             HoverBorderColor: =RGBA(117, 120, 123, 1)
-            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =1224
             Y: =9
             Width: =160
@@ -1183,7 +1186,7 @@
             Color: =If(ThisItem.Safety, RGBA(255, 255, 255, 1), RGBA(177, 179, 179, 1))
             HoverFill: =ColorFade(Self.Fill, -15%)
             BorderColor: =Self.Fill
-            DisplayMode: =If(ThisItem.InShift, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —"), DisplayMode.Edit, DisplayMode.Disabled)
             X: =1388
             Y: =10
             Width: =64
@@ -1204,7 +1207,7 @@
               =Patch(colHours, ThisItem, {Notes: Self.Text});
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow)
-            DisplayMode: =If(ThisItem.InShift && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =1456
             Y: =9
             Width: =68
@@ -1214,15 +1217,15 @@
 - lblCrewGate:
     Control: Label@2.5.1
     Properties:
-      Text: =If(Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —", "▲  PICK THE PRODUCT RUNNING NOW" & Char(10) & "Choose it in PRODUCT (top), then enter ACTUAL CREW. Safety can always be logged.", "▲  ENTER ACTUAL CREW TO START THE SHIFT" & Char(10) & "Hour entry unlocks once crew is in. Safety can always be logged.")
+      Text: =If(ddLine.Selected.Value = "— PICK LINE —", "▲  PICK YOUR LINE" & Char(10) & "Choose it in LINE (top left), then the product and ACTUAL CREW. Safety opens as soon as the line is picked.", Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —", "▲  PICK THE PRODUCT RUNNING NOW" & Char(10) & "Choose it in PRODUCT (top), then enter ACTUAL CREW. Safety can always be logged.", "▲  ENTER ACTUAL CREW TO START THE SHIFT" & Char(10) & "Hour entry unlocks once crew is in. Safety can always be logged.")
       Font: =Font.Arial
       Size: =26
       Color: =RGBA(7, 39, 45, 1)
       FontWeight: =FontWeight.Bold
       Align: =Align.Center
       Fill: =RGBA(255, 255, 255, 0.82)
-      Visible: =Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —" || Coalesce(Value(txtCrew.Text), 0) <= 0
-      Tooltip: ="Pick the PRODUCT and type the number of people actually on the line in ACTUAL CREW (top). Both are required before hourly entry."
+      Visible: =ddLine.Selected.Value = "— PICK LINE —" || Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —" || Coalesce(Value(txtCrew.Text), 0) <= 0
+      Tooltip: ="Pick your LINE and the PRODUCT, and type the number of people actually on the line in ACTUAL CREW (top). Both are required before hourly entry."
       X: =12
       Y: =218
       Width: =1376
@@ -1639,7 +1642,7 @@
     Control: Label@2.5.1
     Properties:
       Text: |-
-        =If(Coalesce(Value(txtCrew.Text), 0) <= 0, "NEXT ▸ ENTER" & Char(10) & "ACTUAL CREW", With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
+        =If(ddLine.Selected.Value = "— PICK LINE —", "NEXT ▸ PICK" & Char(10) & "YOUR LINE", Coalesce(Value(txtCrew.Text), 0) <= 0, "NEXT ▸ ENTER" & Char(10) & "ACTUAL CREW", With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
               od: CountRows(Filter(colHours, InShift && Now() >= DateAdd(StartT, SlotMin, TimeUnit.Minutes) && IsBlank(Cum)))},
           If(IsBlank(n),
              If(CountRows(Filter(colHours, InShift && IsBlank(Cum))) = 0, "✓ ALL HOURS ENTERED", "✓ UP TO DATE"),
@@ -1647,13 +1650,13 @@
       Font: =Font.Arial
       Size: =15
       Color: |-
-        =If(Coalesce(Value(txtCrew.Text), 0) <= 0, RGBA(7, 39, 45, 1), With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
+        =If(ddLine.Selected.Value = "— PICK LINE —" || Coalesce(Value(txtCrew.Text), 0) <= 0, RGBA(7, 39, 45, 1), With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
               od: CountRows(Filter(colHours, InShift && Now() >= DateAdd(StartT, SlotMin, TimeUnit.Minutes) && IsBlank(Cum)))},
           If(IsBlank(n) || od > 0, RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))))
       FontWeight: =FontWeight.Bold
       Align: =Align.Center
       Fill: |-
-        =If(Coalesce(Value(txtCrew.Text), 0) <= 0, RGBA(255, 242, 179, 1), With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
+        =If(ddLine.Selected.Value = "— PICK LINE —" || Coalesce(Value(txtCrew.Text), 0) <= 0, RGBA(255, 242, 179, 1), With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
               od: CountRows(Filter(colHours, InShift && Now() >= DateAdd(StartT, SlotMin, TimeUnit.Minutes) && IsBlank(Cum)))},
           If(IsBlank(n), RGBA(46, 160, 67, 1), od > 0, RGBA(207, 34, 46, 1), RGBA(255, 242, 179, 1))))
       Tooltip: ="What the operator owes the board right now. Yellow = this hour is due. Red = hours have ended with no counter entered."
@@ -1820,7 +1823,8 @@
     Properties:
       Text: =""
       OnSelect: |-
-        =Select(btnFlush);
+        =If(ddLine.Selected.Value = "— PICK LINE —", Notify("Pick your LINE first (top left). Nothing was saved.", NotificationType.Warning),
+        Select(btnFlush);
         If(IsBlank(varPB), Select(btnRefresh));
         With({r: varRow, k: ddLine.Selected.Value & "-" & Text(ddDate.Selected.D, "yyyymmdd") & "-S" & ddShift.Selected.Value & "-H" & Text(varRow.HourNo, "00")},
          With({cumT: Sum(Filter(colHours, HourNo <= r.HourNo), Tgt), prev: Coalesce(LookUp(colHours, HourNo = r.HourNo - 1).Cum, 0),
@@ -1844,7 +1848,8 @@
             Notify("Hour " & r.HourNo & " NOT saved (no connection?). It is kept on this tablet and will retry. Keep this app open.", NotificationType.Warning),
             RemoveIf(colPending, K = k)))));
         If(CountRows(colPending) = 0, Set(varSavedAt, Now()));
-        Select(btnSaveShift)
+        Select(btnSaveShift);
+        true)
       Font: =Font.Arial
       Size: =12
       FontWeight: =FontWeight.Bold
@@ -1863,7 +1868,8 @@
     Properties:
       Text: =""
       OnSelect: |-
-        =With({act: Max(colHours, Coalesce(Cum, 0)), tgt: Sum(colHours, Tgt),
+        =If(ddLine.Selected.Value = "— PICK LINE —", Notify("Pick your LINE first (top left). Nothing was saved.", NotificationType.Warning),
+        With({act: Max(colHours, Coalesce(Cum, 0)), tgt: Sum(colHours, Tgt),
               bpm: If(CountRows(Filter(colHours, Coalesce(BPM, 0) > 0)) = 0, Blank(), Average(Filter(colHours, Coalesce(BPM, 0) > 0), BPM)),
               avail: With({d0: ddDate.Selected.D}, With({d1: If(ddEnd.Selected.M <= ddStart.Selected.M, DateAdd(d0, 1, TimeUnit.Days), d0)}, DateDiff(DateTime(Year(d0), Month(d0), Day(d0), RoundDown(ddStart.Selected.M / 60, 0), Mod(ddStart.Selected.M, 60), 0), DateTime(Year(d1), Month(d1), Day(d1), RoundDown(ddEnd.Selected.M / 60, 0), Mod(ddEnd.Selected.M, 60), 0), TimeUnit.Minutes))) - Coalesce(Value(txtLunch.Text), 0) - Coalesce(Value(txtBreak.Text), 0),
               scrap: Coalesce(Value(txtScrap.Text), 0),
@@ -1889,7 +1895,8 @@
              StdCrewSize: Value(varPB.'Total HC'), ActualCrewSize: Value(txtCrew.Text),
              StaffingReasonCode: ddStaff.Selected.Value, SpeedLossReasonCode: ddSpeedLoss.Selected.Value,
              EnteredBy: User().Email}), Notify("Shift totals not saved yet (no connection?). They update on the next save.", NotificationType.Warning), true))));
-        Set(varSavedAt, Now())
+        Set(varSavedAt, Now());
+        true)
       Font: =Font.Arial
       Size: =12
       FontWeight: =FontWeight.Bold

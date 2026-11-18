@@ -1,9 +1,9 @@
 NXT=('With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),\n'
      '      od: CountRows(Filter(colHours, InShift && Now() >= DateAdd(StartT, SlotMin, TimeUnit.Minutes) && IsBlank(Cum)))},\n')
-out.append(label("lblNext", 'If(Coalesce(Value(txtCrew.Text), 0) <= 0, "NEXT ▸ ENTER" & Char(10) & "ACTUAL CREW", '+NXT+'  If(IsBlank(n),\n     If(CountRows(Filter(colHours, InShift && IsBlank(Cum))) = 0, "✓ ALL HOURS ENTERED", "✓ UP TO DATE"),\n     "NEXT ▸ " & Text(n.StartT, "h:mm AM/PM") & " counter" & If(od > 0, Char(10) & Text(od) & If(od = 1, " hour", " hours") & " overdue", ""))))',
+out.append(label("lblNext", 'If('+NOLINE+', "NEXT ▸ PICK" & Char(10) & "YOUR LINE", Coalesce(Value(txtCrew.Text), 0) <= 0, "NEXT ▸ ENTER" & Char(10) & "ACTUAL CREW", '+NXT+'  If(IsBlank(n),\n     If(CountRows(Filter(colHours, InShift && IsBlank(Cum))) = 0, "✓ ALL HOURS ENTERED", "✓ UP TO DATE"),\n     "NEXT ▸ " & Text(n.StartT, "h:mm AM/PM") & " counter" & If(od > 0, Char(10) & Text(od) & If(od = 1, " hour", " hours") & " overdue", ""))))',
    1280,100,256,72,size=15,bold=True,align="Center",
-   extra={"Fill":F(f'If(Coalesce(Value(txtCrew.Text), 0) <= 0, {YEL}, '+NXT+f'  If(IsBlank(n), {GREEN}, od > 0, {RED}, {YEL})))'),
-          "Color":F(f'If(Coalesce(Value(txtCrew.Text), 0) <= 0, {DARK}, '+NXT+f'  If(IsBlank(n) || od > 0, {WHITE}, {DARK})))'),
+   extra={"Fill":F(f'If({NOLINE} || Coalesce(Value(txtCrew.Text), 0) <= 0, {YEL}, '+NXT+f'  If(IsBlank(n), {GREEN}, od > 0, {RED}, {YEL})))'),
+          "Color":F(f'If({NOLINE} || Coalesce(Value(txtCrew.Text), 0) <= 0, {DARK}, '+NXT+f'  If(IsBlank(n) || od > 0, {WHITE}, {DARK})))'),
           "Tooltip":'="What the operator owes the board right now. Yellow = this hour is due. Red = hours have ended with no counter entered."'}))
 # legend
 def sw(name,fill,border,x): d={"Fill":F(fill),"BorderColor":F(border),"BorderThickness":"=2"}; d.update(box(x,953,16,16)); return ctrl(name,"Rectangle@2.3.0",d)
