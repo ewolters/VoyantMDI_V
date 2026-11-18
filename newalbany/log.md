@@ -1,5 +1,7 @@
 # New Albany Virtual MDI — Build Log
 
+> Paths in entries before 2026-11-18 are from before the restructure: `generator/`, `deploy/` and `solution/` are now under `newalbany/`.
+
 What we built, how we built it, and why. Newest entries at the bottom of each section. Every entry records the date, what changed, the method, and anything we learned the hard way.
 
 **How to read this file:** Part A (Master summary) is the current state as of 2026-10-21 and is the place to start. Part B keeps the original Day-0 plan (now superseded) for history. Part C is the dated session log: every build, test, bug and decision in order.
@@ -1317,3 +1319,4 @@ Eric asked for a lite version of his SVEND Safety HIRARC / Frontier program (DuP
 - Kenny's editable copy: import `solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` into a new **MDI Dev** environment; ship changes as managed upgrades from there. Eric's sandbox is no longer the golden copy.
 - Open items: HANDOFF.md §7.
 - 2026-11-18: Setup docs corrected for how Kenny actually works: Claude Code on the web in this repo (no desktop app, no fork, nothing installed locally). START_HERE.md rewritten (files reach him via GitHub links on the session branch; merge to `main` once live). `py` → `python3` in CLAUDE.md, skills, HANDOFF, Holmdel README. Kenny's `test/solution-1.1.4.2` branch left as-is (test repack, not a release).
+- 2026-11-18: Repo restructured into one folder per plant with the same layout. New Albany's `generator/`, `deploy/`, `solution/`, TROUBLESHOOTING, SYSTEM_REFERENCE and this log moved under `newalbany/`; new `newalbany/README.md`. Paths in all docs and skills are now from the repo root. `make.py check`: 23 identical.

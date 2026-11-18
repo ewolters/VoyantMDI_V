@@ -75,7 +75,7 @@ Tier 2 shows what the board calculates; it doesn't fix the template.
 - **Reasons and components** are whatever the board's rows say; nothing is typed in elsewhere. Free-text variations on the board show as separate reasons.
 - **Colors** come from ⚙ TARGETS in the app (saved to `tier2_settings.json`, shared by every screen).
 - Other known template defects (from the July teardown): 2nd-shift hourly efficiency on the board used the shift-1 target (F$4), "Units Missed" sign reversed, MTD totals summing empty cells. Tier 2 reads the raw cells, so it isn't affected by the MTD issues, but leads comparing against those board cells will see differences.
-- Offline check: `generator/test` runs the script on any board file and prints what Tier 2 would read (see README).
+- Offline check: `holmdel/generator/test` runs the script on any board file and prints what Tier 2 would read (see README).
 
 ## 5. Sync flow errors (what each failing step means)
 Open the failed run → scroll to **For each board** → **Next failed >** → expand **Try board** → the red step. (The run view draws the loop below where the parallel branches join; zoom the browser out with Ctrl −.) Or read the board's `warnings` in `tier2_data.json`.

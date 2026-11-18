@@ -1,6 +1,6 @@
 # System reference (for troubleshooting)
 
-How the New Albany MDI works underneath: what each flow does, what each app reads, the keys that tie records together, and where in the code to look. Written for Kenny's Claude; Kenny can read it too. Pair it with [TROUBLESHOOTING.md](TROUBLESHOOTING.md) (known errors) and [HANDOFF.md](HANDOFF.md) (rebuilds). Holmdel is separate: [holmdel/README.md](holmdel/README.md).
+How the New Albany MDI works underneath: what each flow does, what each app reads, the keys that tie records together, and where in the code to look. Written for Kenny's Claude; Kenny can read it too. Pair it with [newalbany/TROUBLESHOOTING.md](TROUBLESHOOTING.md) (known errors) and [HANDOFF.md](../HANDOFF.md) (rebuilds). Holmdel is separate: [holmdel/README.md](../holmdel/README.md).
 
 ---
 
@@ -13,7 +13,7 @@ Line tablets / phones / TVs ──► 10 canvas apps (solution MDI) ──► Sh
                                                                               │
    list-triggered / scheduled flows: Downtime Escalation, Sync Permissions, Nightly Board Check, Frontier Critical Alert
 ```
-- **Everything is SharePoint lists.** No Dataverse tables, no SQL. The schema of every list (columns, types, choices, views, seed rows) is in `deploy/mdi_package.json`.
+- **Everything is SharePoint lists.** No Dataverse tables, no SQL. The schema of every list (columns, types, choices, views, seed rows) is in `newalbany/deploy/mdi_package.json`.
 - **Apps and flows find the site through environment variables** (1 site + 31 lists). A wrong variable = "not found" / "Unauthorized" errors.
 - **Apps run as the signed-in user.** That user needs SharePoint access to the lists the app reads (site Members), and run-only access to any flow the app calls.
 - **Scheduled / list-triggered flows run as their owner's connections.**
@@ -31,11 +31,11 @@ Line tablets / phones / TVs ──► 10 canvas apps (solution MDI) ──► Sh
 | **MDI - Connect Site** | Manual, paste `MDI2:` code | → sets the 32 environment variables, restarts flows | | Dataverse connector = **Premium**. Use only in MDI Dev. |
 | **MDI - Set Up Site** (solution MDI Setup) | Manual, site address | → creates/repairs all lists, seeds them, saves `Setup_Code` in MDI_Config | Email with the `MDI2:` code | Safe to re-run; adds only what's missing. Run as a site owner. |
 
-Every flow except Set Up Site, Connect Site and Import History has a **Catch** scope that emails `Alert_Email` when it fails. Flow definitions: `deploy/flows/json/`; readable versions: `deploy/flows/*.md`; generator: `generator/flows.py` (`py generator/make.py flows`), Import History: `generator/flows/gen_import_flow.py`.
+Every flow except Set Up Site, Connect Site and Import History has a **Catch** scope that emails `Alert_Email` when it fails. Flow definitions: `newalbany/deploy/flows/json/`; readable versions: `newalbany/deploy/flows/*.md`; generator: `newalbany/generator/flows.py` (`py newalbany/generator/make.py flows`), Import History: `newalbany/generator/flows/gen_import_flow.py`.
 
 ## 3. Apps
 
-One card per app (lists, flows, start-up formula, who to share with, how to check it): **`deploy/apps/APP_BUILD_GUIDE.md` §2**.
+One card per app (lists, flows, start-up formula, who to share with, how to check it): **`newalbany/deploy/apps/APP_BUILD_GUIDE.md` §2**.
 
 | App | Screens → file | Generator (`make.py` target) |
 |---|---|---|
@@ -49,7 +49,7 @@ One card per app (lists, flows, start-up formula, who to share with, how to chec
 | Frontier Audit (optional) | `Frontier_Audit_v2` | `fa.py` · `fa` |
 | MDI Settings | Screen1 Escalation · scrDrop · scrLines · scrStd · scrCfg (`Settings_scrCfg_v2`) · scrPeople · scrImport (`Settings_scrImport_v2`) | `settings.py` + `settings_imp.py` · `settings` |
 
-Shared building blocks: `generator/theme.py` (colors, `write_themed`, Voyant theme), `fx_compat.py` (post-processing, e.g. IfError arity), `settings_helpers.py`. Most apps start from `build6.py`'s helper functions (`label`, `btn`, `rect`, `dd`, `gal`, `tap`).
+Shared building blocks: `newalbany/generator/theme.py` (colors, `write_themed`, Voyant theme), `fx_compat.py` (post-processing, e.g. IfError arity), `settings_helpers.py`. Most apps start from `build6.py`'s helper functions (`label`, `btn`, `rect`, `dd`, `gal`, `tap`).
 
 **Loading pattern:** each screen has a hidden **Load/Refresh** button whose OnSelect loads everything into collections (`col…`), and the screen's OnVisible does `Select(<that button>)`. If a screen shows nothing, its OnVisible wasn't set or its load errored (see the app's notification bar).
 
@@ -89,10 +89,10 @@ Saving the same key twice updates rather than duplicates. Hour x Hour and IMPORT
 Edit these in MDI Settings → THRESHOLDS & LINKS (no code change needed). Tier 3 metric on/off, order and thresholds live in the **KPI_Metrics** list; value-stream grouping in **ValueStreams**.
 
 ## 6. How the boards calculate (where to look)
-- **Tier 2 daily board** (`generator/t2v2.py`): `DAYREC` builds one record per line per day from HxH_Shift (plan, actual, OEE), HxH_Hourly (downtime events, safety), QA_Rework, TS_Occurrences, PC_Audits, SAF_*, Escalation_Log and Newspaper; `derive()` turns those into text, sub-text and a G/A/R/N status per domain (S Safety, Q Quality, D Delivery, DT Downtime, C Cost/OEE, P People, M Maintenance, PC Process confirmation, A Actions). `TOTREC` is the plant row. Thresholds come from §5.
-- **Tier 2 WEEKS & MONTHS** (`generator/t2per.py`): reuses the same formulas per week/month (`PREC`), loads lists one week at a time, never more than 6 months back (26 weeks / current + 5 months).
-- **Tier 3** (`generator/t3.py`, `t3_metrics.py`): the same domain formulas, plus it saves each closed day to **KPI_Daily**; week/month views read KPI_Daily.
-- **Hour x Hour** (`generator/build6.py`): RUN % tile = hourly actual ÷ hourly target; purple ★ marks an hour above max(105%, mean + 2 SD of the line's last 30 days) once 20+ hours exist, else 115%. The cover over the hours stays until a product is picked and ACTUAL CREW is entered.
+- **Tier 2 daily board** (`newalbany/generator/t2v2.py`): `DAYREC` builds one record per line per day from HxH_Shift (plan, actual, OEE), HxH_Hourly (downtime events, safety), QA_Rework, TS_Occurrences, PC_Audits, SAF_*, Escalation_Log and Newspaper; `derive()` turns those into text, sub-text and a G/A/R/N status per domain (S Safety, Q Quality, D Delivery, DT Downtime, C Cost/OEE, P People, M Maintenance, PC Process confirmation, A Actions). `TOTREC` is the plant row. Thresholds come from §5.
+- **Tier 2 WEEKS & MONTHS** (`newalbany/generator/t2per.py`): reuses the same formulas per week/month (`PREC`), loads lists one week at a time, never more than 6 months back (26 weeks / current + 5 months).
+- **Tier 3** (`newalbany/generator/t3.py`, `t3_metrics.py`): the same domain formulas, plus it saves each closed day to **KPI_Daily**; week/month views read KPI_Daily.
+- **Hour x Hour** (`newalbany/generator/build6.py`): RUN % tile = hourly actual ÷ hourly target; purple ★ marks an hour above max(105%, mean + 2 SD of the line's last 30 days) once 20+ hours exist, else 115%. The cover over the hours stays until a product is picked and ACTUAL CREW is entered.
 - **OEE rule (boards):** empty hours through the rest of a shift, or "DNR" (did not run) in the comments, mean the crew went elsewhere and those hours aren't counted against the line.
 
 To explain any number on a screen: search the generator for the label text, find the formula, then trace its collection back to the load button.

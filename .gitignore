@@ -1,7 +1,7 @@
-deploy/customers/
+newalbany/deploy/customers/
 *.zip
-!solution/*.zip
+!newalbany/solution/*.zip
+!holmdel/solution/*.zip
 __pycache__/
 *.bak
 build/
-!holmdel/package/*.zip

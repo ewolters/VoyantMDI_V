@@ -1,10 +1,10 @@
 """Regenerate app screens and flows from the generators.
 
-    python generator/make.py              # list targets
-    python generator/make.py hxh t2       # build some
-    python generator/make.py all          # build everything
-    python generator/make.py check        # build everything, then compare with deploy/apps
-    python generator/make.py lint         # run the Power Fx checks on everything in build/
+    python3 newalbany/generator/make.py              # list targets
+    python3 newalbany/generator/make.py hxh t2       # build some
+    python3 newalbany/generator/make.py all          # build everything
+    python3 newalbany/generator/make.py check        # build everything, then compare with newalbany/deploy/apps
+    python3 newalbany/generator/make.py lint         # run the Power Fx checks on everything in newalbany/build/
 
 Output goes to build/ (never straight into deploy/). Copy a file into deploy/apps under a new
 version number once it has been pasted, published and tested in the MDI Dev environment.

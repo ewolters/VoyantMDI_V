@@ -27,8 +27,8 @@ Production stays untouched; every change is built and tested in a separate envir
 1. **make.powerapps.com** → ⚙ (top right) → **Admin center** → **Environments** → **+ New**.
    - Name: `MDI Dev` · Type: **Developer** (free; if your tenant blocks it, ask IT for a **Sandbox**) · Add a Dataverse data store: **Yes**.
 2. Back in make.powerapps.com, switch to **MDI Dev** (environment picker, top right).
-3. Download `solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` from GitHub (`main`). **Solutions → Import solution → Browse →** that zip → **Next**. Sign in to the connections it asks for (SharePoint, Outlook, Teams, Dataverse, Excel Online) → **Import**.
-4. Optional: import `solution/MDISetup_UNMANAGED_v1.0.0.0.zip` the same way.
+3. Download `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` from GitHub (`main`). **Solutions → Import solution → Browse →** that zip → **Next**. Sign in to the connections it asks for (SharePoint, Outlook, Teams, Dataverse, Excel Online) → **Import**.
+4. Optional: import `newalbany/solution/MDISetup_UNMANAGED_v1.0.0.0.zip` the same way.
 5. When it finishes: **Solutions → MDI → Apps**, open each app once and **Publish**.
 
 **Never import the UNMANAGED zip into your production (default) environment.** The managed MDI already lives there and the two collide.
@@ -61,6 +61,6 @@ Start a session on this repo and say what you want. Say **which plant** (New Alb
 ---
 
 ## Part 3. If you're stuck
-- `TROUBLESHOOTING.md` (New Albany) and `holmdel/TROUBLESHOOTING.md` have every error we've hit, with fixes. Claude reads them too.
-- `log.md` is the build history, with why things are the way they are.
+- `newalbany/TROUBLESHOOTING.md` (New Albany) and `holmdel/TROUBLESHOOTING.md` have every error we've hit, with fixes. Claude reads them too.
+- `newalbany/log.md` is the build history, with why things are the way they are.
 - Claude Code on the web help: https://code.claude.com/docs/en/claude-code-on-the-web

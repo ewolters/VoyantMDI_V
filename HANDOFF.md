@@ -1,6 +1,6 @@
 # Handoff: rebuilding the MDI from scratch
 
-From Eric Wolters to Kenny, November 2026. This is the "if it's gone, here's how to bring it back" document. For day-to-day changes see [START_HERE.md](START_HERE.md); for errors see [TROUBLESHOOTING.md](TROUBLESHOOTING.md); for how each piece works see [SYSTEM_REFERENCE.md](SYSTEM_REFERENCE.md).
+From Eric Wolters to Kenny, November 2026. This is the "if it's gone, here's how to bring it back" document. For day-to-day changes see [START_HERE.md](START_HERE.md); for errors see [newalbany/TROUBLESHOOTING.md](newalbany/TROUBLESHOOTING.md); for how each piece works see [newalbany/SYSTEM_REFERENCE.md](newalbany/SYSTEM_REFERENCE.md).
 
 ---
 
@@ -10,10 +10,10 @@ From Eric Wolters to Kenny, November 2026. This is the "if it's gone, here's how
 |---|---|---|
 | **Data** (about 33 lists) | SharePoint: `https://veepak1.sharepoint.com/sites/OhioContinuousImprovement` | Lists: the **MDI - Set Up Site** flow (§3C). **The data itself only exists in SharePoint: back it up (§5).** |
 | **Apps + flows** (managed solution **MDI** 1.1.4.1) | Power Platform environment **Vee Pak, LLC (default)** | A managed export from **MDI Dev** (§3A) |
-| **Your editable copy** (unmanaged **MDI**) | Environment **MDI Dev** (you create it; START_HERE Part 1.5) | `solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` (§3B) |
-| **Setup flow** (solution **MDI Setup**) | Vee Pak default environment | `solution/MDISetup_UNMANAGED_v1.0.0.0.zip` |
+| **Your editable copy** (unmanaged **MDI**) | Environment **MDI Dev** (you create it; START_HERE Part 1.5) | `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` (§3B) |
+| **Setup flow** (solution **MDI Setup**) | Vee Pak default environment | `newalbany/solution/MDISetup_UNMANAGED_v1.0.0.0.zip` |
 | **Source code** for every screen and flow | This repo | It *is* the backup. Keep your copy pushed to GitHub. |
-| **Holmdel Tier 2** (solution **MDI Tier 2 - Excel boards (no lists)** 1.0.0.19) | Vee Pak default environment, owned by Christina DeRamos; data = the Tier 1 Excel boards in `https://veepak1.sharepoint.com/holmdel` | `holmdel/package/…1.0.0.19_managed.zip` (§4); source + `holmdel/make.py` to rebuild or change it |
+| **Holmdel Tier 2** (solution **MDI Tier 2 - Excel boards (no lists)** 1.0.0.19) | Vee Pak default environment, owned by Christina DeRamos; data = the Tier 1 Excel boards in `https://veepak1.sharepoint.com/holmdel` | `holmdel/solution/…1.0.0.19_managed.zip` (§4); source + `holmdel/generator/make.py` to rebuild or change it |
 
 **Accounts that matter:** every flow runs on the connections of whoever set it up (Kenny at New Albany, Christina at Holmdel). If that person's account is disabled, the flows stop. Do §6 before anyone else leaves.
 
@@ -46,14 +46,14 @@ From Eric Wolters to Kenny, November 2026. This is the "if it's gone, here's how
 6. Re-pin the TV links: each app's link (Apps → ⋯ → Details → Web link) with `&hidenavbar=true` on the end for kiosk TVs.
 
 ### 3B. Rebuild MDI Dev
-*About 20 minutes.* Follow START_HERE Part 1.5: create a Developer (or Sandbox) environment named **MDI Dev**, import `solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip`, sign in to its five connections, open and **Publish** each app.
+*About 20 minutes.* Follow START_HERE Part 1.5: create a Developer (or Sandbox) environment named **MDI Dev**, import `newalbany/solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip`, sign in to its five connections, open and **Publish** each app.
 
-If you've shipped changes since 1.1.4.1, that zip is out of date. Rebuild from it, then re-apply your later screens from `deploy/apps/` (they're the current versions, and `python3 generator/make.py check` proves the repo matches them). Better: after every release, **export MDI Dev unmanaged** too and commit it to `solution/` so this zip is always current.
+If you've shipped changes since 1.1.4.1, that zip is out of date. Rebuild from it, then re-apply your later screens from `newalbany/deploy/apps/` (they're the current versions, and `python3 newalbany/generator/make.py check` proves the repo matches them). Better: after every release, **export MDI Dev unmanaged** too and commit it to `newalbany/solution/` so this zip is always current.
 
 ### 3C. New or rebuilt SharePoint site
 *About 1 hour plus data entry.* The lists are created by a flow; the apps and flows are then repointed at the new lists.
 1. **Create the site** (SharePoint → + Create site → Team site). Add members: everyone who enters data, plus the kiosk/TV accounts.
-2. **Import MDI Setup** into the environment where you'll run it (production or MDI Dev): Solutions → Import → `solution/MDISetup_UNMANAGED_v1.0.0.0.zip`. Connections: SharePoint + Outlook. Turn the flow **MDI - Set Up Site** on.
+2. **Import MDI Setup** into the environment where you'll run it (production or MDI Dev): Solutions → Import → `newalbany/solution/MDISetup_UNMANAGED_v1.0.0.0.zip`. Connections: SharePoint + Outlook. Turn the flow **MDI - Set Up Site** on.
 3. **Run it:** open **MDI - Set Up Site** → **Run** → paste the new site's address (`https://veepak1.sharepoint.com/sites/<name>`). Run it as a **site owner**. It creates every list, column, view and permission, seeds Lines, Lookups, MDI_Config, Escalation_Contacts and PLAYBOOK, then **emails you an `MDI2:…` setup code** (also saved in the new site's MDI_Config list, row Setup_Code). It's safe to run again; it only adds what's missing.
    - Save the code privately (not in this public repo): it's the site address plus every list's ID.
 4. **Repoint MDI Dev at the new site.** The apps and flows find the site and lists through **32 environment variables**. In MDI Dev, either:
@@ -69,14 +69,14 @@ If you've shipped changes since 1.1.4.1, that zip is out of date. Rebuild from i
 Same as §3C with its own site, plus its own production environment if the plant uses a different one. Shared viewer/TV accounts, Lines, PLAYBOOK and People are plant-specific. Keep one MDI Dev per plant (or repoint yours each time before exporting, and note which site the export points at in the zip's file name).
 
 ### 3E. Hand-build fallback (no package imports)
-If solution imports are blocked, `deploy/README.md` is the original install: lists by browser-console script (`deploy/provision_mdi.js.txt`), flows by console script (`deploy/tools/install_flows.js.txt`), apps pasted from `deploy/apps/` using `deploy/apps/APP_BUILD_GUIDE.md` (one card per app: lists, flows, start-up formula, who to share with). Half a day. Note the app cards assume the lists are added directly; the packaged apps use environment variables instead. Either works.
+If solution imports are blocked, `newalbany/deploy/README.md` is the original install: lists by browser-console script (`newalbany/deploy/provision_mdi.js.txt`), flows by console script (`newalbany/deploy/tools/install_flows.js.txt`), apps pasted from `newalbany/deploy/apps/` using `newalbany/deploy/apps/APP_BUILD_GUIDE.md` (one card per app: lists, flows, start-up formula, who to share with). Half a day. Note the app cards assume the lists are added directly; the packaged apps use environment variables instead. Either works.
 
 ---
 
 ## 4. Holmdel (Tier 2 only, reads the Excel boards)
 
 Holmdel is a different architecture from New Albany: no lists, the Excel boards are the record. Full notes: [holmdel/README.md](holmdel/README.md) · problems: [holmdel/TROUBLESHOOTING.md](holmdel/TROUBLESHOOTING.md) · why it's built this way: [holmdel/HISTORY.md](holmdel/HISTORY.md). Reinstall in about 30 minutes:
-1. make.powerapps.com → environment **Vee Pak, LLC (default)** → Solutions → Import → `holmdel/package/MDI_Tier2_ExcelBoards_NoLists_1.0.0.19_managed.zip`.
+1. make.powerapps.com → environment **Vee Pak, LLC (default)** → Solutions → Import → `holmdel/solution/MDI_Tier2_ExcelBoards_NoLists_1.0.0.19_managed.zip`.
 2. Connections: **SharePoint** and **Excel Online (Business)**, signed in as the board owner (today Christina). That account needs **Read with download** on Documents/Production and edit rights on `Production/_Tier2` (TROUBLESHOOTING §2.2).
 3. Settings it asks for: site `https://veepak1.sharepoint.com/holmdel` · board folder `Production` · shift 1 `07:00-15:15` · shift 2 `15:15-23:30` · lunch `30` · break `15`. If they show greyed out, type each one in.
 4. Solutions → the solution → check **both flows On**.
@@ -89,7 +89,7 @@ Nothing at Holmdel lives outside the Excel boards and two small files the sync w
 
 ## 5. Backups to set up now
 - **SharePoint data.** Version history and the 93-day recycle bin cover accidents, not a deleted site. Monthly, export the big lists (HxH_Hourly, HxH_Shift, Newspaper, QA_Rework, NCR, PC_Audits/PC_Results, TS_*, KPI_Daily, PLAYBOOK, People, Lines, Lookups, MDI_Config) to Excel (list → Export → CSV) into a folder IT backs up. Ask IT whether the tenant has Microsoft 365 Backup or a retention policy on the site.
-- **Solution.** After every release, export MDI from MDI Dev **both managed and unmanaged**, and commit them to `solution/`.
+- **Solution.** After every release, export MDI from MDI Dev **both managed and unmanaged**, and commit them to `newalbany/solution/`.
 - **History older than 6 months.** Tier 2 only reads 6 months back. If Voyant runs the archive script it planned, keep its output with the backups.
 - **This repo.** Push after every change. GitHub is the off-site copy of all the source.
 

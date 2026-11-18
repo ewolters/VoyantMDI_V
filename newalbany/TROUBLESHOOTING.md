@@ -1,6 +1,6 @@
 # Virtual MDI: owner's troubleshooting guide
 
-> **Holmdel is a different system** (Excel boards → flow → JSON file → app; no lists). For Holmdel problems use **[holmdel/TROUBLESHOOTING.md](holmdel/TROUBLESHOOTING.md)** first. This guide is New Albany, plus the Power Platform permission basics both plants share (§2.1).
+> **Holmdel is a different system** (Excel boards → flow → JSON file → app; no lists). For Holmdel problems use **[holmdel/TROUBLESHOOTING.md](../holmdel/TROUBLESHOOTING.md)** first. This guide is New Albany, plus the Power Platform permission basics both plants share (§2.1).
 
 For Kenny (and his Claude) as the owner of the New Albany MDI and the Holmdel Tier 2 board. Written from what actually broke during the build and both installs. Read **Section 0** first; most problems trace back to it.
 
@@ -46,7 +46,7 @@ For Kenny (and his Claude) as the owner of the New Albany MDI and the Holmdel Ti
 
 **Testing note:** `MDI Dev` points at the real Ohio lists, so anything you test there writes real data. For risky changes, run **MDI - Set Up Site** on a scratch SharePoint site and repoint the 32 environment variables in `MDI Dev` to it first.
 
-**Changing an app from repo source instead of Studio:** create a blank screen in Studio, select it, and paste the `.pa.yaml` from `deploy/apps/` (Ctrl+V on the screen). `deploy/apps/APP_BUILD_GUIDE.md` says which file goes where.
+**Changing an app from repo source instead of Studio:** create a blank screen in Studio, select it, and paste the `.pa.yaml` from `newalbany/deploy/apps/` (Ctrl+V on the screen). `newalbany/deploy/apps/APP_BUILD_GUIDE.md` says which file goes where.
 
 ---
 
@@ -74,7 +74,7 @@ For Kenny (and his Claude) as the owner of the New Albany MDI and the Holmdel Ti
 ### 2.3 Flow fails with `GetTable … Unauthorized` (or 401/404 on a list)
 **Seen at:** Kenny's first New Albany import.
 **Meaning:** the flow is pointing at the wrong site or list. A generic package was imported before the environment variables pointed at the customer site.
-**Fix:** Solutions → MDI → Environment variables → check **MDI SharePoint site** is the Ohio site and the list variables are set. Build customer packages with `deploy/package/build_package.js` (site + list IDs rewritten from the setup code), or, from now on, export from `MDI Dev` (§1). Then turn the flows Off and On.
+**Fix:** Solutions → MDI → Environment variables → check **MDI SharePoint site** is the Ohio site and the list variables are set. Build customer packages with `newalbany/deploy/package/build_package.js` (site + list IDs rewritten from the setup code), or, from now on, export from `MDI Dev` (§1). Then turn the flows Off and On.
 
 ### 2.4 "Turn on failed. A connector was imported, however the related connection references need connections created…"
 **Fix:** Solutions → [solution] → **Connection references** (Objects list; use **All** + filter Type = Connection reference if it isn't listed) → open the reference (e.g. **MDI Excel Online (Business)**) → pick or create a connection → **Save**. Then turn the flow on.
@@ -141,4 +141,4 @@ For Kenny (and his Claude) as the owner of the New Albany MDI and the Holmdel Ti
 
 ## 6. Prompt for Kenny's Claude
 
-> You are maintaining a Microsoft 365 virtual MDI (Power Apps canvas apps + Power Automate + SharePoint lists) packaged as the managed solution "MDI" (publisher Cr21560, prefix craf4) in the Vee Pak tenant. Source is in github.com/ewolters/VoyantMDI_V: `deploy/apps/*.pa.yaml` (screens to paste in Studio), `deploy/flows/json` (flow definitions), `generator/` (Python that writes the YAML/JSON; `generator/lint/` checks it), `log.md` (history), `TROUBLESHOOTING.md` (this guide). Changes are made in the unmanaged copy in the "MDI Dev" environment, published, version-bumped, exported as managed, and imported as an upgrade into production. Never tell the user to save edits on a managed flow or app in production. Ask for the exact error text and which app/flow/screen before proposing a fix; check Section 2 of TROUBLESHOOTING.md for permission errors first.
+> You are maintaining a Microsoft 365 virtual MDI (Power Apps canvas apps + Power Automate + SharePoint lists) packaged as the managed solution "MDI" (publisher Cr21560, prefix craf4) in the Vee Pak tenant. Source is in github.com/ewolters/VoyantMDI_V: `newalbany/deploy/apps/*.pa.yaml` (screens to paste in Studio), `newalbany/deploy/flows/json` (flow definitions), `newalbany/generator/` (Python that writes the YAML/JSON; `newalbany/generator/lint/` checks it), `newalbany/log.md` (history), `newalbany/TROUBLESHOOTING.md` (this guide). Changes are made in the unmanaged copy in the "MDI Dev" environment, published, version-bumped, exported as managed, and imported as an upgrade into production. Never tell the user to save edits on a managed flow or app in production. Ask for the exact error text and which app/flow/screen before proposing a fix; check Section 2 of newalbany/TROUBLESHOOTING.md for permission errors first.

@@ -1,6 +1,6 @@
 # Virtual MDI — Deployment Package
 
-> **This is the original hand-build install** (lists by console script, flows by console script, apps pasted one by one). It still works and is the fallback if packages won't import. The faster package route, and every recovery scenario, is in `../HANDOFF.md`.
+> **This is the original hand-build install** (lists by console script, flows by console script, apps pasted one by one). It still works and is the fallback if packages won't import. The faster package route, and every recovery scenario, is in `../../HANDOFF.md`.
 *Built in the SVEND sandbox (Verxted tenant), packaged for Voyant New Albany. All Microsoft 365: SharePoint lists + Power Apps + Power Automate. No premium connectors.*
 
 ## What's in the box

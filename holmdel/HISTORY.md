@@ -14,11 +14,11 @@ Each board got a **Send to Central** button (VBA modules `Module4_CentralPush_Bo
 
 ## Design 2: Power Query central rollup (Sep 2026). Superseded.
 A read-only Excel workbook that pulled every line's current-month board through Power Query (`SharePoint.Files`), with parameters `pSiteUrl`, `pRootPath`, `pYear`, `pMonthOverride`. Nothing wrote to the boards.
-**Problems hit:** Power Query sign-in ("Couldn't authenticate with the credentials provided"): cached credentials live in two places (workbook and Global permissions) and both had to be cleared, then the right account and level chosen; null-path and literal-URL bugs across query versions v6–v7.2. The fix procedure is in TROUBLESHOOTING (root) §2.6.
+**Problems hit:** Power Query sign-in ("Couldn't authenticate with the credentials provided"): cached credentials live in two places (workbook and Global permissions) and both had to be cleared, then the right account and level chosen; null-path and literal-URL bugs across query versions v6–v7.2. The fix procedure is in newalbany/TROUBLESHOOTING.md §2.6.
 **Status:** replaced by Design 3. If someone still refreshes a rollup workbook, it's independent of Tier 2.
 
 ## Design 3: Tier 2 from the boards, no lists (Oct 2026). Live.
-Scheduled flow → Office Script on a copy of each board → `tier2_data.json` → Tier 2 app. Standard licenses only. See README.md.
+Scheduled flow → Office Script on a copy of each board → `tier2_data.json` → Tier 2 app. Standard licenses only. See holmdel/README.md.
 
 How it ended up like this, and what each problem taught:
 
@@ -26,7 +26,7 @@ How it ended up like this, and what each problem taught:
 |---|---|---|
 | Build week, late Oct | First design copied New Albany: SharePoint lists + a setup flow using the **Dataverse** connector. Vee Pak's environment **blocks Dataverse** (Premium). | Dropped lists entirely. The boards stay the only record. |
 | Build week, late Oct | Office Script "couldn't create a connection with Excel" / Forbidden on every board. Christina's access to the boards was **read-only**, and Excel only runs scripts on files the account can **edit**. | The flow **copies** each board into `_Tier2` and reads the copy. Boards stay read-only. |
-| Build week, late Oct | Power Automate expression errors at import/run: `trim()` given 2 arguments; `addProperty` names containing dots. | Added `generator/lint2.py` (argument counts, property names); every build runs it. |
+| Build week, late Oct | Power Automate expression errors at import/run: `trim()` given 2 arguments; `addProperty` names containing dots. | Added `holmdel/generator/lint2.py` (argument counts, property names); every build runs it. |
 | Build week, late Oct | OneDrive-style async copy didn't work on SharePoint. | Switched to SharePoint's synchronous copy plus a wait-for-copy loop. |
 | Build week, late Oct | **403** on copy: her access was view-only **without download**. | IT granted Read (with download). |
 | Build week, late Oct | Every board has the same file name, so one board's notes overwrote another's; a folder name under 4 letters crashed the scan; a failing note step lost the whole save; copies folder locked after a script run. | Notes keyed by board URL; per-run copy folders deleted on the next run; failures can't block the save. |
