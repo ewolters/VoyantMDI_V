@@ -65,7 +65,7 @@ Check in this order:
    - **Runs failing** → §5.
    - **Runs succeeding but nothing new** → nobody saved a board to SharePoint (§2, items 1–2). **Seen Nov 16:** board "stopped" at 6:55 am; check this first.
 2. **Connections:** the flows run on the importer's connections. If that person's password changed, their account was disabled, or the connection expired, every run fails. Solutions → the Holmdel solution → **Connection references** → re-select a working connection. **Before anyone leaves, move the connections to another owner or a service account.**
-3. **"Trigger concurrency throttling detected"** (yellow) is expected: a run took longer than 30 minutes, so the next one waited. Leave it.
+3. **"Trigger concurrency throttling detected"** (yellow) is expected: a run took longer than 30 minutes, so the next one waited. Leave it. **But** only one sync runs at a time, so a single run that hangs (for hours, "Running" at the top of the history) holds back every run after it and Tier 2 freezes at that time. Open it; if it's stuck on one step, **Cancel** it, and the next run proceeds. During a Microsoft 365 service incident, check the Microsoft 365 Service health page before chasing anything else.
 4. `tier2_data.json` → `lastRun` shows when the sync last **saved**. It only saves when a board actually changed, so a quiet weekend leaves it alone.
 
 ## 4. A number doesn't match the board
