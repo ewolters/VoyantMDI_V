@@ -11,7 +11,7 @@ Always establish **which plant** first. They share almost nothing:
 - **Plain words, one step at a time.** Give click-by-click directions for Power Apps / Power Automate ("Solutions → MDI → …"). Number the steps. Stop after anything he has to do in a browser and wait for him to report back.
 - **Ask for the exact error text or a screenshot** (and which app, screen or flow) before proposing a fix. Don't guess from a summary. Check `TROUBLESHOOTING.md` first; most errors are already there.
 - **Do the file work yourself.** Kenny shouldn't have to edit Python or YAML. You run the generators, check the output, and tell him which file to paste where.
-- **Commands run on Windows.** Use `py` (or `python`) and backslash paths in anything you tell him to type. Prefer running commands yourself.
+- **Kenny works in Claude Code on the web, in this repo.** No desktop app, nothing installed on his PC. You run every command (`python3`); he never types one. Files reach him through GitHub: push your branch and give him the link to the file (Raw for `.pa.yaml`, Download for zips). When a change is live in production, open a PR and merge it to `main`, so `main` matches production.
 - **Say what's untested.** Nothing you generate has run until Kenny pastes it into Studio. Say so, and say what to check.
 
 ## What exists
@@ -22,7 +22,7 @@ Always establish **which plant** first. They share almost nothing:
 | SharePoint site | `https://veepak1.sharepoint.com/sites/OhioContinuousImprovement` (about 33 lists: HxH_Hourly, HxH_Shift, Lines, PLAYBOOK, Lookups, MDI_Config, Newspaper, …). Schema: `deploy/mdi_package.json`. |
 | Apps (10) | Tier 1 Hour x Hour, Tier 2 SQDC (+ WEEKS & MONTHS screen `scrPeriods`), Tier 3 War Room (Board, Bowler, Variances), Quality (REWORK + NCR), TS Maintenance, TS Binder, Newspaper, SW Manager, PC Audit, MDI Settings. |
 | Flows (7 + setup) | HxH - Downtime Escalation, MDI - Upload Photo, MDI - Sync Permissions, MDI - Nightly Board Check, MDI - Frontier Critical Alert (off), MDI - Connect Site (needs Premium; not used at Ohio), MDI - Import History; MDI - Set Up Site (in MDI Setup). |
-| Holmdel | Separate solution **MDI Tier 2 - Excel boards (no lists)** 1.0.0.19 in the same Vee Pak environment, imported and run by Christina DeRamos. See the Holmdel section above. Rebuild with `py holmdel/make.py`. |
+| Holmdel | Separate solution **MDI Tier 2 - Excel boards (no lists)** 1.0.0.19 in the same Vee Pak environment, imported and run by Christina DeRamos. See the Holmdel section above. Rebuild with `python3 holmdel/make.py`. |
 
 ## Repo map
 - `deploy/apps/*.pa.yaml`: the current screen source for every app (one file per screen; `deploy/apps/APP_BUILD_GUIDE.md` says which file goes on which app/screen).
@@ -36,10 +36,10 @@ Always establish **which plant** first. They share almost nothing:
 - `log.md`: build history and decisions.
 
 ## Changing an app (the normal loop)
-1. Find the generator: `py generator/make.py` lists targets (hxh, t2, t2periods, t3, t3screens, quality, mt, bd, np, pc, sw, fa, settings, flows, flow-import).
-2. Before editing, run `py generator/make.py check`. It must say **all identical**; if not, someone hand-edited `deploy/apps` and you must reconcile first.
-3. Edit the generator. Rebuild only that target: `py generator/make.py hxh`. Output lands in `build/` (git-ignored).
-4. `py generator/make.py lint`. Fix anything reported. Also read the Power Fx traps in TROUBLESHOOTING.md §4; the lint doesn't catch them all.
+1. Find the generator: `python3 generator/make.py` lists targets (hxh, t2, t2periods, t3, t3screens, quality, mt, bd, np, pc, sw, fa, settings, flows, flow-import).
+2. Before editing, run `python3 generator/make.py check`. It must say **all identical**; if not, someone hand-edited `deploy/apps` and you must reconcile first.
+3. Edit the generator. Rebuild only that target: `python3 generator/make.py hxh`. Output lands in `build/` (git-ignored).
+4. `python3 generator/make.py lint`. Fix anything reported. Also read the Power Fx traps in TROUBLESHOOTING.md §4; the lint doesn't catch them all.
 5. Bump the version in the generator's output file name (e.g. HxH_Board_v22 → v23), rebuild, and copy the file into `deploy/apps/`, deleting the old version. Update `APP_BUILD_GUIDE.md` and this file's version notes if needed.
 6. Tell Kenny exactly how to paste it **in MDI Dev**: which app, which screen, "select all controls on the screen and delete them, then select the screen and Ctrl+V", any OnVisible/App property to set, then **Publish**.
 7. After he confirms it works: he ships it with the **ship-upgrade** skill steps (bump solution version, export managed, import as upgrade in production, check flows On).

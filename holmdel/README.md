@@ -122,15 +122,15 @@ After the import, open the solution and check that **both flows show On**. An up
 | `package/MDI_Tier2_ExcelBoards_NoLists_1.0.0.19_managed.zip` | the two flows, the app, the six settings |
 | `ReadProductionBoard.ts` | board-reading script (the flow deploys its own copy) |
 | `Tier2_XB_v7.pa.yaml` | the Tier 2 screen source (v7, compiled into the 1.0.0.19 app) |
-| `make.py` | rebuilds the package; run `py holmdel\make.py` for usage |
+| `make.py` | rebuilds the package; run `python3 holmdel/make.py` for usage |
 | `generator/` | `flows.py` (flows + settings) and `build.py` (package), called by `make.py`; `lint2.py` checks flow expressions |
 | `generator/test/` | `export.py` + `run.js` run the script against any board offline: `python3 export.py board.xlsx board.json; node run.js ../../ReadProductionBoard.ts board.json '{"lineOverride":"Line 12"}'` |
 
 ## For the new owner (Nov 2026)
 - **Supporting it** (permissions, sync, stale boards) needs nothing but this README, `../TROUBLESHOOTING.md` and the Power Platform admin screens.
 - **Reinstalling or upgrading** uses `package/MDI_Tier2_ExcelBoards_NoLists_1.0.0.19_managed.zip` as described above.
-- **Changing it.** Everything needed is in this folder; `holmdel/make.py` rebuilds the package (`py holmdel\make.py check` proves it reproduces the shipped 1.0.0.19, apart from a platform version stamp).
-  - **Flow or board-reading changes** (what's read from the boards, the sync schedule, the data file): edit `ReadProductionBoard.ts` or `generator/flows.py` → `py holmdel\make.py 1.0.0.20` (it lints the flows) → import `build\holmdel\…_1.0.0.20_managed.zip` into Vee Pak (default) as an **Upgrade** → check both flows On. The app inside is the same compiled app as 1.0.0.19.
-  - **App (screen) changes:** `py holmdel\make.py 1.0.0.20 unmanaged` → import that zip into **MDI Dev** (a separate solution, no clash with MDI) → **turn Sync Excel Boards Off in MDI Dev** (otherwise it reads the real boards from a second place) → edit the app in Studio (the screen source is `Tier2_XB_v7.pa.yaml`) → Publish → export that solution **unmanaged** → `py holmdel\make.py 1.0.0.21 managed <path to the export zip>` → import the managed zip into production as an Upgrade.
+- **Changing it.** Everything needed is in this folder; `holmdel/make.py` rebuilds the package (`python3 holmdel/make.py check` proves it reproduces the shipped 1.0.0.19, apart from a platform version stamp).
+  - **Flow or board-reading changes** (what's read from the boards, the sync schedule, the data file): edit `ReadProductionBoard.ts` or `generator/flows.py` → `python3 holmdel/make.py 1.0.0.20` (it lints the flows) → import `build\holmdel\…_1.0.0.20_managed.zip` into Vee Pak (default) as an **Upgrade** → check both flows On. The app inside is the same compiled app as 1.0.0.19.
+  - **App (screen) changes:** `python3 holmdel/make.py 1.0.0.20 unmanaged` → import that zip into **MDI Dev** (a separate solution, no clash with MDI) → **turn Sync Excel Boards Off in MDI Dev** (otherwise it reads the real boards from a second place) → edit the app in Studio (the screen source is `Tier2_XB_v7.pa.yaml`) → Publish → export that solution **unmanaged** → `python3 holmdel/make.py 1.0.0.21 managed <path to the export zip>` → import the managed zip into production as an Upgrade.
   - **Untested:** the unmanaged import into a dev environment and the app-from-export rebuild haven't been run yet. The managed rebuild has (byte-identical apart from the version stamp).
 - `generator/app*.py` are the scripts that produced `Tier2_XB_v1…v7.pa.yaml`, each patching the previous version (`app.py` → v1, `app_v2.py v1 v2`, …); for new app changes, edit in Studio or patch v7 the same way.

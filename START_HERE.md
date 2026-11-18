@@ -1,47 +1,34 @@
 # Start here, Kenny
 
-This kit lets you and Claude keep the New Albany MDI running and change it, without Eric. You don't need to know Python or Power Fx: Claude does the code, you do the clicking in Power Apps and tell Claude what you see.
+This kit lets you and Claude keep the MDI running and change it. You don't need to know Python or Power Fx: Claude does the code, you do the clicking in Power Apps and tell Claude what you see.
 
 **How the work splits**
-- **Claude (in the Claude desktop app, Code tab)** reads this folder, changes the generators, rebuilds the app screens, checks them, and tells you exactly what to paste and where.
+- **Claude Code (in your browser, at claude.ai/code, working in this repo)** reads the repo, changes the generators, rebuilds the app screens, checks them, and tells you exactly what to paste and where. Nothing is installed on your PC.
 - **You** paste into Power Apps Studio in the **MDI Dev** environment, test, then ship the change to production with a managed export + upgrade.
 
 ---
 
-## Part 1. One-time setup (about an hour)
+## Part 1. One-time setup
 
-### 1. Claude
-- You need a **paid Claude plan (Pro, Max, Team or Enterprise)**. Claude Code isn't available on the free plan.
-- Install the **Claude desktop app** for Windows: use **Download for Windows** on the [desktop quickstart page](https://code.claude.com/docs/en/desktop-quickstart). Sign in.
-- Click the **Code** tab at the top of the sidebar. That's Claude Code. (The normal chat tab can't see this folder.)
+### 1. Claude Code
+- A **paid Claude plan** (Pro, Max, Team or Enterprise) and a GitHub account with access to `github.com/ewolters/VoyantMDI_V`.
+- Go to **claude.ai/code**, pick this repo, and start a session. Claude reads `CLAUDE.md` automatically, which tells it everything about this system.
+- First message: *"Read START_HERE.md, then run the generator check."* It should end with **"23 identical, 0 different"**. That proves the code in the repo matches what's installed.
 
-### 2. Two free tools Claude needs on your PC
-- **Git for Windows**: https://git-scm.com/download/win (defaults are fine).
-- **Python 3**: https://www.python.org/downloads/ . On the first installer screen, tick **"Add python.exe to PATH"**.
+### 2. How files get from Claude to you
+Claude runs in the cloud, not on your PC, so files reach you through GitHub:
+- Each session works on its own **branch** and pushes to GitHub. Ask Claude *"push this and give me the link to the file."*
+- **A screen (`.pa.yaml`):** open the link → **Raw** → Ctrl+A, Ctrl+C → paste in Studio. (Or ask Claude to print a short one in the chat.)
+- **A solution zip:** open the link → **Download raw file**.
+- When a change is working in production, have Claude open a **pull request** and merge it into `main` on GitHub. `main` is the record of what's live; leave test branches unmerged.
 
-If your PC is locked down and IT has to install these, ask for exactly those two.
-
-### 3. Your own copy of this repo
-This folder lives on GitHub. You need your own copy so you can save changes:
-- Make a free account at https://github.com if you don't have one.
-- Either Eric **transfers** the repo to you (Settings → Transfer), or you open https://github.com/ewolters/VoyantMDI_V and click **Fork**. Either way, you end up with `github.com/<you>/VoyantMDI_V`.
-- Consider making your copy **private** (repo Settings → Danger Zone → Change visibility). It contains your SharePoint site address.
-
-### 4. Get it onto your PC
-1. In the Code tab, choose **Local** and open a folder such as `Documents`.
-2. Type: *"Clone https://github.com/&lt;you&gt;/VoyantMDI_V into this folder."* Approve what it asks.
-3. Start a **new session** and open the new `VoyantMDI_V` folder as the project. Claude now reads `CLAUDE.md` automatically, which tells it everything about this system.
-4. Type: *"Read START_HERE.md, then run the generator check."* It should end with **"23 identical, 0 different"**. That proves the code in the repo matches what's installed.
-
-**Permission mode:** start in **Manual** (Claude asks before each change or command). Switch to **Accept edits** once you're comfortable.
-
-### 5. Your development environment (MDI Dev)
+### 3. Your development environment (MDI Dev)
 Production stays untouched; every change is built and tested in a separate environment first.
 1. **make.powerapps.com** → ⚙ (top right) → **Admin center** → **Environments** → **+ New**.
-   - Name: `MDI Dev` · Type: **Developer** (free for you; if your tenant blocks it, ask IT for a **Sandbox** environment) · Add a Dataverse data store: **Yes**.
+   - Name: `MDI Dev` · Type: **Developer** (free; if your tenant blocks it, ask IT for a **Sandbox**) · Add a Dataverse data store: **Yes**.
 2. Back in make.powerapps.com, switch to **MDI Dev** (environment picker, top right).
-3. **Solutions → Import solution → Browse →** `solution\MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` from your `VoyantMDI_V` folder → **Next**. Sign in to the connections it asks for (SharePoint, Outlook, Teams, Dataverse, Excel Online) → **Import**.
-4. Optional: import `solution\MDISetup_UNMANAGED_v1.0.0.0.zip` the same way.
+3. Download `solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` from GitHub (`main`). **Solutions → Import solution → Browse →** that zip → **Next**. Sign in to the connections it asks for (SharePoint, Outlook, Teams, Dataverse, Excel Online) → **Import**.
+4. Optional: import `solution/MDISetup_UNMANAGED_v1.0.0.0.zip` the same way.
 5. When it finishes: **Solutions → MDI → Apps**, open each app once and **Publish**.
 
 **Never import the UNMANAGED zip into your production (default) environment.** The managed MDI already lives there and the two collide.
@@ -52,10 +39,10 @@ Production stays untouched; every change is built and tested in a separate envir
 
 ## Part 2. Everyday use
 
-Open the Code tab, open the `VoyantMDI_V` folder, and just say what you want. Examples:
+Start a session on this repo and say what you want. Say **which plant** (New Albany or Holmdel) first; they're different systems. Examples:
 
-- *"On Hour x Hour, make the downtime reason box wider."* → Claude changes the generator, rebuilds, checks, and tells you which file to paste on which screen in MDI Dev.
-- *"Holmdel: Christian gets 'does not have ReadAccess right(s) … entity Process'."* → Claude walks you through the fix in TROUBLESHOOTING.md.
+- *"New Albany, Hour x Hour: make the downtime reason box wider."* → Claude changes the generator, rebuilds, checks, pushes, and tells you which file to paste on which screen in MDI Dev.
+- *"Holmdel: the TV says 'does not have ReadAccess right(s) … entity Process'."* → Claude walks you through the fix in `holmdel/TROUBLESHOOTING.md`.
 - *"The change works in MDI Dev. Ship it to production."* → Claude walks you through the version bump, managed export and upgrade.
 - *"Explain how the Tier 2 downtime number is calculated."* → Claude reads the code and answers in plain words.
 
@@ -68,11 +55,12 @@ Open the Code tab, open the `VoyantMDI_V` folder, and just say what you want. Ex
 - Paste only into **MDI Dev**. Production only ever gets a managed **Upgrade** import.
 - Give Claude the **exact error text** or a screenshot, plus which app/screen/flow.
 - After every production import: open the solution and check every flow says **On**.
-- At the end of a change, say *"commit and push this."* Your GitHub copy is the backup.
+- One change per session/branch. Merge to `main` once it's live, so the next session starts from what production actually runs.
+- **The repo is public.** Don't paste setup codes (`MDI2:…`), passwords or Voyant documents into files Claude commits.
 
 ---
 
 ## Part 3. If you're stuck
-- `TROUBLESHOOTING.md` has every error we've hit, with fixes. Claude reads it too.
+- `TROUBLESHOOTING.md` (New Albany) and `holmdel/TROUBLESHOOTING.md` have every error we've hit, with fixes. Claude reads them too.
 - `log.md` is the build history, with why things are the way they are.
-- Claude Code help: https://code.claude.com/docs/en/desktop
+- Claude Code on the web help: https://code.claude.com/docs/en/claude-code-on-the-web

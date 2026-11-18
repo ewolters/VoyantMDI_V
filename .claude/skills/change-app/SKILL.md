@@ -7,10 +7,10 @@ argument-hint: "[what to change]"
 Change requested: $ARGUMENTS
 
 1. **Pin down the request.** Which app, which screen, what should it look like or do afterwards? If anything is ambiguous, ask Kenny one short question (a screenshot helps) before editing.
-2. **Baseline.** Run `py generator/make.py check` (or `python`). It must report all identical. If not, stop and explain what differs before changing anything.
+2. **Baseline.** Run `python3 generator/make.py check`. It must report all identical. If not, stop and explain what differs before changing anything.
 3. **Find the code.** `generator/make.py` maps targets to generator files. Search the generator for the control name or the text shown on screen. Read enough of it to understand how the screen is built (helpers like `label()`, `btn()`, `gal()` come from `theme.py` / the app's own helpers).
 4. **Edit the generator**, not the YAML. Keep the existing style. Watch the Power Fx traps in `TROUBLESHOOTING.md` §4 (no `Set` inside `ForAll`, 3-argument `IfError` for mixed types, no pasted ComboBoxes, 2000-row delegation limit).
-5. **Rebuild just that target** (`py generator/make.py <target>`), then `py generator/make.py lint`. Fix anything reported. Diff the new file in `build/` against the current one in `deploy/apps/` and confirm only the intended controls/properties changed.
+5. **Rebuild just that target** (`python3 generator/make.py <target>`), then `python3 generator/make.py lint`. Fix anything reported. Diff the new file in `build/` against the current one in `deploy/apps/` and confirm only the intended controls/properties changed.
 6. **Version it.** Bump the version number in the generator's output file name, rebuild, copy the new file into `deploy/apps/`, and delete the previous version there. Update `deploy/apps/APP_BUILD_GUIDE.md` if it names the file.
 7. **Tell Kenny how to apply it in MDI Dev**, numbered:
    - make.powerapps.com → environment **MDI Dev** → Solutions → MDI → the app → Edit.

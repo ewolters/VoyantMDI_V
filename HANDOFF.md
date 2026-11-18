@@ -48,7 +48,7 @@ From Eric Wolters to Kenny, November 2026. This is the "if it's gone, here's how
 ### 3B. Rebuild MDI Dev
 *About 20 minutes.* Follow START_HERE Part 1.5: create a Developer (or Sandbox) environment named **MDI Dev**, import `solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip`, sign in to its five connections, open and **Publish** each app.
 
-If you've shipped changes since 1.1.4.1, that zip is out of date. Rebuild from it, then re-apply your later screens from `deploy/apps/` (they're the current versions, and `py generator/make.py check` proves the repo matches them). Better: after every release, **export MDI Dev unmanaged** too and commit it to `solution/` so this zip is always current.
+If you've shipped changes since 1.1.4.1, that zip is out of date. Rebuild from it, then re-apply your later screens from `deploy/apps/` (they're the current versions, and `python3 generator/make.py check` proves the repo matches them). Better: after every release, **export MDI Dev unmanaged** too and commit it to `solution/` so this zip is always current.
 
 ### 3C. New or rebuilt SharePoint site
 *About 1 hour plus data entry.* The lists are created by a flow; the apps and flows are then repointed at the new lists.

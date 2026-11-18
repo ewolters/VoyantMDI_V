@@ -1316,3 +1316,4 @@ Eric asked for a lite version of his SVEND Safety HIRARC / Frontier program (DuP
 - `generator/make.py check` rebuilds all 23 app screens identical to deploy/apps; `holmdel/make.py check` rebuilds Holmdel 1.0.0.19 identical apart from the platform version stamp.
 - Kenny's editable copy: import `solution/MDI_OhioContinuousImprovement_UNMANAGED_v1.1.4.1.zip` into a new **MDI Dev** environment; ship changes as managed upgrades from there. Eric's sandbox is no longer the golden copy.
 - Open items: HANDOFF.md §7.
+- 2026-11-18: Setup docs corrected for how Kenny actually works: Claude Code on the web in this repo (no desktop app, no fork, nothing installed locally). START_HERE.md rewritten (files reach him via GitHub links on the session branch; merge to `main` once live). `py` → `python3` in CLAUDE.md, skills, HANDOFF, Holmdel README. Kenny's `test/solution-1.1.4.2` branch left as-is (test repack, not a release).
