@@ -86,7 +86,7 @@ After the import, open the solution and check that **both flows show On**. An up
 ## Lessons learned
 
 ### Sharing the app doesn't share the flow (2026-10-29)
-**Symptom:** a viewer (Christian Algarin) presses Refresh and gets `MDIXB-Tier2Data.Run failed: … user … does not have ReadAccess right(s) for record with id b2321e1e-… of entity Process`. He owns everything in SharePoint, and the error still appears.
+**Symptom:** a viewer (Christian) presses Refresh and gets `MDIXB-Tier2Data.Run failed: … user … does not have ReadAccess right(s) for record with id b2321e1e-… of entity Process`. He owns everything in SharePoint, and the error still appears.
 
 **Cause:** the error is about Power Platform, not SharePoint. `Process` is the flow record, and `b2321e1e-d0f5-5596-9d3a-65dcc95a8161` is **MDI XB - Tier 2 Data**. The app runs that flow as the person using the app. Sharing the app gives no permission on the flow, so every viewer other than the flow's owner hits this, including the TV account.
 

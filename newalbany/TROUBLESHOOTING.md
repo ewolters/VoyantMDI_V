@@ -53,7 +53,7 @@ For Kenny (and his Claude) as the owner of the New Albany MDI and the Holmdel Ti
 ## 2. Permission errors
 
 ### 2.1 `…does not have ReadAccess right(s) for record with id … of entity Process` (app shows zeros / "No lines")
-**Seen at:** Holmdel (Christian Algarin; the TV account "HM").
+**Seen at:** Holmdel (Christian; the TV account "HM").
 **Meaning:** the app tried to run a flow and Dataverse refused. `Process` = the flow record. The signed-in user isn't allowed to run that flow. It has nothing to do with SharePoint; owning every SharePoint file doesn't help.
 **Fix (flow owner, once per flow):**
 1. Power Automate → **My flows** (or **Solutions → [solution] → the flow**) → open the flow's **details page**, not the editor.
