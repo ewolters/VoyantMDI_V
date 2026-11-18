@@ -18,19 +18,36 @@ Inputs, all in the repo:
                                           no New Albany components are taken from it)
   APP_SOURCE                       a solution zip that contains the compiled canvas app
 """
-import os, sys, glob, subprocess, zipfile, io
+import os, sys, glob, subprocess, zipfile, io, re, shutil
 
 GEN = os.path.dirname(os.path.abspath(__file__))
 HERE = os.path.dirname(GEN)                      # holmdel/
 REPO = os.path.dirname(HERE)
 OUT = os.path.join(HERE, "build")
-TEMPLATE = sorted(glob.glob(os.path.join(REPO, "newalbany", "solution", "MDISetup_UNMANAGED_*.zip")))[-1]
+_t = sorted(glob.glob(os.path.join(REPO, "newalbany", "solution", "MDISetup_UNMANAGED_*.zip")))
+if not _t: sys.exit("missing newalbany/solution/MDISetup_UNMANAGED_*.zip (the publisher skeleton this package is built on); restore it from git")
+TEMPLATE = _t[-1]
 SHIPPED = os.path.join(HERE, "solution", "MDI_Tier2_ExcelBoards_NoLists_1.0.0.19_managed.zip")
 APP_YAML = os.path.join(HERE, "deploy", "Tier2_XB_v7.pa.yaml")
 # The compiled app. To ship app changes: edit the app in a dev environment, export that solution
 # (unmanaged), and point APP_SOURCE at the export (or pass it as the 3rd argument).
 APP_SOURCE = SHIPPED
 ENV = dict(os.environ, PYTHONUTF8="1")
+
+def vtuple(v): return tuple(int(x) for x in v.split("."))
+
+def shipped_version():
+    vs = [re.search(r"_(\d+\.\d+\.\d+\.\d+)_", os.path.basename(z)) for z in glob.glob(os.path.join(HERE, "solution", "*.zip"))]
+    return max((m.group(1) for m in vs if m), key=vtuple)
+
+def check_script():
+    """TypeScript syntax/type check of the board script against the Office Scripts typings (needs tsc; skipped if absent)."""
+    tsc = shutil.which("tsc")
+    if not tsc: print("script: tsc not found, syntax check skipped (npm i -g typescript)"); return True
+    r = subprocess.run([tsc, "--noEmit", "--target", "es2019", "--lib", "es2019", os.path.join(HERE, "deploy", "ReadProductionBoard.ts"),
+                        os.path.join(GEN, "test", "excelscript.d.ts")], capture_output=True, text=True)
+    print("script: ReadProductionBoard.ts compiles" if r.returncode == 0 else "script: ReadProductionBoard.ts DOES NOT COMPILE\n" + r.stdout.strip())
+    return r.returncode == 0
 
 def build(version, unmanaged=False, app=None):
     os.makedirs(os.path.join(OUT, "flows"), exist_ok=True)
@@ -93,7 +110,13 @@ if __name__ == "__main__":
                 if x and y and x.split(b"\n", 1)[-1] == y.split(b"\n", 1)[-1]: continue
                 diffs.append(n)
         print("package: identical to the shipped 1.0.0.19 (apart from the platform version stamp)" if not diffs else f"package DIFFERENT: {diffs}")
+        sc = check_script()
         ad, n = app_yaml_diffs()
         print(f"app source: {os.path.basename(APP_YAML)} matches the shipped app ({n} properties)" if not ad else f"app source DIFFERENT: {ad[:20]}")
-        sys.exit(1 if diffs or ad else 0)
-    build(a[0], unmanaged=len(a) > 1 and a[1] == "unmanaged", app=a[2] if len(a) > 2 else None)
+        sys.exit(1 if diffs or ad or not sc else 0)
+    v = a[0]
+    if not re.fullmatch(r"\d+\.\d+\.\d+\.\d+", v): sys.exit(f"version must look like 1.0.0.20, not {v!r}")
+    if vtuple(v) <= vtuple(shipped_version()):
+        sys.exit(f"version {v} must be higher than the shipped {shipped_version()}, or the import won't upgrade")
+    if not check_script(): sys.exit("fix the script before building")
+    build(v, unmanaged=len(a) > 1 and a[1] == "unmanaged", app=a[2] if len(a) > 2 else None)

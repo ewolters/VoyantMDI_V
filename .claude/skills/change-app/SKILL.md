@@ -21,3 +21,5 @@ Change requested: $ARGUMENTS
    For a one-formula change, giving him the formula for one property is fine. The generator still gets the same change.
 8. Say clearly that it's untested until he pastes it, and wait for his result.
 9. When he confirms: commit (`git add -A`, message naming the app and new file version), add a dated line to `newalbany/log.md`, push. Then offer `/ship-upgrade`.
+
+**Every reply in this skill ends with** the three parts in CLAUDE.md: *Question for you*, *Next step*, *You could ask me* (2–3 ready-to-copy prompts for this exact moment).

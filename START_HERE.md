@@ -61,6 +61,8 @@ Start a session on this repo and say what you want. Say **which plant** (New Alb
 ---
 
 ## Part 3. If you're stuck
+- **Every Claude reply ends with a question, the next step, and two or three prompts you can copy.** If you don't know what to say, pick one of those, or just answer the question.
+- `RISK_REGISTER.md` lists what can break at each plant, how you'd notice and how to fix it. §1 there is the short list to deal with first.
 - `newalbany/TROUBLESHOOTING.md` (New Albany) and `holmdel/TROUBLESHOOTING.md` have every error we've hit, with fixes. Claude reads them too.
 - `newalbany/log.md` is the build history, with why things are the way they are.
 - Claude Code on the web help: https://code.claude.com/docs/en/claude-code-on-the-web

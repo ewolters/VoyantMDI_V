@@ -1,6 +1,6 @@
 # Voyant Virtual MDI (Microsoft 365 build)
 
-**New owner? Read [START_HERE.md](START_HERE.md).** Rebuilding from scratch: [HANDOFF.md](HANDOFF.md). How it works: [newalbany/SYSTEM_REFERENCE.md](newalbany/SYSTEM_REFERENCE.md). Errors: [newalbany/TROUBLESHOOTING.md](newalbany/TROUBLESHOOTING.md). Claude reads [CLAUDE.md](CLAUDE.md) automatically.
+**New owner? Read [START_HERE.md](START_HERE.md).** Rebuilding from scratch: [HANDOFF.md](HANDOFF.md). How it works: [newalbany/SYSTEM_REFERENCE.md](newalbany/SYSTEM_REFERENCE.md). Errors: [newalbany/TROUBLESHOOTING.md](newalbany/TROUBLESHOOTING.md). What can break: [RISK_REGISTER.md](RISK_REGISTER.md). Claude reads [CLAUDE.md](CLAUDE.md) automatically.
 
 Virtual MDI boards for Voyant on Microsoft 365, for two plants that share almost nothing: **New Albany** (the full MDI on SharePoint lists) and **Holmdel** (Tier 2 read straight from the Excel boards).
 
@@ -8,6 +8,7 @@ The repo has one folder per plant, laid out the same way:
 
 ```
 README.md  START_HERE.md  CLAUDE.md  HANDOFF.md     both plants
+RISK_REGISTER.md                                    what can break, how you'd know, how to fix (both plants)
 .claude/skills/                                     /change-app  /ship-upgrade  /troubleshoot
 newalbany/                    holmdel/
   README.md                     README.md           overview, where to look

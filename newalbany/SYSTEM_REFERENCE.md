@@ -31,7 +31,7 @@ Line tablets / phones / TVs ──► 10 canvas apps (solution MDI) ──► Sh
 | **MDI - Connect Site** | Manual, paste `MDI2:` code | → sets the 32 environment variables, restarts flows | | Dataverse connector = **Premium**. Use only in MDI Dev. |
 | **MDI - Set Up Site** (solution MDI Setup) | Manual, site address | → creates/repairs all lists, seeds them, saves `Setup_Code` in MDI_Config | Email with the `MDI2:` code | Safe to re-run; adds only what's missing. Run as a site owner. |
 
-Every flow except Set Up Site, Connect Site and Import History has a **Catch** scope that emails `Alert_Email` when it fails. Flow definitions: `newalbany/deploy/flows/json/`; readable versions: `newalbany/deploy/flows/*.md`; generator: `newalbany/generator/flows.py` (`py newalbany/generator/make.py flows`), Import History: `newalbany/generator/flows/gen_import_flow.py`.
+Every flow except Set Up Site, Connect Site and Import History has a **Catch** scope that emails `Alert_Email` when it fails. Flow definitions: `newalbany/deploy/flows/json/`; readable versions: `newalbany/deploy/flows/*.md`; generator: `newalbany/generator/flows.py` (`python3 newalbany/generator/make.py flows`), Import History: `newalbany/generator/flows/gen_import_flow.py`.
 
 ## 3. Apps
 

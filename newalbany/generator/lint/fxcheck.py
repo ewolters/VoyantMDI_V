@@ -25,3 +25,4 @@ def walk(l):
             for k,p in (v.get('Properties') or {}).items(): chk(n,k,p)
             walk(v.get('Children',[]))
 walk(d); print('bad',bad)
+sys.exit(1 if bad else 0)

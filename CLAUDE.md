@@ -9,10 +9,26 @@ Always establish **which plant** first. They share almost nothing:
 
 ## How to work with Kenny
 - **Plain words, one step at a time.** Give click-by-click directions for Power Apps / Power Automate ("Solutions → MDI → …"). Number the steps. Stop after anything he has to do in a browser and wait for him to report back.
-- **Ask for the exact error text or a screenshot** (and which app, screen or flow) before proposing a fix. Don't guess from a summary. Check `newalbany/TROUBLESHOOTING.md` first; most errors are already there.
+- **Ask for the exact error text or a screenshot** (and which app, screen or flow) before proposing a fix. Don't guess from a summary. Check `RISK_REGISTER.md` and the plant's `TROUBLESHOOTING.md` first; most failures are already there.
 - **Do the file work yourself.** Kenny shouldn't have to edit Python or YAML. You run the generators, check the output, and tell him which file to paste where.
 - **Kenny works in Claude Code on the web, in this repo.** No desktop app, nothing installed on his PC. You run every command (`python3`); he never types one. Files reach him through GitHub: push your branch and give him the link to the file (Raw for `.pa.yaml`, Download for zips). When a change is live in production, open a PR and merge it to `main`, so `main` matches production.
 - **Say what's untested.** Nothing you generate has run until Kenny pastes it into Studio. Say so, and say what to check.
+
+## End every reply the same way (Kenny relies on this)
+Kenny is new to prompting. Never leave him guessing what to type next. Finish **every** reply, however short, with these three parts, in this order, in plain words:
+
+**Question for you:** the one thing you need from him right now, answerable in a word or a screenshot ("Which plant?", "What does the red step say?", "Did REFRESH work on the TV?"). If nothing is needed, write "None."
+**Next step:** what happens next and who does it, as one numbered action ("1. In MDI Dev, open Tier 2 and Publish. Tell me when it's done.").
+**You could ask me:** two or three prompts he can copy as is, each a full sentence that fits this moment, for example:
+- "Walk me through shipping this to production."
+- "Check RISK_REGISTER.md: what else could break because of this change?"
+- "Add what we just fixed to the Holmdel troubleshooting guide and push it."
+
+Rules for these parts:
+- One question, not a list. If you need several facts, ask for a screenshot instead.
+- Prompts must be specific to where you are (name the app, plant or flow), not generic ("Tell me more").
+- If he answers with only "yes", "done" or "ok", treat it as answering your question or completing the next step, and continue.
+- If he seems stuck or vague, offer two choices ("Do you want A or B?") rather than an open question.
 
 ## What exists
 | | |
@@ -29,6 +45,7 @@ One folder per plant, same layout. **All paths in these docs are from the repo r
 
 ```
 README.md  START_HERE.md  CLAUDE.md  HANDOFF.md     both plants
+RISK_REGISTER.md                                    what can break, how you'd know, how to fix (both plants)
 .claude/skills/                                     /change-app  /ship-upgrade  /troubleshoot
 newalbany/                    holmdel/
   README.md                     README.md           overview, where to look
@@ -55,7 +72,7 @@ Holmdel details:
 2. Before editing, run `python3 newalbany/generator/make.py check`. It must say **all identical**; if not, someone hand-edited `newalbany/deploy/apps` and you must reconcile first.
 3. Edit the generator. Rebuild only that target: `python3 newalbany/generator/make.py hxh`. Output lands in `newalbany/build/` (git-ignored).
 4. `python3 newalbany/generator/make.py lint`. Fix anything reported. Also read the Power Fx traps in newalbany/TROUBLESHOOTING.md §4; the lint doesn't catch them all.
-5. Bump the version in the generator's output file name (e.g. HxH_Board_v22 → v23), rebuild, and copy the file into `newalbany/deploy/apps/`, deleting the old version. Update `APP_BUILD_GUIDE.md` and this file's version notes if needed.
+5. Bump the version in the generator's output file name (e.g. HxH_Board_v22 → v23), rebuild, and copy the file into `newalbany/deploy/apps/`, deleting the old version. Run `check` again: it flags a new version not copied in (NOT DEPLOYED) and an old one left behind (NOT REBUILT), and it also compares and lints the flows. Update `APP_BUILD_GUIDE.md` and this file's version notes if needed.
 6. Tell Kenny exactly how to paste it **in MDI Dev**: which app, which screen, "select all controls on the screen and delete them, then select the screen and Ctrl+V", any OnVisible/App property to set, then **Publish**.
 7. After he confirms it works: he ships it with the **ship-upgrade** skill steps (bump solution version, export managed, import as upgrade in production, check flows On).
 8. Commit with a message that says what changed and the new file versions; add a dated line to `newalbany/log.md`.

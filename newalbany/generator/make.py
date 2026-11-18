@@ -3,8 +3,9 @@
     python3 newalbany/generator/make.py              # list targets
     python3 newalbany/generator/make.py hxh t2       # build some
     python3 newalbany/generator/make.py all          # build everything
-    python3 newalbany/generator/make.py check        # build everything, then compare with newalbany/deploy/apps
-    python3 newalbany/generator/make.py lint         # run the Power Fx checks on everything in newalbany/build/
+    python3 newalbany/generator/make.py check        # build everything, compare with newalbany/deploy (screens + flows), lint the flows
+    python3 newalbany/generator/make.py lint         # Power Fx checks on everything in newalbany/build/ (brackets, duplicates,
+                                                     #   list-name typos, Set/Navigate inside ForAll)
 
 Output goes to build/ (never straight into deploy/). Copy a file into deploy/apps under a new
 version number once it has been pasted, published and tested in the MDI Dev environment.
@@ -48,20 +49,43 @@ def run(name):
     return True
 
 def check():
+    """Every deployed screen and flow must be rebuilt byte-for-byte by the generators."""
     apps = os.path.join(ROOT, "deploy", "apps")
+    flows = os.path.join(ROOT, "deploy", "flows", "json")
     alias = {"Settings_Thresholds_v2.pa.yaml": "Settings_scrCfg_v2.pa.yaml",
              "Settings_scrImport_v2.pa.yaml": "Settings_scrImport_v2.pa.yaml",
              **{f"Settings_{n}_v2.pa.yaml": f"Settings_{n}_v1.pa.yaml" for n in ("Dropdowns", "Escalation", "Lines", "People", "Standards")}}
-    same = diff = 0
+    same = diff = 0; covered = set()
     for f in sorted(os.listdir(OUT)):
         if not f.endswith(".pa.yaml"): continue
         ref = os.path.join(apps, alias.get(f, f))
-        if not os.path.exists(ref): continue
+        if not os.path.exists(ref):
+            if not f.startswith("_"):   # _*.pa.yaml are generator scratch files
+                diff += 1; print("  NOT DEPLOYED  " + f + "   (built, but no such file in newalbany/deploy/apps: deleted, or a new version not copied in yet)")
+            continue
+        covered.add(alias.get(f, f))
         ok = filecmp.cmp(os.path.join(OUT, f), ref, shallow=False)
         same += ok; diff += not ok
         print(("  same  " if ok else "  DIFF  ") + f + ("" if alias.get(f, f) == f else f"  (vs {alias[f]})"))
-    print(f"{same} identical, {diff} different")
-    return diff == 0
+    # deployed screens that no generator produced: a generator that failed, was renamed, or an old version left behind
+    orphans = [f for f in sorted(os.listdir(apps)) if f.endswith(".pa.yaml") and f not in covered]
+    for f in orphans: print("  NOT REBUILT  " + f + "   (no generator wrote it: failed generator, renamed output, or an old version to delete)")
+    # flows the generators write, compared with deploy/flows/json, then linted
+    fl_same = fl_diff = 0; fdir = os.path.join(OUT, "flows")
+    for f in sorted(os.listdir(fdir)) if os.path.isdir(fdir) else []:
+        ref = os.path.join(flows, f)
+        if not f.endswith(".json") or not os.path.exists(ref): continue
+        ok = filecmp.cmp(os.path.join(fdir, f), ref, shallow=False)
+        fl_same += ok; fl_diff += not ok
+        print(("  same  " if ok else "  DIFF  ") + "flow " + f)
+    fl_bad = 0
+    for f in sorted(os.listdir(flows)):
+        if f.endswith(".json") and f != "catch_block.json":
+            r = subprocess.run([sys.executable, os.path.join(GEN, "lint", "flowlint.py"), os.path.join(flows, f)], env=ENV, capture_output=True, text=True)
+            if r.returncode: fl_bad += 1; print("  FLOW LINT  " + r.stdout.strip())
+    print(f"{same} identical, {diff} different" + (f", {len(orphans)} not rebuilt" if orphans else "")
+          + f"; flows {fl_same} identical, {fl_diff} different" + (f", {fl_bad} fail lint" if fl_bad else ", lint clean"))
+    return diff == 0 and not orphans and fl_diff == 0 and fl_bad == 0
 
 if __name__ == "__main__":
     os.makedirs(TMP, exist_ok=True)
@@ -72,13 +96,17 @@ if __name__ == "__main__":
         bad = 0
         for f in sorted(os.listdir(OUT)):
             if f.endswith(".pa.yaml"):
-                for tool in ("fxcheck.py", "dupcheck.py"):
+                for tool in ("fxcheck.py", "dupcheck.py", "sources.py"):
                     r = subprocess.run([sys.executable, os.path.join(GEN, "lint", tool), os.path.join(OUT, f)], env=ENV, capture_output=True, text=True)
                     last = (r.stdout.strip().splitlines() or [""])[-1]
                     print(f"  {f:40} {tool:12} {last}")
                     bad += r.returncode != 0
         sys.exit(1 if bad else 0)
     names = list(TARGETS) if args[0] in ("all", "check") else args
+    if args[0] == "check":   # start clean, so a generator that fails can't hide behind last run's output
+        for f in os.listdir(OUT):
+            if f.endswith(".pa.yaml"): os.remove(os.path.join(OUT, f))
+        shutil.rmtree(os.path.join(OUT, "flows"), ignore_errors=True)
     bad = [n for n in names if n not in TARGETS]
     if bad: sys.exit(f"unknown target(s): {bad}")
     ok = all([run(n) for n in names])

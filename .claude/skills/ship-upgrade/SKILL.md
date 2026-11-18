@@ -24,3 +24,5 @@ Walk Kenny through these steps one block at a time, waiting for him to confirm e
 - Version not higher: bump it in MDI Dev and export again.
 - Missing dependency / connection reference: see newalbany/TROUBLESHOOTING.md §2.4.
 - After import a flow won't turn on: newalbany/TROUBLESHOOTING.md §2.3–2.4.
+
+**Every reply in this skill ends with** the three parts in CLAUDE.md: *Question for you*, *Next step*, *You could ask me* (2–3 ready-to-copy prompts for this exact moment).
