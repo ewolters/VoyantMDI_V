@@ -84,8 +84,8 @@ LASTEND="))"
 
 ROWSAVE='Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));\nSelect(btnSaveRow)'
 PH='"— PICK PRODUCT —"'
-JOBBAD='!IsBlank(Self.Text) && !IsMatch(Self.Text, "\\d{1,6}")'
-JOBMSG='Notify("Job number: numbers only, up to 6 digits. Not saved.", NotificationType.Warning); Reset(Self); true'
+JOBBAD='!IsBlank(Self.Text) && !IsMatch(Self.Text, "\\d{6}")'
+JOBMSG='Notify("Job number must be exactly 6 digits (for example 164303). Not saved.", NotificationType.Warning); Reset(Self); true'
 PHL='"PICK"'  # LINE starts here: the operator must choose their line (nothing saves until they do)
 NOLINE='ddLine.Selected.Value = '+PHL+''
 LINEKEY='If(varProd = '+PH+', "", ddLine.Selected.Value & "|" & varPB.Size & "|" & varPB.Form)'

@@ -489,15 +489,14 @@
       BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
       FocusedBorderColor: =RGBA(0, 72, 81, 1)
       HoverBorderColor: =RGBA(117, 120, 123, 1)
-      OnChange: |-
-        =If(!IsBlank(Self.Text) && !IsMatch(Self.Text, "\d{1,6}"), Notify("Job number: numbers only, up to 6 digits. Not saved.", NotificationType.Warning); Reset(Self); true, Select(btnSaveShift); true)
+      OnChange: =If(!IsBlank(Self.Text) && !IsMatch(Self.Text, "\d{6}"), Notify("Job number must be exactly 6 digits (for example 164303). Not saved.", NotificationType.Warning); Reset(Self); true, Select(btnSaveShift); true)
       X: =616
       Y: =120
       Width: =160
       Height: =48
       Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
       BorderThickness: =If(IsBlank(Self.Text), 3, 1)
-      Tooltip: ="REQUIRED. Primary job number for the shift. Numbers only, up to 6 digits."
+      Tooltip: ="REQUIRED. Primary job number for the shift. Exactly 6 digits."
       MaxLength: =6
 - cStdCrew:
     Control: Label@2.5.1
@@ -897,7 +896,7 @@
             FocusedBorderColor: =RGBA(0, 72, 81, 1)
             HoverBorderColor: =RGBA(117, 120, 123, 1)
             OnChange: |-
-              =If(!IsBlank(Self.Text) && !IsMatch(Self.Text, "\d{1,6}"), Notify("Job number: numbers only, up to 6 digits. Not saved.", NotificationType.Warning); Reset(Self); true,
+              =If(!IsBlank(Self.Text) && !IsMatch(Self.Text, "\d{6}"), Notify("Job number must be exactly 6 digits (for example 164303). Not saved.", NotificationType.Warning); Reset(Self); true,
                Patch(colHours, ThisItem, {Job: Self.Text});
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow);
@@ -908,7 +907,7 @@
             Width: =80
             Height: =42
             BorderThickness: =1
-            Tooltip: ="Only if the job changed this hour (changeover). Blank = Job 1. Numbers only, up to 6 digits."
+            Tooltip: ="Only if the job changed this hour (changeover). Blank = Job 1. Exactly 6 digits."
             MaxLength: =6
       - gTgt:
           Control: Label@2.5.1
