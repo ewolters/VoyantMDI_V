@@ -58,8 +58,8 @@
     Control: Classic/DropDown@2.3.1
     Properties:
       Items: |-
-        =Ungroup(Table({t: Table({Value: "— PICK LINE —"})}, {t: Distinct(PLAYBOOK, Line)}), t)
-      Default: ="— PICK LINE —"
+        =Ungroup(Table({t: Table({Value: "PICK"})}, {t: Distinct(PLAYBOOK, Line)}), t)
+      Default: ="PICK"
       OnChange: =Select(btnRefresh)
       Font: =Font.Arial
       Size: =20
@@ -76,8 +76,8 @@
       FocusedBorderColor: =RGBA(0, 72, 81, 1)
       HoverBorderColor: =RGBA(117, 120, 123, 1)
       FontWeight: =FontWeight.Bold
-      Fill: =If(ddLine.Selected.Value = "— PICK LINE —", RGBA(255, 236, 179, 1), RGBA(255, 255, 255, 1))
-      BorderColor: =If(ddLine.Selected.Value = "— PICK LINE —", RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
+      Fill: =If(ddLine.Selected.Value = "PICK", RGBA(255, 236, 179, 1), RGBA(255, 255, 255, 1))
+      BorderColor: =If(ddLine.Selected.Value = "PICK", RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
       X: =440
       Y: =28
       Width: =120
@@ -898,7 +898,7 @@
               =Patch(colHours, ThisItem, {Job: Self.Text});
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow)
-            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "PICK") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =146
             Y: =9
             Width: =80
@@ -949,7 +949,7 @@
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow)
             FontWeight: =FontWeight.Bold
-            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "PICK") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             BorderThickness: =If(ThisItem.InShift && (IsBlank(ThisItem.Cum)) && Now() >= ThisItem.StartT, 3, 1)
             X: =400
             Y: =7
@@ -1019,7 +1019,7 @@
               =Patch(colHours, ThisItem, {BPM: If(IsBlank(Self.Text), Blank(), Value(Self.Text))});
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow)
-            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "PICK") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             Fill: =If(!ThisItem.InShift, RGBA(236, 236, 234, 1), !(IsBlank(ThisItem.BPM)), If(ThisItem.BPM < varTmax, RGBA(253, 236, 200, 1), RGBA(255, 255, 255, 1)), Now() >= DateAdd(ThisItem.StartT, ThisItem.SlotMin, TimeUnit.Minutes), RGBA(249, 214, 213, 1), Now() >= ThisItem.StartT, RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
             X: =812
             Y: =9
@@ -1044,7 +1044,7 @@
               =With({p: Coalesce(Value(Self.Text), 0)}, Patch(colHours, ThisItem, {Planned: p, Tgt: Max(0, varUPH * (ThisItem.SlotMin - p) / 60)}));
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow)
-            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "PICK") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =880
             Y: =9
             Width: =56
@@ -1071,7 +1071,7 @@
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow);
                 true))
-            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "PICK") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =940
             Y: =9
             Width: =56
@@ -1104,7 +1104,7 @@
             PressedFill: =RGBA(176, 227, 228, 1)
             FocusedBorderColor: =RGBA(0, 72, 81, 1)
             HoverBorderColor: =RGBA(117, 120, 123, 1)
-            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "PICK") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =1000
             Y: =9
             Width: =160
@@ -1133,7 +1133,7 @@
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow);
                 true))
-            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "PICK") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =1164
             Y: =9
             Width: =56
@@ -1166,7 +1166,7 @@
             PressedFill: =RGBA(176, 227, 228, 1)
             FocusedBorderColor: =RGBA(0, 72, 81, 1)
             HoverBorderColor: =RGBA(117, 120, 123, 1)
-            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "PICK") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =1224
             Y: =9
             Width: =160
@@ -1190,45 +1190,42 @@
             Color: =If(ThisItem.Safety, RGBA(255, 255, 255, 1), RGBA(177, 179, 179, 1))
             HoverFill: =ColorFade(Self.Fill, -15%)
             BorderColor: =Self.Fill
-            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —"), DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "PICK"), DisplayMode.Edit, DisplayMode.Disabled)
             X: =1388
             Y: =10
             Width: =64
             Height: =40
             Tooltip: ="Tap if a safety incident or near miss happened this hour. Tap again to undo. Add a note."
-      - gNotes:
-          Control: Classic/TextInput@2.3.2
+      - gNoteBtn:
+          Control: Classic/Button@2.2.0
           Properties:
-            Default: =ThisItem.Notes
-            HintText: =""
+            Text: =If(IsBlank(ThisItem.Notes), "+ note", Left(ThisItem.Notes, 7) & If(Len(ThisItem.Notes) > 7, "…", ""))
+            OnSelect: =Set(varNoteHr, ThisItem.HourNo); Set(varNoteOpen, true); Reset(txtNote)
             Font: =Font.Arial
             Size: =10
-            Align: =Align.Center
+            FontWeight: =FontWeight.Normal
+            Fill: =RGBA(255, 255, 255, 1)
+            Color: =If(IsBlank(ThisItem.Notes), RGBA(177, 179, 179, 1), RGBA(7, 39, 45, 1))
+            HoverFill: =RGBA(176, 227, 228, 1)
             BorderColor: =RGBA(217, 217, 214, 1)
-            FocusedBorderColor: =RGBA(0, 72, 81, 1)
-            HoverBorderColor: =RGBA(117, 120, 123, 1)
-            OnChange: |-
-              =Patch(colHours, ThisItem, {Notes: Self.Text});
-              Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
-              Select(btnSaveRow)
-            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "— PICK LINE —") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "PICK") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
+            BorderThickness: =1
+            Tooltip: =If(IsBlank(ThisItem.Notes), "Add a note for this hour", ThisItem.Notes)
             X: =1456
             Y: =9
             Width: =68
             Height: =42
-            BorderThickness: =1
-            Tooltip: ="Optional note for this hour."
 - lblCrewGate:
     Control: Label@2.5.1
     Properties:
-      Text: =If(ddLine.Selected.Value = "— PICK LINE —", "▲  PICK YOUR LINE" & Char(10) & "Choose it in LINE (top left), then the product and ACTUAL CREW. Safety opens as soon as the line is picked.", Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —", "▲  PICK THE PRODUCT RUNNING NOW" & Char(10) & "Choose it in PRODUCT (top), then enter ACTUAL CREW. Safety can always be logged.", "▲  ENTER ACTUAL CREW TO START THE SHIFT" & Char(10) & "Hour entry unlocks once crew is in. Safety can always be logged.")
+      Text: =If(ddLine.Selected.Value = "PICK", "▲  PICK YOUR LINE" & Char(10) & "Choose it in LINE (top left), then the product and ACTUAL CREW. Safety opens as soon as the line is picked.", Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —", "▲  PICK THE PRODUCT RUNNING NOW" & Char(10) & "Choose it in PRODUCT (top), then enter ACTUAL CREW. Safety can always be logged.", "▲  ENTER ACTUAL CREW TO START THE SHIFT" & Char(10) & "Hour entry unlocks once crew is in. Safety can always be logged.")
       Font: =Font.Arial
       Size: =26
       Color: =RGBA(7, 39, 45, 1)
       FontWeight: =FontWeight.Bold
       Align: =Align.Center
       Fill: =RGBA(255, 255, 255, 0.82)
-      Visible: =ddLine.Selected.Value = "— PICK LINE —" || Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —" || Coalesce(Value(txtCrew.Text), 0) <= 0
+      Visible: =ddLine.Selected.Value = "PICK" || Coalesce(varProd, "— PICK PRODUCT —") = "— PICK PRODUCT —" || Coalesce(Value(txtCrew.Text), 0) <= 0
       Tooltip: ="Pick your LINE and the PRODUCT, and type the number of people actually on the line in ACTUAL CREW (top). Both are required before hourly entry."
       X: =12
       Y: =218
@@ -1646,7 +1643,7 @@
     Control: Label@2.5.1
     Properties:
       Text: |-
-        =If(ddLine.Selected.Value = "— PICK LINE —", "NEXT ▸ PICK" & Char(10) & "YOUR LINE", Coalesce(Value(txtCrew.Text), 0) <= 0, "NEXT ▸ ENTER" & Char(10) & "ACTUAL CREW", With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
+        =If(ddLine.Selected.Value = "PICK", "NEXT ▸ PICK" & Char(10) & "YOUR LINE", Coalesce(Value(txtCrew.Text), 0) <= 0, "NEXT ▸ ENTER" & Char(10) & "ACTUAL CREW", With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
               od: CountRows(Filter(colHours, InShift && Now() >= DateAdd(StartT, SlotMin, TimeUnit.Minutes) && IsBlank(Cum)))},
           If(IsBlank(n),
              If(CountRows(Filter(colHours, InShift && IsBlank(Cum))) = 0, "✓ ALL HOURS ENTERED", "✓ UP TO DATE"),
@@ -1654,13 +1651,13 @@
       Font: =Font.Arial
       Size: =15
       Color: |-
-        =If(ddLine.Selected.Value = "— PICK LINE —" || Coalesce(Value(txtCrew.Text), 0) <= 0, RGBA(7, 39, 45, 1), With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
+        =If(ddLine.Selected.Value = "PICK" || Coalesce(Value(txtCrew.Text), 0) <= 0, RGBA(7, 39, 45, 1), With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
               od: CountRows(Filter(colHours, InShift && Now() >= DateAdd(StartT, SlotMin, TimeUnit.Minutes) && IsBlank(Cum)))},
           If(IsBlank(n) || od > 0, RGBA(255, 255, 255, 1), RGBA(7, 39, 45, 1))))
       FontWeight: =FontWeight.Bold
       Align: =Align.Center
       Fill: |-
-        =If(ddLine.Selected.Value = "— PICK LINE —" || Coalesce(Value(txtCrew.Text), 0) <= 0, RGBA(255, 242, 179, 1), With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
+        =If(ddLine.Selected.Value = "PICK" || Coalesce(Value(txtCrew.Text), 0) <= 0, RGBA(255, 242, 179, 1), With({n: First(Filter(colHours, InShift && Now() >= StartT && IsBlank(Cum))),
               od: CountRows(Filter(colHours, InShift && Now() >= DateAdd(StartT, SlotMin, TimeUnit.Minutes) && IsBlank(Cum)))},
           If(IsBlank(n), RGBA(46, 160, 67, 1), od > 0, RGBA(207, 34, 46, 1), RGBA(255, 242, 179, 1))))
       Tooltip: ="What the operator owes the board right now. Yellow = this hour is due. Red = hours have ended with no counter entered."
@@ -1827,7 +1824,7 @@
     Properties:
       Text: =""
       OnSelect: |-
-        =If(ddLine.Selected.Value = "— PICK LINE —", Notify("Pick your LINE first (top left). Nothing was saved.", NotificationType.Warning),
+        =If(ddLine.Selected.Value = "PICK", Notify("Pick your LINE first (top left). Nothing was saved.", NotificationType.Warning),
         Select(btnFlush);
         If(IsBlank(varPB), Select(btnRefresh));
         With({r: varRow, k: ddLine.Selected.Value & "-" & Text(Coalesce(varDate, Today()), "yyyymmdd") & "-S" & ddShift.Selected.Value & "-H" & Text(varRow.HourNo, "00")},
@@ -1872,7 +1869,7 @@
     Properties:
       Text: =""
       OnSelect: |-
-        =If(ddLine.Selected.Value = "— PICK LINE —", Notify("Pick your LINE first (top left). Nothing was saved.", NotificationType.Warning),
+        =If(ddLine.Selected.Value = "PICK", Notify("Pick your LINE first (top left). Nothing was saved.", NotificationType.Warning),
         With({act: Max(colHours, Coalesce(Cum, 0)), tgt: Sum(colHours, Tgt),
               bpm: If(CountRows(Filter(colHours, Coalesce(BPM, 0) > 0)) = 0, Blank(), Average(Filter(colHours, Coalesce(BPM, 0) > 0), BPM)),
               avail: With({d0: Coalesce(varDate, Today())}, With({d1: If(ddEnd.Selected.M <= ddStart.Selected.M, DateAdd(d0, 1, TimeUnit.Days), d0)}, DateDiff(DateTime(Year(d0), Month(d0), Day(d0), RoundDown(ddStart.Selected.M / 60, 0), Mod(ddStart.Selected.M, 60), 0), DateTime(Year(d1), Month(d1), Day(d1), RoundDown(ddEnd.Selected.M / 60, 0), Mod(ddEnd.Selected.M, 60), 0), TimeUnit.Minutes))) - Coalesce(Value(txtLunch.Text), 0) - Coalesce(Value(txtBreak.Text), 0),
@@ -1914,6 +1911,104 @@
       Y: =1079
       Width: =1
       Height: =1
+- noteShade:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varNoteOpen
+      Fill: =RGBA(0, 0, 0, 0.35)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =1080
+- notePanel:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varNoteOpen
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =460
+      Y: =180
+      Width: =1000
+      Height: =600
+- noteTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="NOTE  ·  " & With({h: LookUp(colHours, HourNo = varNoteHr)}, Substitute(Substitute(Text(h.StartT, "h:mm AM/PM"), " AM", ""), " PM", "") & "–" & Text(DateAdd(h.StartT, h.SlotMin, TimeUnit.Minutes), "h:mm AM/PM")) & "  ·  line " & ddLine.Selected.Value
+      Font: =Font.Georgia
+      Size: =20
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varNoteOpen
+      X: =484
+      Y: =196
+      Width: =952
+      Height: =48
+- txtNote:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =LookUp(colHours, HourNo = varNoteHr).Notes
+      Mode: =TextMode.MultiLine
+      HintText: ="What happened this hour? (changeover, material issue, who was called...)"
+      MaxLength: =2000
+      Font: =Font.Arial
+      Size: =18
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =484
+      Y: =252
+      Width: =952
+      Height: =440
+      Visible: =varNoteOpen
+- noteCount:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Text(Len(txtNote.Text)) & " / 2000"
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varNoteOpen
+      X: =484
+      Y: =700
+      Width: =300
+      Height: =30
+- noteSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SAVE NOTE"
+      OnSelect: |-
+        =Patch(colHours, LookUp(colHours, HourNo = varNoteHr), {Notes: txtNote.Text}); Set(varRow, LookUp(colHours, HourNo = varNoteHr)); Set(varNoteOpen, false); Select(btnSaveRow)
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 178, 169, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varNoteOpen
+      X: =1156
+      Y: =712
+      Width: =150
+      Height: =52
+- noteCancel:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="CANCEL"
+      OnSelect: =Set(varNoteOpen, false)
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(217, 217, 214, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varNoteOpen
+      X: =1316
+      Y: =712
+      Width: =120
+      Height: =52
 - calShade:
     Control: Rectangle@2.3.0
     Properties:

@@ -23,11 +23,11 @@ cond("gDT1", '!IsBlank(ThisItem.Reason)', "IsBlank(ThisItem.DT)")
 cond("gR1", "Coalesce(ThisItem.DT, 0) > 0", 'IsBlank(ThisItem.Reason)')
 cond("gDT2", '!IsBlank(ThisItem.Reason2)', "IsBlank(ThisItem.DT2)")
 cond("gR2", "Coalesce(ThisItem.DT2, 0) > 0", 'IsBlank(ThisItem.Reason2)')
-for n in ["gJob","gPlan","gNotes"]: optional(n)
+for n in ["gJob","gPlan"]: optional(n)
 E("gCounter", HintText=f'If(ThisItem.InShift && {STARTED}, "enter", "")')
 E("gBPM", HintText=f'If(ThisItem.InShift && {STARTED}, "bpm", "")')
 for n in ["gPlan","gDT1","gDT2"]: E(n, HintText='""')
-E("gJob", HintText='""'); E("gNotes", HintText='""')
+E("gJob", HintText='""')
 
 # shift-level
 E("txtJob1", Fill=f'If(IsBlank(Self.Text), {YEL}, {W_})', BorderColor=f'If(IsBlank(Self.Text), {YELB}, {GB})', BorderThickness='If(IsBlank(Self.Text), 3, 1)')
@@ -92,7 +92,6 @@ T={"ddLine":"Production line. Standards load from the PLAYBOOK list.",
  "gDT2":"Unplanned downtime minutes, event 2 (if a second issue hit this hour). DT1 + DT2 can't exceed the hour.",
  "gR2":"Reason for downtime event 2. Required when there are DT2 minutes. List comes from the Lookups list (Downtime).",
  "gSafety":"Tap if a safety incident or near miss happened this hour. Tap again to undo. Add a note.",
- "gNotes":"Optional note for this hour.",
  "txtScrap":"REQUIRED at end of shift. Finished-goods scrap units. Enter 0 if none.",
  "ddScrapReason":"Required when scrap is more than 0.",
  "txtScrapNotes":"Optional detail on scrap.",

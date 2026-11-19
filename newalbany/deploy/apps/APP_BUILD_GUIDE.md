@@ -87,7 +87,7 @@ Open **Settings** (gear icon or ⋯ in the top bar).
 ### 1. HxH Board: hour-by-hour production board (line tablet / TV)
 | | |
 |---|---|
-| **File** | `HxH_Board_v24.pa.yaml` |
+| **File** | `HxH_Board_v25.pa.yaml` |
 | **Name / format** | `MDI HxH Board`, **Tablet** 1920 × 1080 |
 | **Lists** | PLAYBOOK, HxH_Hourly, HxH_Shift, Lookups |
 | **Flow** | no |

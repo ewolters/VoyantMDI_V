@@ -84,7 +84,7 @@ LASTEND="))"
 
 ROWSAVE='Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));\nSelect(btnSaveRow)'
 PH='"— PICK PRODUCT —"'
-PHL='"— PICK LINE —"'  # LINE starts here: the operator must choose their line (nothing saves until they do)
+PHL='"PICK"'  # LINE starts here: the operator must choose their line (nothing saves until they do)
 NOLINE='ddLine.Selected.Value = '+PHL+''
 LINEKEY='If(varProd = '+PH+', "", ddLine.Selected.Value & "|" & varPB.Size & "|" & varPB.Form)'
 
@@ -207,7 +207,11 @@ kids.append(ti("gDT2",'If(IsBlank(ThisItem.DT2), "", Text(ThisItem.DT2))',1164,9
 kids.append(dd("gR2",DT_CODES,1224,9,160,42,default='Coalesce(ThisItem.Reason2, " ")',onchange='With({v: Trim(Self.Selected.Value)},\n If(v <> Coalesce(ThisItem.Reason2, ""),\n    Patch(colHours, ThisItem, {Reason2: v});\n    Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));\n    Select(btnSaveRow)))',size=11,indent=I,extra={"DisplayMode":F(IN)}))
 kids.append(btn("gSafety",'If(ThisItem.Safety, "EVENT", "OK")','Patch(colHours, ThisItem, {Safety: !ThisItem.Safety});\n'+ROWSAVE,1388,10,64,40,
    fill=f'If(!ThisItem.InShift, {MUTE}, ThisItem.Safety, {RED}, {MUTE})',color=f'If(ThisItem.Safety, {WHITE}, {G5})',size=11,indent=I,extra={"DisplayMode":F(INSAFE)}))
-kids.append(ti("gNotes",'ThisItem.Notes',1456,9,68,42,'Patch(colHours, ThisItem, {Notes: Self.Text});\n'+ROWSAVE,hint='"note"',size=10,number=False,indent=I,extra={"DisplayMode":F(IN)}))
+# NOTES: the row shows a short preview; tapping opens a popup (noteShade ... noteCancel) with room for a real note
+kids.append(btn("gNoteBtn",'If(IsBlank(ThisItem.Notes), "+ note", Left(ThisItem.Notes, 7) & If(Len(ThisItem.Notes) > 7, "…", ""))',
+   'Set(varNoteHr, ThisItem.HourNo); Set(varNoteOpen, true); Reset(txtNote)',1456,9,68,42,fill=WHITE,color=f'If(IsBlank(ThisItem.Notes), {G5}, {DARK})',size=10,indent=I,
+   extra={"DisplayMode":F(IN),"FontWeight":"=FontWeight.Normal","BorderColor":F(G1),"BorderThickness":"=1","HoverFill":F(AQUA),
+          "Tooltip":F('If(IsBlank(ThisItem.Notes), "Add a note for this hour", ThisItem.Notes)')}))
 gprops={"Items":F("colHours"),"TemplateSize":"=60","TemplatePadding":"=0","ShowScrollbar":"=false",
  "TemplateFill":F(f'If(!ThisItem.InShift, RGBA(236, 236, 234, 1),\n   Now() >= ThisItem.StartT && Now() < DateAdd(ThisItem.StartT, ThisItem.SlotMin, TimeUnit.Minutes), {NOW},\n   Mod(ThisItem.HourNo, 2) = 0, RGBA(247, 248, 248, 1), {WHITE})'),
  "BorderColor":F(G1),"BorderThickness":"=1"}
@@ -306,6 +310,18 @@ out.append(btn("btnRetry",'"RETRY NOW"','Select(btnFlush)',1196,94,150,40,size=1
 NOSAVE='Notify("Pick your LINE first (top left). Nothing was saved.", NotificationType.Warning)'
 out.append(btn("btnSaveRow",'""','If('+NOLINE+', '+NOSAVE+',\n'+SAVEROW+';\ntrue)',0,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
 out.append(btn("btnSaveShift",'""','If('+NOLINE+', '+NOSAVE+',\n'+SAVESHIFT+';\ntrue)',2,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
+NV={"Visible":"=varNoteOpen"}
+NHR='LookUp(colHours, HourNo = varNoteHr)'
+out.append(rect("noteShade","RGBA(0, 0, 0, 0.35)",0,0,1920,1080).replace("Properties:\n","Properties:\n      Visible: =varNoteOpen\n",1))
+out.append(rect("notePanel",WHITE,460,180,1000,600).replace("Properties:\n","Properties:\n      Visible: =varNoteOpen\n      BorderColor: ="+TEAL_D+"\n      BorderThickness: =2\n",1))
+out.append(label("noteTitle",'"NOTE  ·  " & With({h: '+NHR+'}, Substitute(Substitute(Text(h.StartT, "h:mm AM/PM"), " AM", ""), " PM", "") & "–" & Text(DateAdd(h.StartT, h.SlotMin, TimeUnit.Minutes), "h:mm AM/PM")) & "  ·  line " & ddLine.Selected.Value',
+   484,196,952,48,size=20,bold=True,color=DARK,font="Georgia",extra=dict(NV)))
+out.append(ctrl("txtNote","Classic/TextInput@2.3.2",{"Default":F(NHR+'.Notes'),"Mode":"=TextMode.MultiLine","HintText":'="What happened this hour? (changeover, material issue, who was called...)"',
+   "MaxLength":"=2000","Font":"=Font.Arial","Size":"=18","BorderColor":F(G5),"FocusedBorderColor":F(TEAL_D),"HoverBorderColor":F(G9),**box(484,252,952,440),"Visible":"=varNoteOpen"}))
+out.append(label("noteCount",'Text(Len(txtNote.Text)) & " / 2000"',484,700,300,30,size=11,color=G9,extra=dict(NV)))
+out.append(btn("noteSave",'"SAVE NOTE"','Patch(colHours, '+NHR+', {Notes: txtNote.Text}); Set(varRow, '+NHR+'); Set(varNoteOpen, false); Select(btnSaveRow)',
+   1156,712,150,52,fill=TEAL,color=DARK,size=14,extra=dict(NV)))
+out.append(btn("noteCancel",'"CANCEL"','Set(varNoteOpen, false)',1316,712,120,52,fill=G1,color=DARK,size=14,extra=dict(NV)))
 CV={"Visible":"=varCal"}
 def cv(d=None): d=dict(d or {}); d.update(CV); return d
 CX=880; CY=88   # panel under the DATE button
@@ -333,5 +349,5 @@ out.append(btn("calCancel",'"CANCEL"','Set(varCal, false)',CX+280,CY+446,124,44,
 # every formula that read the old dropdown now reads the picked date
 out=[s.replace("ddDate.Selected.D", DTE) for s in out]
 assert not any("ddDate" in s for s in out)
-write_themed(__import__("os").environ["MDI_OUTDIR"]+"/HxH_Board_v24.pa.yaml", "".join(out))
+write_themed(__import__("os").environ["MDI_OUTDIR"]+"/HxH_Board_v25.pa.yaml", "".join(out))
 print("ok", sum(len(x) for x in out))

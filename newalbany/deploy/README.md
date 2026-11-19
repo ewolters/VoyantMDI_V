@@ -6,7 +6,7 @@
 ## What's in the box
 | Module | App (file) | Who uses it | Device |
 |---|---|---|---|
-| Hour x Hour | **HxH Board** (`apps/HxH_Board_v24.pa.yaml`) | Line leads / operators, every hour | Line tablet / TV |
+| Hour x Hour | **HxH Board** (`apps/HxH_Board_v25.pa.yaml`) | Line leads / operators, every hour | Line tablet / TV |
 | Downtime escalation | Flow **HxH - Downtime Escalation** | Automatic (Teams to contacts at 60/120/240 min) | — |
 | QA rework | **QA Rework** (`apps/QA_Rework_v4.pa.yaml`) | QA | Tablet / PC |
 | Troubleshooting | **TS Maintenance** (`apps/TS_Maintenance_v5.pa.yaml`) | Maintenance (QR at machine) | Phone |
