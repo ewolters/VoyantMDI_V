@@ -201,9 +201,9 @@ kids.append(ti("gBPM",'If(IsBlank(ThisItem.BPM), "", Text(ThisItem.BPM))',812,9,
    hint='"bpm"',size=14,indent=I,extra={"DisplayMode":F(IN),"Fill":F(f'If(!IsBlank(ThisItem.BPM) && ThisItem.BPM < varTmax, RGBA(253, 236, 200, 1), {WHITE})')}))
 kids.append(ti("gPlan",'If(ThisItem.Planned = 0, "", Text(ThisItem.Planned))',880,9,56,42,
    'With({p: Coalesce(Value(Self.Text), 0)}, Patch(colHours, ThisItem, {Planned: p, Tgt: Max(0, varUPH * (ThisItem.SlotMin - p) / 60)}));\n'+ROWSAVE,hint='"0"',size=14,indent=I,extra={"DisplayMode":F(IN)}))
-kids.append(ti("gDT1",'If(IsBlank(ThisItem.DT), "", Text(ThisItem.DT))',940,9,56,42,'Patch(colHours, ThisItem, {DT: If(IsBlank(Self.Text), Blank(), Value(Self.Text))});\n'+ROWSAVE,hint='"0"',size=14,indent=I,extra={"DisplayMode":F(IN)}))
+kids.append(ti("gDT1",'If(IsBlank(ThisItem.DT), "", Text(ThisItem.DT))',940,9,56,42,'With({v: If(IsBlank(Self.Text), Blank(), Value(Self.Text))},\n If(Coalesce(v, 0) + Coalesce(ThisItem.DT2, 0) > ThisItem.SlotMin,\n  Notify("DT1 + DT2 can\'t be more than " & ThisItem.SlotMin & " minutes in this hour. DT1 not saved.", NotificationType.Warning); Reset(Self); true,\n  Patch(colHours, ThisItem, {DT: v});\n'+ROWSAVE+';\n  true))',hint='"0"',size=14,indent=I,extra={"DisplayMode":F(IN)}))
 kids.append(dd("gR1",DT_CODES,1000,9,160,42,default='Coalesce(ThisItem.Reason, " ")',onchange='With({v: Trim(Self.Selected.Value)},\n If(v <> Coalesce(ThisItem.Reason, ""),\n    Patch(colHours, ThisItem, {Reason: v});\n    Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));\n    Select(btnSaveRow)))',size=11,indent=I,extra={"DisplayMode":F(IN)}))
-kids.append(ti("gDT2",'If(IsBlank(ThisItem.DT2), "", Text(ThisItem.DT2))',1164,9,56,42,'Patch(colHours, ThisItem, {DT2: If(IsBlank(Self.Text), Blank(), Value(Self.Text))});\n'+ROWSAVE,hint='"0"',size=14,indent=I,extra={"DisplayMode":F(IN)}))
+kids.append(ti("gDT2",'If(IsBlank(ThisItem.DT2), "", Text(ThisItem.DT2))',1164,9,56,42,'With({v: If(IsBlank(Self.Text), Blank(), Value(Self.Text))},\n If(Coalesce(v, 0) + Coalesce(ThisItem.DT, 0) > ThisItem.SlotMin,\n  Notify("DT1 + DT2 can\'t be more than " & ThisItem.SlotMin & " minutes in this hour. DT2 not saved.", NotificationType.Warning); Reset(Self); true,\n  Patch(colHours, ThisItem, {DT2: v});\n'+ROWSAVE+';\n  true))',hint='"0"',size=14,indent=I,extra={"DisplayMode":F(IN)}))
 kids.append(dd("gR2",DT_CODES,1224,9,160,42,default='Coalesce(ThisItem.Reason2, " ")',onchange='With({v: Trim(Self.Selected.Value)},\n If(v <> Coalesce(ThisItem.Reason2, ""),\n    Patch(colHours, ThisItem, {Reason2: v});\n    Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));\n    Select(btnSaveRow)))',size=11,indent=I,extra={"DisplayMode":F(IN)}))
 kids.append(btn("gSafety",'If(ThisItem.Safety, "EVENT", "OK")','Patch(colHours, ThisItem, {Safety: !ThisItem.Safety});\n'+ROWSAVE,1388,10,64,40,
    fill=f'If(!ThisItem.InShift, {MUTE}, ThisItem.Safety, {RED}, {MUTE})',color=f'If(ThisItem.Safety, {WHITE}, {G5})',size=11,indent=I,extra={"DisplayMode":F(INSAFE)}))
@@ -333,5 +333,5 @@ out.append(btn("calCancel",'"CANCEL"','Set(varCal, false)',CX+280,CY+446,124,44,
 # every formula that read the old dropdown now reads the picked date
 out=[s.replace("ddDate.Selected.D", DTE) for s in out]
 assert not any("ddDate" in s for s in out)
-write_themed(__import__("os").environ["MDI_OUTDIR"]+"/HxH_Board_v23.pa.yaml", "".join(out))
+write_themed(__import__("os").environ["MDI_OUTDIR"]+"/HxH_Board_v24.pa.yaml", "".join(out))
 print("ok", sum(len(x) for x in out))
