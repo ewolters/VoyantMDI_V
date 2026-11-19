@@ -69,6 +69,12 @@ Holmdel details:
 - `holmdel/deploy/Tier2_XB_v7.pa.yaml` **is** the screen source (no generator; `holmdel/generator/legacy/` is history). `holmdel/deploy/ReadProductionBoard.ts` is the board-reading script. `holmdel/generator/flows.py` writes the two flows; `holmdel/generator/make.py` builds the package (it borrows only the empty publisher skeleton from `newalbany/solution/MDISetup_UNMANAGED_*.zip`).
 - `python3 holmdel/generator/make.py check` must say the package and the app source both match the shipped 1.0.0.19. Run it before and after any Holmdel change.
 
+## Versioning (Kenny, Nov 19, 2026)
+- **Every change gets a new version number, every time.** Once a screen file is pushed, it is never changed again under the same number, even if Kenny hasn't pasted it yet. The next change is the next number (HxH_Board_v26 → v27).
+- **One version = one exact file.** Kenny can always tell which file he pasted, and the repo matches what's installed.
+- **Solution releases** follow the same rule: every import into production gets a higher MDI version (1.1.4.2 → 1.1.4.3 → …), and the log names which screen versions it contains.
+- In replies, always say the version number Kenny should paste, and what it contains.
+
 ## Changing an app (the normal loop)
 1. Find the generator: `python3 newalbany/generator/make.py` lists targets (hxh, t2, t2periods, t3, t3screens, quality, mt, bd, np, pc, sw, fa, settings, flows, flow-import, flow-setup, flow-connect).
 2. Before editing, run `python3 newalbany/generator/make.py check`. It must say **all identical**; if not, someone hand-edited `newalbany/deploy/apps` and you must reconcile first.
