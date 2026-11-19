@@ -75,7 +75,7 @@ Holmdel details:
 3. Edit the generator. Rebuild only that target: `python3 newalbany/generator/make.py hxh`. Output lands in `newalbany/build/` (git-ignored).
 4. `python3 newalbany/generator/make.py lint`. Fix anything reported. Also read the Power Fx traps in newalbany/TROUBLESHOOTING.md §4; the lint doesn't catch them all.
 5. Bump the version in the generator's output file name (e.g. HxH_Board_v25 → v26), rebuild, and copy the file into `newalbany/deploy/apps/`, deleting the old version. Run `check` again: it flags a new version not copied in (NOT DEPLOYED) and an old one left behind (NOT REBUILT), and it also compares and lints the flows. Update `APP_BUILD_GUIDE.md` and this file's version notes if needed.
-6. Tell Kenny exactly how to paste it **in MDI Dev**: which app, which screen, "select all controls on the screen and delete them, then select the screen and Ctrl+V", any OnVisible/App property to set, then **Publish**.
+6. Tell Kenny exactly how to paste it **in MDI Dev**: which app, which screen, the plain-words steps in START_HERE "Replacing a screen" (no jargon like "select first to last"; Kenny isn't a developer), any OnVisible/App property to set, then **Publish**.
 7. After he confirms it works: he ships it with the **ship-upgrade** skill steps (bump solution version, export managed, import as upgrade in production, check flows On).
 8. Commit with a message that says what changed and the new file versions; add a dated line to `newalbany/log.md`.
 

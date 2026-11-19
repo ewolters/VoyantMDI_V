@@ -14,7 +14,7 @@ Change requested: $ARGUMENTS
 6. **Version it.** Bump the version number in the generator's output file name, rebuild, copy the new file into `newalbany/deploy/apps/`, and delete the previous version there. Update `newalbany/deploy/apps/APP_BUILD_GUIDE.md` if it names the file.
 7. **Tell Kenny how to apply it in MDI Dev**, numbered:
    - make.powerapps.com → environment **MDI Dev** → Solutions → MDI → the app → Edit.
-   - Which screen; select all its controls (click the first in Tree view, Shift+click the last) → Delete; select the screen → Ctrl+V with the file's contents (open it in Notepad, Ctrl+A, Ctrl+C).
+   - Which screen, then the paste steps exactly as written in START_HERE "Replacing a screen" (plain words: click the screen name in Tree view, click the board, Ctrl+A, Delete, click the screen name, Ctrl+V). Never say "select first to last" or other developer shorthand (open it in Notepad, Ctrl+A, Ctrl+C).
    - Any screen OnVisible / App.OnStart property to set, and any new screen to create first (exact name).
    - Fix any red ✕ errors (send Claude the text), then **Publish**.
    - What to test, and what "working" looks like.

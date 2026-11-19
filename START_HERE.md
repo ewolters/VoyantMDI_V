@@ -49,6 +49,18 @@ Production stays untouched; every change is built and tested in a separate envir
 - A change moves: edit in MDI Dev (unmanaged) → **Export as Managed** → import into production as an **Upgrade**. The export is where unmanaged becomes managed.
 - **My flows** in Power Automate lists flows *outside* any solution, e.g. old hand-built ones. The real MDI flows are inside the MDI solution (Solutions → MDI → Cloud flows).
 
+### Replacing a screen (the paste steps, in plain words)
+Use these every time Claude gives you a new screen file. Example: the Hour x Hour board.
+1. **Copy the new file.** Open the link Claude gives you. Press **Ctrl+A** (selects all the text), then **Ctrl+C** (copies it).
+2. **Open the app for editing:** make.powerapps.com → top right, check the environment says **MDI_Sandbox** → **Solutions** → **MDI** → **Apps** → click the app → **Edit**.
+3. **Find the screen.** On the left is a panel called **Tree view**, a list of the app's screens (Screen1, scrPeriods, …). Click the **name of the screen** Claude told you (for example **Screen1**).
+4. **Empty the screen.** Click once on the picture of the board in the middle of the window. Press **Ctrl+A**: every box on the board gets a thin outline. Press **Delete**: the board goes blank.
+   - Check: in Tree view, the screen name has nothing listed under it any more, and **the other screens still have their items.** If another screen went empty, press **Ctrl+Z** (undo) and start this step again.
+   - If Ctrl+A didn't outline anything: in Tree view click the arrow next to the screen name so its items show, click the **top** item, scroll to the **bottom** of that list, hold **Shift** and click the **bottom** item, then press **Delete**.
+5. **Paste.** Click the **screen name** in Tree view again, then press **Ctrl+V**. Big screens take 10–20 seconds.
+6. **Errors?** A red circle with an ✕ means a problem. Send Claude a screenshot or the message text. Don't Publish with red errors.
+7. **Publish** (purple button, top right), then **Play** (▶) to test.
+
 ---
 
 ## Part 2. Everyday use
