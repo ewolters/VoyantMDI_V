@@ -411,6 +411,7 @@
       - gcN:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.Title
             Font: =Font.Arial
             Size: =11
@@ -423,6 +424,7 @@
       - gcV:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Coalesce(ThisItem.SettingValue, "(blank)")
             Font: =Font.Arial
             Size: =11
@@ -434,6 +436,7 @@
       - gcD:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Coalesce(ThisItem.Notes, "")
             Font: =Font.Arial
             Size: =9
@@ -671,6 +674,7 @@
       - gmL:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.Letter.Value
             Font: =Font.Arial
             Size: =14
@@ -685,6 +689,7 @@
       - gmN:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.MetricName & "  (" & ThisItem.Unit & ")"
             Font: =Font.Arial
             Size: =11
@@ -697,6 +702,7 @@
       - gmB:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.Better.Value
             Font: =Font.Arial
             Size: =12
@@ -708,6 +714,7 @@
       - gmG:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Text(ThisItem.Green)
             Font: =Font.Arial
             Size: =12
@@ -720,6 +727,7 @@
       - gmA:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Text(ThisItem.Amber)
             Font: =Font.Arial
             Size: =12
@@ -732,6 +740,7 @@
       - gmO:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Text(ThisItem.DisplayOrder)
             Font: =Font.Arial
             Size: =12
@@ -743,6 +752,7 @@
       - gmAc:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =If(ThisItem.Active, "", "off")
             Font: =Font.Arial
             Size: =10

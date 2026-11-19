@@ -375,6 +375,7 @@
       - gsL:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.Line
             Font: =Font.Arial
             Size: =12
@@ -387,6 +388,7 @@
       - gsS:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.Size
             Font: =Font.Arial
             Size: =12
@@ -398,6 +400,7 @@
       - gsF:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.Form
             Font: =Font.Arial
             Size: =12
@@ -409,6 +412,7 @@
       - gsR:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Text(ThisItem.Rate)
             Font: =Font.Arial
             Size: =12
@@ -421,6 +425,7 @@
       - gsU:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: |-
               =Text(Value(ThisItem.'Playbook Units per Hour'), "#,##0")
             Font: =Font.Arial
@@ -434,6 +439,7 @@
       - gsC:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Text(Value(ThisItem.'Total HC'))
             Font: =Font.Arial
             Size: =12
@@ -446,6 +452,7 @@
       - gsA:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =If(ThisItem.Active, "", "retired")
             Font: =Font.Arial
             Size: =10

@@ -288,6 +288,7 @@
       - glLn:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.Title
             Font: =Font.Arial
             Size: =14
@@ -300,6 +301,7 @@
       - glVS:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Coalesce(ThisItem.ValueStream, "(none)")
             Font: =Font.Arial
             Size: =12
@@ -311,6 +313,7 @@
       - glOrd:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Text(ThisItem.DisplayOrder)
             Font: =Font.Arial
             Size: =12
@@ -322,6 +325,7 @@
       - glAct:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =If(ThisItem.Active, "", "retired")
             Font: =Font.Arial
             Size: =10
@@ -609,6 +613,7 @@
       - gvN:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.Title
             Font: =Font.Arial
             Size: =13
@@ -621,6 +626,7 @@
       - gvP:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =If(IsBlank(ThisItem.ParentVS), "(top level)", ThisItem.ParentVS)
             Font: =Font.Arial
             Size: =12
@@ -632,6 +638,7 @@
       - gvL:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Coalesce(ThisItem.Leader, "")
             Font: =Font.Arial
             Size: =12
@@ -643,6 +650,7 @@
       - gvO:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Text(ThisItem.DisplayOrder)
             Font: =Font.Arial
             Size: =12
@@ -654,6 +662,7 @@
       - gvA:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =If(ThisItem.Active, "", "retired")
             Font: =Font.Arial
             Size: =10

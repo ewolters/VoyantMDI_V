@@ -1,3 +1,4 @@
+import re
 # MDI Settings app: 6 screens editing the lists the other MDI apps read.
 # Screen1 ESCALATION · scrDrop DROPDOWN LISTS · scrLines LINES & VALUE STREAMS · scrStd STANDARDS · scrCfg THRESHOLDS & LINKS · scrPeople PEOPLE
 import sys
@@ -17,7 +18,14 @@ ME = ('Set(varMe, LookUp(People, Lower(Email) = Lower(User().Email)));\n'
 def SAVE(patch, load, ok="Saved"):
     return f'IfError({patch},\n Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),\n Notify("{ok}", NotificationType.Success); Select({load}))'
 
+def _tap_through(k):
+    # Labels/rectangles pasted from YAML don't pass taps to their gallery (Studio only adds Select(Parent) when you insert
+    # them by hand), so tapping a row never ran the gallery's OnSelect: rows couldn't be opened for editing (fixed Nov 19, 2026).
+    if "OnSelect:" in k or not re.search(r"Control: (Label|Rectangle)@", k): return k
+    m = re.search(r"\n( *)Properties:\n", k)
+    return k[:m.end()] + m.group(1) + "  OnSelect: =Select(Parent)\n" + k[m.end():]
 def gal(name, items, x, y, w, h, size, kids, onselect, selexpr):
+    kids = [_tap_through(k) for k in kids]
     p = {"Items": F(items), "TemplateSize": F(str(size)), "TemplatePadding": "=0", "ShowScrollbar": "=true",
          "OnSelect": F(onselect), "TemplateFill": F(f'If({selexpr}, {SEL}, {WHITE})'), "BorderColor": F(G1), "BorderThickness": "=1"}
     p.update(box(x, y, w, h))

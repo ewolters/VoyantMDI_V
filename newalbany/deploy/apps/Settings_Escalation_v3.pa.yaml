@@ -1,4 +1,4 @@
-- dHdrBar:
+- eHdrBar:
     Control: Rectangle@2.3.0
     Properties:
       Fill: =RGBA(7, 39, 45, 1)
@@ -6,7 +6,7 @@
       Y: =0
       Width: =1920
       Height: =90
-- dBrand:
+- eBrand:
     Control: Label@2.5.1
     Properties:
       Text: ="voyant"
@@ -17,7 +17,7 @@
       Y: =6
       Width: =170
       Height: =52
-- dBrandSub:
+- eBrandSub:
     Control: Label@2.5.1
     Properties:
       Text: ="NEW ALBANY"
@@ -29,7 +29,7 @@
       Y: =56
       Width: =170
       Height: =24
-- dTitle:
+- eTitle:
     Control: Label@2.5.1
     Properties:
       Text: ="MDI SETTINGS"
@@ -42,7 +42,7 @@
       Y: =20
       Width: =420
       Height: =50
-- dBadge:
+- eBadge:
     Control: Label@2.5.1
     Properties:
       Text: |-
@@ -56,7 +56,7 @@
       Y: =10
       Width: =900
       Height: =70
-- dSubBar:
+- eSubBar:
     Control: Rectangle@2.3.0
     Properties:
       Fill: =RGBA(244, 245, 245, 1)
@@ -64,28 +64,11 @@
       Y: =90
       Width: =1920
       Height: =52
-- dTab0:
+- eTab0:
     Control: Classic/Button@2.2.0
     Properties:
       Text: ="ESCALATION"
       OnSelect: =Navigate(Screen1, ScreenTransition.None)
-      Font: =Font.Arial
-      Size: =12
-      FontWeight: =FontWeight.Bold
-      Fill: =RGBA(255, 255, 255, 1)
-      Color: =RGBA(0, 72, 81, 1)
-      HoverFill: =ColorFade(Self.Fill, -15%)
-      BorderColor: =RGBA(0, 72, 81, 1)
-      BorderThickness: =1
-      X: =12
-      Y: =96
-      Width: =304
-      Height: =40
-- dTab1:
-    Control: Classic/Button@2.2.0
-    Properties:
-      Text: ="DROPDOWN LISTS"
-      OnSelect: =Navigate(scrDrop, ScreenTransition.None)
       Font: =Font.Arial
       Size: =12
       FontWeight: =FontWeight.Bold
@@ -94,11 +77,28 @@
       HoverFill: =ColorFade(Self.Fill, -15%)
       BorderColor: =RGBA(0, 72, 81, 1)
       BorderThickness: =1
+      X: =12
+      Y: =96
+      Width: =304
+      Height: =40
+- eTab1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="DROPDOWN LISTS"
+      OnSelect: =Navigate(scrDrop, ScreenTransition.None)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
       X: =324
       Y: =96
       Width: =304
       Height: =40
-- dTab2:
+- eTab2:
     Control: Classic/Button@2.2.0
     Properties:
       Text: ="LINES & VALUE STREAMS"
@@ -115,7 +115,7 @@
       Y: =96
       Width: =304
       Height: =40
-- dTab3:
+- eTab3:
     Control: Classic/Button@2.2.0
     Properties:
       Text: ="STANDARDS"
@@ -132,7 +132,7 @@
       Y: =96
       Width: =304
       Height: =40
-- dTab4:
+- eTab4:
     Control: Classic/Button@2.2.0
     Properties:
       Text: ="THRESHOLDS & LINKS"
@@ -149,7 +149,7 @@
       Y: =96
       Width: =304
       Height: =40
-- dTab5:
+- eTab5:
     Control: Classic/Button@2.2.0
     Properties:
       Text: ="PEOPLE"
@@ -166,7 +166,7 @@
       Y: =96
       Width: =304
       Height: =40
-- dLoad:
+- eLoad:
     Control: Classic/Button@2.2.0
     Properties:
       Text: ="↻"
@@ -175,8 +175,9 @@
         Set(varNoAdmin, CountRows(Filter(People, MDIAdmin = true)) = 0);
         Set(varAdm, Coalesce(varMe.MDIAdmin, false) || varNoAdmin);
         Set(varCan, Coalesce(varMe.CanEditConfig, false) || varAdm);
-        ClearCollect(colLk, Lookups);
-        If(IsBlank(varCat), Set(varCat, "Downtime"))
+        ClearCollect(colEsc, Escalation_Contacts);
+        ClearCollect(colCfg, MDI_Config);
+        Set(varELoaded, Now())
       Font: =Font.Arial
       Size: =14
       FontWeight: =FontWeight.Bold
@@ -190,205 +191,185 @@
       Y: =98
       Width: =36
       Height: =36
-- dCat0:
-    Control: Classic/Button@2.2.0
-    Properties:
-      Text: ="DOWNTIME"
-      OnSelect: =Set(varCat, "Downtime"); Set(varL, Blank())
-      Font: =Font.Arial
-      Size: =12
-      FontWeight: =FontWeight.Bold
-      Fill: =If(varCat = "Downtime", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 1))
-      Color: =RGBA(7, 39, 45, 1)
-      HoverFill: =ColorFade(Self.Fill, -15%)
-      BorderColor: =RGBA(177, 179, 179, 1)
-      BorderThickness: =1
-      X: =16
-      Y: =150
-      Width: =206
-      Height: =44
-- dCat1:
-    Control: Classic/Button@2.2.0
-    Properties:
-      Text: ="SCRAP"
-      OnSelect: =Set(varCat, "Scrap"); Set(varL, Blank())
-      Font: =Font.Arial
-      Size: =12
-      FontWeight: =FontWeight.Bold
-      Fill: =If(varCat = "Scrap", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 1))
-      Color: =RGBA(7, 39, 45, 1)
-      HoverFill: =ColorFade(Self.Fill, -15%)
-      BorderColor: =RGBA(177, 179, 179, 1)
-      BorderThickness: =1
-      X: =230
-      Y: =150
-      Width: =206
-      Height: =44
-- dCat2:
-    Control: Classic/Button@2.2.0
-    Properties:
-      Text: ="SPEED LOSS"
-      OnSelect: =Set(varCat, "Speed loss"); Set(varL, Blank())
-      Font: =Font.Arial
-      Size: =12
-      FontWeight: =FontWeight.Bold
-      Fill: =If(varCat = "Speed loss", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 1))
-      Color: =RGBA(7, 39, 45, 1)
-      HoverFill: =ColorFade(Self.Fill, -15%)
-      BorderColor: =RGBA(177, 179, 179, 1)
-      BorderThickness: =1
-      X: =444
-      Y: =150
-      Width: =206
-      Height: =44
-- dCat3:
-    Control: Classic/Button@2.2.0
-    Properties:
-      Text: ="EXTRA HEADCOUNT"
-      OnSelect: =Set(varCat, "Extra headcount"); Set(varL, Blank())
-      Font: =Font.Arial
-      Size: =12
-      FontWeight: =FontWeight.Bold
-      Fill: =If(varCat = "Extra headcount", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 1))
-      Color: =RGBA(7, 39, 45, 1)
-      HoverFill: =ColorFade(Self.Fill, -15%)
-      BorderColor: =RGBA(177, 179, 179, 1)
-      BorderThickness: =1
-      X: =658
-      Y: =150
-      Width: =206
-      Height: =44
-- dCat4:
-    Control: Classic/Button@2.2.0
-    Properties:
-      Text: ="REWORK"
-      OnSelect: =Set(varCat, "Rework"); Set(varL, Blank())
-      Font: =Font.Arial
-      Size: =12
-      FontWeight: =FontWeight.Bold
-      Fill: =If(varCat = "Rework", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 1))
-      Color: =RGBA(7, 39, 45, 1)
-      HoverFill: =ColorFade(Self.Fill, -15%)
-      BorderColor: =RGBA(177, 179, 179, 1)
-      BorderThickness: =1
-      X: =872
-      Y: =150
-      Width: =206
-      Height: =44
-- dCat5:
-    Control: Classic/Button@2.2.0
-    Properties:
-      Text: ="EQUIPMENT"
-      OnSelect: =Set(varCat, "Equipment"); Set(varL, Blank())
-      Font: =Font.Arial
-      Size: =12
-      FontWeight: =FontWeight.Bold
-      Fill: =If(varCat = "Equipment", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 1))
-      Color: =RGBA(7, 39, 45, 1)
-      HoverFill: =ColorFade(Self.Fill, -15%)
-      BorderColor: =RGBA(177, 179, 179, 1)
-      BorderThickness: =1
-      X: =1086
-      Y: =150
-      Width: =206
-      Height: =44
-- dCat6:
-    Control: Classic/Button@2.2.0
-    Properties:
-      Text: ="NCR DEFECT"
-      OnSelect: =Set(varCat, "NCR defect"); Set(varL, Blank())
-      Font: =Font.Arial
-      Size: =12
-      FontWeight: =FontWeight.Bold
-      Fill: =If(varCat = "NCR defect", RGBA(0, 178, 169, 1), RGBA(255, 255, 255, 1))
-      Color: =RGBA(7, 39, 45, 1)
-      HoverFill: =ColorFade(Self.Fill, -15%)
-      BorderColor: =RGBA(177, 179, 179, 1)
-      BorderThickness: =1
-      X: =1300
-      Y: =150
-      Width: =206
-      Height: =44
-- dUse:
+- eIntro:
     Control: Label@2.5.1
     Properties:
       Text: |-
-        =Switch(varCat, "Downtime", "Hour x Hour: DT1 / DT2 reason. EquipType links a reason to troubleshooting.", "Scrap", "Hour x Hour: primary scrap / defect reason", "Speed loss", "Hour x Hour: reason running below target speed", "Extra headcount", "Hour x Hour: reason for extra crew", "Rework", "Quality: rework reasons (the big buttons)", "Equipment", "TS Maintenance and TS Binder: machine types", "NCR defect", "Quality: NCR defect type", "")
+        ="Each contact gets a Teams/e-mail alert when ONE downtime reason on ONE line and shift adds up to their LEVEL (minutes). Typical: 60 = first level, 120 = second, 240 = third. Retire someone by turning ACTIVE off: never delete."
       Font: =Font.Arial
       Size: =12
-      Color: =RGBA(0, 72, 81, 1)
-      FontWeight: =FontWeight.Bold
+      Color: =RGBA(117, 120, 123, 1)
       X: =16
-      Y: =198
-      Width: =1300
-      Height: =34
-- dAll:
+      Y: =148
+      Width: =1888
+      Height: =44
+- eSetBg:
+    Control: Rectangle@2.3.0
+    Properties:
+      Fill: =RGBA(244, 245, 245, 1)
+      X: =16
+      Y: =196
+      Width: =1888
+      Height: =84
+- ecFirst:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="FIRST LEVEL (MINUTES)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =32
+      Y: =202
+      Width: =220
+      Height: =20
+- eFirst:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(LookUp(colCfg, Title = "Escalation_FirstLevelMin").SettingValue, "60")
+      HintText: =""
+      Format: =TextFormat.Number
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =32
+      Y: =224
+      Width: =200
+      Height: =44
+- ecAlert:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SEND FLOW-FAILURE ALERTS TO (E-MAIL, ; BETWEEN)"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =260
+      Y: =202
+      Width: =520
+      Height: =20
+- eAlert:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =Coalesce(LookUp(colCfg, Title = "Alert_Email").SettingValue, "")
+      HintText: ="name@company.com"
+      Font: =Font.Arial
+      Size: =13
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =260
+      Y: =224
+      Width: =640
+      Height: =44
+- eSetSave:
     Control: Classic/Button@2.2.0
     Properties:
-      Text: =If(varDAll, "✓  " & "SHOW RETIRED", "SHOW RETIRED")
-      OnSelect: =Set(varDAll, !varDAll)
+      Text: ="SAVE SETTINGS"
+      OnSelect: |-
+        =IfError(Patch(MDI_Config, Coalesce(LookUp(MDI_Config, Title = "Escalation_FirstLevelMin"), Defaults(MDI_Config)), {Title: "Escalation_FirstLevelMin", SettingValue: eFirst.Text, Kind: {Value: "Threshold"}});
+         Patch(MDI_Config, Coalesce(LookUp(MDI_Config, Title = "Alert_Email"), Defaults(MDI_Config)), {Title: "Alert_Email", SettingValue: eAlert.Text, Kind: {Value: "Other"}}),
+         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+         Notify("Settings saved", NotificationType.Success); Select(eLoad))
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =930
+      Y: =224
+      Width: =200
+      Height: =44
+- eAll:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varEAll, "✓  " & "SHOW RETIRED", "SHOW RETIRED")
+      OnSelect: =Set(varEAll, !varEAll)
       Font: =Font.Arial
       Size: =11
       FontWeight: =FontWeight.Bold
-      Fill: =If(varDAll, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
-      Color: =If(varDAll, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      Fill: =If(varEAll, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varEAll, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
       HoverFill: =ColorFade(Self.Fill, -15%)
       BorderColor: =RGBA(177, 179, 179, 1)
       BorderThickness: =1
       DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
       X: =1720
-      Y: =196
+      Y: =228
       Width: =170
       Height: =40
-- dh0:
+- eh0:
     Control: Label@2.5.1
     Properties:
-      Text: ="ORDER"
+      Text: ="LEVEL"
       Font: =Font.Arial
       Size: =10
       Color: =RGBA(117, 120, 123, 1)
       FontWeight: =FontWeight.Bold
       X: =16
-      Y: =240
+      Y: =292
+      Width: =90
+      Height: =30
+- eh1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="NAME"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =116
+      Y: =292
+      Width: =260
+      Height: =30
+- eh2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ROLE"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =386
+      Y: =292
+      Width: =220
+      Height: =30
+- eh3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="E-MAIL"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =616
+      Y: =292
+      Width: =300
+      Height: =30
+- eh4:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SHIFTS"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =926
+      Y: =292
       Width: =110
       Height: =30
-- dh1:
-    Control: Label@2.5.1
-    Properties:
-      Text: ="LABEL (WHAT PEOPLE PICK)"
-      Font: =Font.Arial
-      Size: =10
-      Color: =RGBA(117, 120, 123, 1)
-      FontWeight: =FontWeight.Bold
-      X: =136
-      Y: =240
-      Width: =380
-      Height: =30
-- dh2:
-    Control: Label@2.5.1
-    Properties:
-      Text: ="GROUP"
-      Font: =Font.Arial
-      Size: =10
-      Color: =RGBA(117, 120, 123, 1)
-      FontWeight: =FontWeight.Bold
-      X: =526
-      Y: =240
-      Width: =160
-      Height: =30
-- dh3:
-    Control: Label@2.5.1
-    Properties:
-      Text: ="HELP"
-      Font: =Font.Arial
-      Size: =10
-      Color: =RGBA(117, 120, 123, 1)
-      FontWeight: =FontWeight.Bold
-      X: =696
-      Y: =240
-      Width: =330
-      Height: =30
-- dh4:
+- eh5:
     Control: Label@2.5.1
     Properties:
       Text: =""
@@ -396,155 +377,140 @@
       Size: =10
       Color: =RGBA(117, 120, 123, 1)
       FontWeight: =FontWeight.Bold
-      X: =1036
-      Y: =240
-      Width: =70
+      X: =1046
+      Y: =292
+      Width: =60
       Height: =30
-- galD:
+- galE:
     Control: Gallery@2.15.0
     Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
     Properties:
-      Items: =SortByColumns(Filter(colLk, Category.Value = varCat && (varDAll || Active)), "SortOrder", SortOrder.Ascending)
-      TemplateSize: =46
+      Items: =SortByColumns(Filter(colEsc, varEAll || Active), "Level", SortOrder.Ascending, "Title", SortOrder.Ascending)
+      TemplateSize: =48
       TemplatePadding: =0
       ShowScrollbar: =true
-      OnSelect: =Set(varL, ThisItem); Set(varLA, Coalesce(ThisItem.Active, false))
-      TemplateFill: =If(ThisItem.ID = varL.ID, RGBA(229, 243, 243, 1), RGBA(255, 255, 255, 1))
+      OnSelect: =Set(varE, ThisItem); Set(varESS, Coalesce(ThisItem.ShiftSpecific, false)); Set(varES1, "1" in ThisItem.Shifts.Value); Set(varES2, "2" in ThisItem.Shifts.Value); Set(varES3, "3" in ThisItem.Shifts.Value); Set(varEA, Coalesce(ThisItem.Active, false))
+      TemplateFill: =If(ThisItem.ID = varE.ID, RGBA(229, 243, 243, 1), RGBA(255, 255, 255, 1))
       BorderColor: =RGBA(217, 217, 214, 1)
       BorderThickness: =1
       X: =16
-      Y: =272
+      Y: =324
       Width: =1100
-      Height: =798
+      Height: =746
     Children:
-      - gdUp:
-          Control: Classic/Button@2.2.0
-          Properties:
-            Text: ="▲"
-            OnSelect: |-
-              =With({o: Last(Filter(SortByColumns(Filter(colLk, Category.Value = varCat), "SortOrder", SortOrder.Ascending), SortOrder < ThisItem.SortOrder))},
-               If(!IsBlank(o.ID),
-                Patch(Lookups, LookUp(Lookups, ID = ThisItem.ID), {SortOrder: o.SortOrder});
-                Patch(Lookups, LookUp(Lookups, ID = o.ID), {SortOrder: ThisItem.SortOrder});
-                Select(dLoad)))
-            Font: =Font.Arial
-            Size: =11
-            FontWeight: =FontWeight.Bold
-            Fill: =RGBA(255, 255, 255, 1)
-            Color: =RGBA(0, 72, 81, 1)
-            HoverFill: =ColorFade(Self.Fill, -15%)
-            BorderColor: =RGBA(177, 179, 179, 1)
-            BorderThickness: =1
-            DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
-            X: =0
-            Y: =6
-            Width: =50
-            Height: =34
-      - gdDn:
-          Control: Classic/Button@2.2.0
-          Properties:
-            Text: ="▼"
-            OnSelect: |-
-              =With({o: First(Filter(SortByColumns(Filter(colLk, Category.Value = varCat), "SortOrder", SortOrder.Ascending), SortOrder > ThisItem.SortOrder))},
-               If(!IsBlank(o.ID),
-                Patch(Lookups, LookUp(Lookups, ID = ThisItem.ID), {SortOrder: o.SortOrder});
-                Patch(Lookups, LookUp(Lookups, ID = o.ID), {SortOrder: ThisItem.SortOrder});
-                Select(dLoad)))
-            Font: =Font.Arial
-            Size: =11
-            FontWeight: =FontWeight.Bold
-            Fill: =RGBA(255, 255, 255, 1)
-            Color: =RGBA(0, 72, 81, 1)
-            HoverFill: =ColorFade(Self.Fill, -15%)
-            BorderColor: =RGBA(177, 179, 179, 1)
-            BorderThickness: =1
-            DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
-            X: =56
-            Y: =6
-            Width: =50
-            Height: =34
-      - gdLbl:
+      - geLvl:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
+            Text: =Text(ThisItem.Level) & " min"
+            Font: =Font.Arial
+            Size: =13
+            Color: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Bold
+            Align: =Align.Center
+            Fill: =Switch(ThisItem.Level, 60, RGBA(210, 153, 34, 1), 120, RGBA(219, 109, 40, 1), RGBA(207, 34, 46, 1))
+            X: =0
+            Y: =6
+            Width: =90
+            Height: =36
+      - geName:
+          Control: Label@2.5.1
+          Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.Title
             Font: =Font.Arial
             Size: =12
             Color: =RGBA(7, 39, 45, 1)
             FontWeight: =FontWeight.Bold
-            X: =120
+            X: =100
             Y: =0
-            Width: =380
+            Width: =260
             Height: =44
-      - gdGrp:
+      - geRole:
           Control: Label@2.5.1
           Properties:
-            Text: =Coalesce(ThisItem.Group, "")
+            OnSelect: =Select(Parent)
+            Text: =ThisItem.Role
             Font: =Font.Arial
             Size: =12
             Color: =RGBA(117, 120, 123, 1)
-            X: =510
+            X: =370
             Y: =0
-            Width: =160
+            Width: =220
             Height: =44
-      - gdHelp:
+      - geMail:
           Control: Label@2.5.1
           Properties:
-            Text: =Coalesce(ThisItem.Help, "") & If(IsBlank(ThisItem.EquipType), "", "  [" & ThisItem.EquipType & "]")
+            OnSelect: =Select(Parent)
+            Text: =ThisItem.Email
             Font: =Font.Arial
-            Size: =10
+            Size: =11
             Color: =RGBA(117, 120, 123, 1)
-            X: =680
+            X: =600
             Y: =0
-            Width: =330
+            Width: =300
             Height: =44
-      - gdAct:
+      - geSh:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
+            Text: =If(ThisItem.ShiftSpecific, "shift " & Concat(ThisItem.Shifts, Value, ", "), "all shifts")
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            X: =910
+            Y: =0
+            Width: =110
+            Height: =44
+      - geAct:
+          Control: Label@2.5.1
+          Properties:
+            OnSelect: =Select(Parent)
             Text: =If(ThisItem.Active, "", "retired")
             Font: =Font.Arial
             Size: =10
             Color: =RGBA(207, 34, 46, 1)
-            X: =1020
+            X: =1030
             Y: =0
-            Width: =70
+            Width: =60
             Height: =44
-- dFormBg:
+- eFormBg:
     Control: Rectangle@2.3.0
     Properties:
       Fill: =RGBA(244, 245, 245, 1)
       X: =1132
-      Y: =240
+      Y: =292
       Width: =772
-      Height: =830
-- dFormT:
+      Height: =778
+- eFormT:
     Control: Label@2.5.1
     Properties:
-      Text: =If(IsBlank(varL.ID), "NEW " & Upper(varCat) & " REASON", "EDIT " & Upper(varCat) & " REASON")
+      Text: =If(IsBlank(varE.ID), "NEW CONTACT", "EDIT CONTACT")
       Font: =Font.Arial
       Size: =16
       Color: =RGBA(0, 72, 81, 1)
       FontWeight: =FontWeight.Bold
       X: =1148
-      Y: =248
-      Width: =740
+      Y: =300
+      Width: =500
       Height: =36
-- dLblC:
+- eNameC:
     Control: Label@2.5.1
     Properties:
-      Text: ="LABEL (WHAT PEOPLE PICK)"
+      Text: ="NAME"
       Font: =Font.Arial
       Size: =9
       Color: =RGBA(117, 120, 123, 1)
       FontWeight: =FontWeight.Bold
       X: =1148
-      Y: =296
+      Y: =348
       Width: =600
       Height: =20
-- dLbl:
+- eName:
     Control: Classic/TextInput@2.3.2
     Properties:
-      Default: =Coalesce(varL.Title, "")
-      HintText: ="Machine - Filler"
+      Default: =Coalesce(varE.Title, "")
+      HintText: ="First Last"
       Font: =Font.Arial
       Size: =13
       Align: =Align.Left
@@ -554,26 +520,26 @@
       OnChange: =false
       DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
       X: =1148
-      Y: =318
+      Y: =370
       Width: =740
       Height: =44
-- dGrpC:
+- eMailC:
     Control: Label@2.5.1
     Properties:
-      Text: ="GROUP (OPTIONAL, FOR REPORTS)"
+      Text: ="E-MAIL (MUST MATCH THEIR MICROSOFT LOGIN)"
       Font: =Font.Arial
       Size: =9
       Color: =RGBA(117, 120, 123, 1)
       FontWeight: =FontWeight.Bold
       X: =1148
-      Y: =376
+      Y: =428
       Width: =600
       Height: =20
-- dGrp:
+- eMail:
     Control: Classic/TextInput@2.3.2
     Properties:
-      Default: =Coalesce(varL.Group, "")
-      HintText: ="Machine"
+      Default: =Coalesce(varE.Email, "")
+      HintText: ="name@company.com"
       Font: =Font.Arial
       Size: =13
       Align: =Align.Left
@@ -583,26 +549,26 @@
       OnChange: =false
       DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
       X: =1148
-      Y: =398
+      Y: =450
       Width: =740
       Height: =44
-- dHelpC:
+- eRoleC:
     Control: Label@2.5.1
     Properties:
-      Text: ="HELP (SHOWN AS A HINT)"
+      Text: ="ROLE"
       Font: =Font.Arial
       Size: =9
       Color: =RGBA(117, 120, 123, 1)
       FontWeight: =FontWeight.Bold
       X: =1148
-      Y: =456
+      Y: =508
       Width: =600
       Height: =20
-- dHelp:
+- eRole:
     Control: Classic/TextInput@2.3.2
     Properties:
-      Default: =Coalesce(varL.Help, "")
-      HintText: =""
+      Default: =Coalesce(varE.Role, "")
+      HintText: ="Maintenance Manager"
       Font: =Font.Arial
       Size: =13
       Align: =Align.Left
@@ -612,76 +578,152 @@
       OnChange: =false
       DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
       X: =1148
-      Y: =478
+      Y: =530
       Width: =740
       Height: =44
-- dEqC:
+- eLvlC:
     Control: Label@2.5.1
     Properties:
       Text: |-
-        ="EQUIPMENT TYPE (DOWNTIME ONLY: LINKS TO TROUBLESHOOTING)"
+        ="LEVEL: MINUTES OF DOWNTIME (ONE REASON, ONE SHIFT) BEFORE THIS PERSON IS ALERTED"
       Font: =Font.Arial
       Size: =9
       Color: =RGBA(117, 120, 123, 1)
       FontWeight: =FontWeight.Bold
       X: =1148
-      Y: =536
-      Width: =600
+      Y: =588
+      Width: =700
       Height: =20
-- dEq:
-    Control: Classic/DropDown@2.3.1
+- eLvl:
+    Control: Classic/TextInput@2.3.2
     Properties:
-      Items: |-
-        =Ungroup(Table({t: Table({Value: ""})}, {t: ForAll(SortByColumns(Filter(colLk, Category.Value = "Equipment" && Active), "SortOrder", SortOrder.Ascending), {Value: Title})}), t)
-      Default: =Coalesce(varL.EquipType, "")
+      Default: =If(IsBlank(varE.Level), "60", Text(varE.Level))
+      HintText: =""
+      Format: =TextFormat.Number
       Font: =Font.Arial
       Size: =13
-      ChevronBackground: =RGBA(255, 255, 255, 1)
-      ChevronFill: =RGBA(117, 120, 123, 1)
-      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
-      ChevronHoverFill: =RGBA(7, 39, 45, 1)
-      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
-      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
-      SelectionFill: =RGBA(0, 72, 81, 1)
-      SelectionColor: =RGBA(255, 255, 255, 1)
-      HoverFill: =RGBA(176, 227, 228, 1)
-      PressedFill: =RGBA(176, 227, 228, 1)
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
       FocusedBorderColor: =RGBA(0, 72, 81, 1)
       HoverBorderColor: =RGBA(117, 120, 123, 1)
-      DisplayMode: =If(varCan && varCat = "Downtime", DisplayMode.Edit, DisplayMode.Disabled)
+      OnChange: =false
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
       X: =1148
-      Y: =558
-      Width: =360
+      Y: =610
+      Width: =160
       Height: =44
-- dAct:
+- eShC:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="SHIFTS"
+      Font: =Font.Arial
+      Size: =9
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      X: =1148
+      Y: =668
+      Width: =300
+      Height: =20
+- eShAll:
     Control: Classic/Button@2.2.0
     Properties:
-      Text: =If(varLA, "✓  " & "ACTIVE (SHOWS IN THE APPS)", "ACTIVE (SHOWS IN THE APPS)")
-      OnSelect: =Set(varLA, !varLA)
+      Text: =If(varESS, "ONLY THESE SHIFTS  →", "✓  ALL SHIFTS")
+      OnSelect: =Set(varESS, !varESS)
       Font: =Font.Arial
       Size: =11
       FontWeight: =FontWeight.Bold
-      Fill: =If(varLA, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
-      Color: =If(varLA, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      Fill: =If(varESS, RGBA(255, 255, 255, 1), RGBA(0, 72, 81, 1))
+      Color: =If(varESS, RGBA(117, 120, 123, 1), RGBA(255, 255, 255, 1))
       HoverFill: =ColorFade(Self.Fill, -15%)
       BorderColor: =RGBA(177, 179, 179, 1)
       BorderThickness: =1
       DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
       X: =1148
-      Y: =616
-      Width: =300
+      Y: =690
+      Width: =240
       Height: =40
-- dSave:
+- eSh1:
     Control: Classic/Button@2.2.0
     Properties:
-      Text: ="SAVE REASON"
+      Text: =If(varES1, "✓  " & "SHIFT 1", "SHIFT 1")
+      OnSelect: =Set(varES1, !varES1)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varES1, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varES1, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan && varESS, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1402
+      Y: =690
+      Width: =120
+      Height: =40
+- eSh2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varES2, "✓  " & "SHIFT 2", "SHIFT 2")
+      OnSelect: =Set(varES2, !varES2)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varES2, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varES2, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan && varESS, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1532
+      Y: =690
+      Width: =120
+      Height: =40
+- eSh3:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varES3, "✓  " & "SHIFT 3", "SHIFT 3")
+      OnSelect: =Set(varES3, !varES3)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varES3, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varES3, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan && varESS, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1662
+      Y: =690
+      Width: =120
+      Height: =40
+- eAct:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varEA, "✓  " & "ACTIVE (GETS ALERTS)", "ACTIVE (GETS ALERTS)")
+      OnSelect: =Set(varEA, !varEA)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =If(varEA, RGBA(0, 72, 81, 1), RGBA(255, 255, 255, 1))
+      Color: =If(varEA, RGBA(255, 255, 255, 1), RGBA(117, 120, 123, 1))
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      BorderThickness: =1
+      DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
+      X: =1148
+      Y: =748
+      Width: =260
+      Height: =40
+- eSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SAVE CONTACT"
       OnSelect: |-
-        =If(IsBlank(Trim(dLbl.Text)), Notify("A label is required.", NotificationType.Warning),
-         !IsBlank(LookUp(colLk, Category.Value = varCat && Lower(Title) = Lower(Trim(dLbl.Text)) && ID <> Coalesce(varL.ID, -1))), Notify("That label is already in " & varCat & ".", NotificationType.Warning),
-        IfError(Patch(Lookups, If(IsBlank(varL.ID), Defaults(Lookups), LookUp(Lookups, ID = varL.ID)), {Title: Trim(dLbl.Text), Category: {Value: varCat}, Group: dGrp.Text, Help: dHelp.Text, EquipType: If(varCat = "Downtime", dEq.Selected.Value, Coalesce(varL.EquipType, "")), Active: varLA,
-          SortOrder: If(IsBlank(varL.ID), Coalesce(Max(Filter(colLk, Category.Value = varCat), SortOrder), 0) + 10, varL.SortOrder)}),
+        =If(IsBlank(eName.Text) || IsBlank(eMail.Text) || !IsNumeric(eLvl.Text), Notify("Name, e-mail and a level in minutes are required.", NotificationType.Warning),
+        IfError(Patch(Escalation_Contacts, If(IsBlank(varE.ID), Defaults(Escalation_Contacts), LookUp(Escalation_Contacts, ID = varE.ID)), {Title: eName.Text, Email: Trim(eMail.Text), Role: eRole.Text, Level: Value(eLvl.Text), ShiftSpecific: varESS,
+          Shifts: ForAll(Filter(Table({V: "1", On: varES1}, {V: "2", On: varES2}, {V: "3", On: varES3}), On), {Value: V}), Active: varEA}),
          Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
-         Notify("Reason saved", NotificationType.Success); Select(dLoad)))
+         Notify("Contact saved", NotificationType.Success); Select(eLoad)))
       Font: =Font.Arial
       Size: =14
       FontWeight: =FontWeight.Bold
@@ -691,14 +733,14 @@
       BorderColor: =Self.Fill
       DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
       X: =1148
-      Y: =686
+      Y: =818
       Width: =240
       Height: =50
-- dNew:
+- eNew:
     Control: Classic/Button@2.2.0
     Properties:
-      Text: ="+ NEW REASON"
-      OnSelect: =Set(varL, Blank()); Set(varLA, true); Reset(dLbl); Reset(dGrp); Reset(dHelp); Reset(dEq)
+      Text: ="+ NEW CONTACT"
+      OnSelect: =Set(varE, Blank()); Set(varESS, false); Set(varES1, false); Set(varES2, false); Set(varES3, false); Set(varEA, true); Reset(eName); Reset(eMail); Reset(eRole); Reset(eLvl)
       Font: =Font.Arial
       Size: =13
       FontWeight: =FontWeight.Bold
@@ -709,17 +751,17 @@
       BorderThickness: =1
       DisplayMode: =If(varCan, DisplayMode.Edit, DisplayMode.Disabled)
       X: =1404
-      Y: =686
+      Y: =818
       Width: =220
       Height: =50
-- dNote:
+- eNote:
     Control: Label@2.5.1
     Properties:
-      Text: ="Renaming changes the choice from now on; records already saved keep the old wording. To stop using a reason, turn ACTIVE off (history stays readable). Use ▲ ▼ to set the order people see. New reasons go to the bottom."
+      Text: ="The HxH - Downtime Escalation flow reads this list on every save. Changes apply to the next alert."
       Font: =Font.Arial
       Size: =10
       Color: =RGBA(117, 120, 123, 1)
       X: =1148
-      Y: =750
+      Y: =882
       Width: =740
-      Height: =110
+      Height: =50

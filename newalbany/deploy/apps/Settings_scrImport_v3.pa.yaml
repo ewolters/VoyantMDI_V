@@ -307,6 +307,7 @@
       - giN:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.Name
             Font: =Font.Arial
             Size: =12
@@ -319,6 +320,7 @@
       - giA:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Text(ThisItem.KB) & " KB  ·  added " & Text(DateTimeValue(ThisItem.At), "m/d/yyyy h:mm AM/PM")
             Font: =Font.Arial
             Size: =9
@@ -748,6 +750,7 @@
       - gmF:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.F
             Font: =Font.Arial
             Size: =11
@@ -759,6 +762,7 @@
       - gmArrow:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: ="→"
             Font: =Font.Arial
             Size: =12
@@ -770,6 +774,7 @@
       - gmT:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.T
             Font: =Font.Arial
             Size: =11
@@ -782,6 +787,7 @@
       - gmN2:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Text(ThisItem.N) & " stops"
             Font: =Font.Arial
             Size: =10

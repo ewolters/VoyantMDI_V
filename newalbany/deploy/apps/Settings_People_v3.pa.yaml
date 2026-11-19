@@ -338,6 +338,7 @@
       - gpN:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.Title
             Font: =Font.Arial
             Size: =12
@@ -350,6 +351,7 @@
       - gpR:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =ThisItem.Role.Value
             Font: =Font.Arial
             Size: =12
@@ -361,6 +363,7 @@
       - gpT:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Text(ThisItem.Tier)
             Font: =Font.Arial
             Size: =12
@@ -372,6 +375,7 @@
       - gpL:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Coalesce(ThisItem.Lines, "all")
             Font: =Font.Arial
             Size: =11
@@ -383,6 +387,7 @@
       - gpC:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =Concatenate(If(ThisItem.MDIAdmin, "ADMIN  ", ""), If(ThisItem.CanEditConfig, "SETTINGS  ", ""), If(ThisItem.CanLinkDowntime, "LINK DT", ""))
             Font: =Font.Arial
             Size: =10
@@ -395,6 +400,7 @@
       - gpA:
           Control: Label@2.5.1
           Properties:
+            OnSelect: =Select(Parent)
             Text: =If(ThisItem.Active, "", "inactive")
             Font: =Font.Arial
             Size: =10

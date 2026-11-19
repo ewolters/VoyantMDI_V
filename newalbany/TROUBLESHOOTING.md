@@ -118,6 +118,7 @@ For Kenny (and his Claude) as the owner of the New Albany MDI and the Holmdel Ti
 - **Dropdown in a gallery with a blank Default shows another row's pick.** Give the Items a placeholder `" "` row, Default `Coalesce(Reason, " ")`, and `Trim` on save.
 - **Wrap-count galleries cap columns.** For wide grids use fixed column slots (see Tier 2 WEEKS & MONTHS).
 - **2,000-row limit.** Filters on SharePoint lists return at most the app's data row limit; load big lists in date chunks (`ForAll(Sequence(...), Collect(...))`).
+- **Gallery rows pasted from YAML don't open when tapped.** Labels and rectangles inside a gallery only pass a tap to the gallery's OnSelect if their own OnSelect is `Select(Parent)`; Studio adds that when you insert them by hand, a YAML paste doesn't. Give them `OnSelect: =Select(Parent)` (MDI Settings v3 does this in `gal()`), or put a transparent tap button over the row (Tier 2 does). Symptom: "I can only add new, not edit" (MDI Settings v1/v2, fixed in v3).
 - **Paste order matters.** A control that navigates to a screen errors until that screen exists; create the screen first.
 - **Flows called from apps:** after changing a flow's inputs/outputs, remove and re-add it in the app's Power Automate pane, then Publish.
 - **Voyant mail filters** block `.py` attachments and rewrite `https://` inside `.txt` scripts. Send zips without Python; in text scripts write `https:\/\/`.
