@@ -25,7 +25,7 @@ TARGETS = {
     "t2":       ("Tier 2 daily board  -> T2_Board_v19.pa.yaml", ["t2v2.py"]),
     "t2periods":("Tier 2 WEEKS & MONTHS screen -> T2_Periods_v2.pa.yaml", ["t2per.py"]),
     "t3":       ("Tier 3 War Room board -> T3_Board_v9.pa.yaml", ["t3.py", "{OUT}/T3_Board_v9.pa.yaml"]),
-    "t3screens":("Tier 3 Bowler + Variances screens", ["t3screens.py", "{OUT}/T3_Bowler_v6.pa.yaml", "{OUT}/T3_Variances_v7.pa.yaml"]),
+    "t3screens":("Tier 3 Bowler + Variances screens", ["t3screens.py", "{OUT}/T3_Bowler_v6.pa.yaml", "{OUT}/T3_Variances_v8.pa.yaml"]),
     "quality":  ("Quality app: REWORK + NCR screens", ["quality.py", "{OUT}/Quality_v5.pa.yaml", "{OUT}/Quality_NCR_v2.pa.yaml"]),
     "qa":       ("QA Rework (standalone, older)", ["qa.py"]),
     "mt":       ("TS Maintenance", ["mt.py"]),

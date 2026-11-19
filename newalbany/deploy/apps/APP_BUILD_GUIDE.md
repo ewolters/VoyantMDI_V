@@ -203,7 +203,7 @@ Open **Settings** (gear icon or ⋯ in the top bar).
 ### 10. Tier 3 Board: plant leadership meeting (meeting-room TV). One app, three screens.
 | | |
 |---|---|
-| **Files** | `T3_Board_v9.pa.yaml` → **Screen1** (PERFORMANCE) · `T3_Bowler_v6.pa.yaml` → screen **scrBowler** · `T3_Variances_v7.pa.yaml` → screen **scrVariance** |
+| **Files** | `T3_Board_v9.pa.yaml` → **Screen1** (PERFORMANCE) · `T3_Bowler_v6.pa.yaml` → screen **scrBowler** · `T3_Variances_v8.pa.yaml` → screen **scrVariance** |
 | **Name / format** | `MDI Tier 3 Board`, **Tablet** 1920 × 1080 |
 | **Lists** (23) | the 19 Tier 2 lists (HxH_Shift, HxH_Hourly, QA_Rework, TS_Occurrences, TS_Issues, TS_Fixes, PC_Audits, PC_Results, PC_Cards, SW_Elements, Escalation_Log, Newspaper, Lines, MDI_Config, PLAYBOOK, Lookups, People, SAF_Audits, SAF_Results) **+ KPI_Daily, ValueStreams, Variances, KPI_Metrics** |
 | **Flow** | no |
@@ -218,7 +218,7 @@ Open **Settings** (gear icon or ⋯ in the top bar).
 > Tier 3 computes the last 7 days with Tier 2's formulas and saves closed days to **KPI_Daily**, so trends build up from the first day it is opened. Root cause is a placeholder tab for now.
 
 ---|---|
-| **File** | `T3_Board_v9.pa.yaml` → **Screen1** · `T3_Bowler_v6.pa.yaml` → **scrBowler** · `T3_Variances_v7.pa.yaml` → **scrVariance** |
+| **File** | `T3_Board_v9.pa.yaml` → **Screen1** · `T3_Bowler_v6.pa.yaml` → **scrBowler** · `T3_Variances_v8.pa.yaml` → **scrVariance** |
 | **Name / format** | `MDI Tier 3 Board`, **Tablet** 1920 × 1080 |
 | **Lists** (20) | the 19 Tier 2 lists (HxH_Shift, HxH_Hourly, QA_Rework, TS_Occurrences, TS_Issues, TS_Fixes, PC_Audits, PC_Results, PC_Cards, SW_Elements, Escalation_Log, Newspaper, Lines, MDI_Config, PLAYBOOK, Lookups, People, SAF_Audits, SAF_Results) **+ KPI_Daily** |
 | **Flow** | no |

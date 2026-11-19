@@ -132,7 +132,8 @@ def card(pfx, w, kind24):
 out.append(label("v24T", '"24-HOUR VARIANCES  ·  biggest misses  ·  on the board " & varV24 & " days  (" & CountRows(' + V24 + ') & ")"', LX, 140, PANEL_W - 190, 34, size=13, bold=True, color=TEAL_D))
 out.append(btn("v24Add", '"+ 24-HOUR"', f'Set(varPre, {BLANKPRE}); Select(vLoad); Set(varVK, "24-hour"); {RESETS}; Set(varVAdd, true)', LX + PANEL_W - 180, 140, 180, 34, size=11, fill=RED, color=WHITE))
 out.append(gal("galV24", V24, LX, 178, PANEL_W, 284, 112, card("v24", PANEL_W - 20, True)))
-out.append(label("v24E", f'If(!IsBlank(varLoadedAt) && CountRows({V24}) = 0, "No open 24-hour variances in this scope. Raise one from the biggest misses below.", "")', LX, 220, PANEL_W, 40, size=12, color=G9, align="Center"))
+out.append(label("v24E", '"No open 24-hour variances in this scope. Raise one from the biggest misses below."', LX, 220, PANEL_W, 40, size=12, color=G9, align="Center",
+   extra={"Visible": F(f'!IsBlank(varLoadedAt) && CountRows({V24}) = 0')}))   # hidden unless empty: a visible label on top of the cards blocks their buttons
 # suggestions: biggest misses of the reviewed day (from the boards)
 # ---- BIGGEST MISSES of the reviewed day, every letter (top 3 per source), keyed so a raised miss drops off ----
 DAYW = 'ShiftDate >= varD && ShiftDate < varD1'
@@ -177,14 +178,16 @@ sk = [rect("vsSq", SQC.format(x="ThisItem.SQ"), 0, 6, 28, 28, indent=I),
       btn("vsRaise", '"RAISE"', f'Set(varPre, {{T: ThisItem.T, M: ThisItem.M, U: ThisItem.U, SQ: ThisItem.SQ, Ln: ThisItem.Ln, K: ThisItem.K, Mt: ThisItem.Mt}}); Select(vLoad); Set(varVK, "24-hour"); {RESETS}; Set(varVAdd, true)',
           780, 5, 120, 30, size=10, fill=TEAL, color=DARK, indent=I)]
 out.append(gal("galVSug", SUGG, LX + 12, SY + 38, PANEL_W - 24, 1068 - SY - 44, 40, sk))
-out.append(label("vSugE", f'If(CountRows({SUGG}) = 0, "No misses logged for this day in this scope.", "")', LX + 12, SY + 60, PANEL_W - 24, 30, size=11, color=G9))
+out.append(label("vSugE", '"No misses logged for this day in this scope."', LX + 12, SY + 60, PANEL_W - 24, 30, size=11, color=G9,
+   extra={"Visible": F(f'CountRows({SUGG}) = 0')}))
 # right: monthly / MOR
 out.append(label("vMoT", '"MONTHLY VARIANCES  ·  for the MOR  ·  " & Upper(Text(varVM, "mmmm yyyy")) & "  (" & CountRows(' + VMO + ') & ")"', RX2, 140, RW3 - 380, 34, size=13, bold=True, color=TEAL_D))
 out.append(btn("vMoPrev", '"◀"', 'Set(varVM, DateAdd(varVM, -1, TimeUnit.Months))', RX2 + RW3 - 372, 140, 44, 34, size=12, fill=TEAL_D, color=WHITE))
 out.append(btn("vMoNext", '"▶"', 'Set(varVM, DateAdd(varVM, 1, TimeUnit.Months))', RX2 + RW3 - 324, 140, 44, 34, size=12, fill=TEAL_D, color=WHITE))
 out.append(btn("vMoAdd", '"+ MONTHLY"', f'Set(varPre, {BLANKPRE}); Select(vLoad); Set(varVK, "Monthly"); {RESETS}; Set(varVAdd, true)', RX2 + RW3 - 270, 140, 270, 34, size=11, fill="RGBA(9, 105, 218, 1)", color=WHITE))
 out.append(gal("galVMo", VMO, RX2, 178, RW3, 890, 112, card("vmo", RW3 - 20, False)))
-out.append(label("vMoE", f'If(!IsBlank(varLoadedAt) && CountRows({VMO}) = 0, "No monthly variances for " & Text(varVM, "mmmm") & " in this scope.", "")', RX2, 220, RW3, 40, size=12, color=G9, align="Center"))
+out.append(label("vMoE", '"No monthly variances for " & Text(varVM, "mmmm") & " in this scope."', RX2, 220, RW3, 40, size=12, color=G9, align="Center",
+   extra={"Visible": F(f'!IsBlank(varLoadedAt) && CountRows({VMO}) = 0')}))
 
 # ---- add-variance overlay
 VA = {"Visible": "=varVAdd"}

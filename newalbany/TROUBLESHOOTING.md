@@ -118,6 +118,7 @@ For Kenny (and his Claude) as the owner of the New Albany MDI and the Holmdel Ti
 - **Dropdown in a gallery with a blank Default shows another row's pick.** Give the Items a placeholder `" "` row, Default `Coalesce(Reason, " ")`, and `Trim` on save.
 - **Wrap-count galleries cap columns.** For wide grids use fixed column slots (see Tier 2 WEEKS & MONTHS).
 - **2,000-row limit.** Filters on SharePoint lists return at most the app's data row limit; load big lists in date chunks (`ForAll(Sequence(...), Collect(...))`).
+- **A label on top of a button blocks it, even with empty text.** Controls later in the YAML sit on top, and labels catch clicks. An "empty list" message placed over a gallery must have `Visible` = the empty condition, not `Text` = `""` when not empty. (Tier 3 Variances v7: CLOSE on the first card did nothing; fixed in v8.)
 - **Paste order matters.** A control that navigates to a screen errors until that screen exists; create the screen first.
 - **Flows called from apps:** after changing a flow's inputs/outputs, remove and re-add it in the app's Power Automate pane, then Publish.
 - **Voyant mail filters** block `.py` attachments and rewrite `https://` inside `.txt` scripts. Send zips without Python; in text scripts write `https:\/\/`.
