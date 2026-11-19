@@ -39,7 +39,7 @@ One card per app (lists, flows, start-up formula, who to share with, how to chec
 
 | App | Screens → file | Generator (`make.py` target) |
 |---|---|---|
-| Tier 1 Hour x Hour | Screen1 → `HxH_Board_v25` | `build6.py` (+ `ux6.py`, `ux_tail6.py`) · `hxh` |
+| Tier 1 Hour x Hour | Screen1 → `HxH_Board_v26` | `build6.py` (+ `ux6.py`, `ux_tail6.py`) · `hxh` |
 | Tier 2 SQDC | Screen1 → `T2_Board_v19`; scrPeriods → `T2_Periods_v2` | `t2v2.py` · `t2`; `t2per.py` · `t2periods` |
 | Tier 3 War Room | Screen1 → `T3_Board_v9`; scrBowler → `T3_Bowler_v6`; scrVariance → `T3_Variances_v7` | `t3.py` (+ `t3_metrics.py`) · `t3`; `t3screens.py` · `t3screens` |
 | Quality | Screen1 → `Quality_v5`; scrNCR → `Quality_NCR_v2` | `quality.py` (builds on `qa.py`) · `quality` |

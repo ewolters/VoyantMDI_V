@@ -488,14 +488,15 @@
       BorderColor: =If(IsBlank(Self.Text), RGBA(210, 153, 34, 1), RGBA(177, 179, 179, 1))
       FocusedBorderColor: =RGBA(0, 72, 81, 1)
       HoverBorderColor: =RGBA(117, 120, 123, 1)
-      OnChange: =Select(btnSaveShift)
+      OnChange: |-
+        =If(!IsBlank(Self.Text) && !IsMatch(Self.Text, "\d{1,6}"), Notify("Job number: numbers only, up to 6 digits. Not saved.", NotificationType.Warning); Reset(Self); true, Select(btnSaveShift); true)
       X: =616
       Y: =120
       Width: =160
       Height: =48
       Fill: =If(IsBlank(Self.Text), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
       BorderThickness: =If(IsBlank(Self.Text), 3, 1)
-      Tooltip: ="REQUIRED. Primary job number for the shift."
+      Tooltip: ="REQUIRED. Primary job number for the shift. Numbers only, up to 6 digits."
       MaxLength: =6
 - cStdCrew:
     Control: Label@2.5.1
@@ -895,16 +896,18 @@
             FocusedBorderColor: =RGBA(0, 72, 81, 1)
             HoverBorderColor: =RGBA(117, 120, 123, 1)
             OnChange: |-
-              =Patch(colHours, ThisItem, {Job: Self.Text});
+              =If(!IsBlank(Self.Text) && !IsMatch(Self.Text, "\d{1,6}"), Notify("Job number: numbers only, up to 6 digits. Not saved.", NotificationType.Warning); Reset(Self); true,
+               Patch(colHours, ThisItem, {Job: Self.Text});
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
-              Select(btnSaveRow)
+              Select(btnSaveRow);
+               true)
             DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "PICK") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =146
             Y: =9
             Width: =80
             Height: =42
             BorderThickness: =1
-            Tooltip: ="Only if the job changed this hour (changeover). Blank = Job 1."
+            Tooltip: ="Only if the job changed this hour (changeover). Blank = Job 1. Numbers only, up to 6 digits."
             MaxLength: =6
       - gTgt:
           Control: Label@2.5.1
@@ -1041,16 +1044,20 @@
             FocusedBorderColor: =RGBA(0, 72, 81, 1)
             HoverBorderColor: =RGBA(117, 120, 123, 1)
             OnChange: |-
-              =With({p: Coalesce(Value(Self.Text), 0)}, Patch(colHours, ThisItem, {Planned: p, Tgt: Max(0, varUPH * (ThisItem.SlotMin - p) / 60)}));
+              =With({p: Coalesce(Value(Self.Text), 0)},
+               If(p + Coalesce(ThisItem.DT, 0) + Coalesce(ThisItem.DT2, 0) > ThisItem.SlotMin,
+                Notify("DT1 + DT2 + PLAN can't be more than " & ThisItem.SlotMin & " minutes in this hour. PLAN not saved.", NotificationType.Warning); Reset(Self); true,
+                Patch(colHours, ThisItem, {Planned: p, Tgt: Max(0, varUPH * (ThisItem.SlotMin - p) / 60)});
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
-              Select(btnSaveRow)
+              Select(btnSaveRow);
+                true))
             DisplayMode: =If(ThisItem.InShift && !(ddLine.Selected.Value = "PICK") && Coalesce(Value(txtCrew.Text), 0) > 0, DisplayMode.Edit, DisplayMode.Disabled)
             X: =880
             Y: =9
             Width: =56
             Height: =42
             BorderThickness: =1
-            Tooltip: ="Planned minutes this hour (lunch, break, planned meeting). Lowers this hour's target."
+            Tooltip: ="Planned minutes this hour (lunch, break, planned meeting). Lowers this hour's target. DT1 + DT2 + PLAN can't exceed the hour."
       - gDT1:
           Control: Classic/TextInput@2.3.2
           Properties:
@@ -1065,8 +1072,8 @@
             HoverBorderColor: =RGBA(117, 120, 123, 1)
             OnChange: |-
               =With({v: If(IsBlank(Self.Text), Blank(), Value(Self.Text))},
-               If(Coalesce(v, 0) + Coalesce(ThisItem.DT2, 0) > ThisItem.SlotMin,
-                Notify("DT1 + DT2 can't be more than " & ThisItem.SlotMin & " minutes in this hour. DT1 not saved.", NotificationType.Warning); Reset(Self); true,
+               If(Coalesce(v, 0) + Coalesce(ThisItem.DT2, 0) + Coalesce(ThisItem.Planned, 0) > ThisItem.SlotMin,
+                Notify("DT1 + DT2 + PLAN can't be more than " & ThisItem.SlotMin & " minutes in this hour. DT1 not saved.", NotificationType.Warning); Reset(Self); true,
                 Patch(colHours, ThisItem, {DT: v});
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow);
@@ -1078,7 +1085,7 @@
             Height: =42
             Fill: =If((!IsBlank(ThisItem.Reason)) && (IsBlank(ThisItem.DT)), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
             BorderThickness: =If((!IsBlank(ThisItem.Reason)) && (IsBlank(ThisItem.DT)), 3, 1)
-            Tooltip: ="Unplanned downtime minutes, event 1. DT1 + DT2 can't exceed the hour (60 min, 30 for a half hour)."
+            Tooltip: ="Unplanned downtime minutes, event 1. DT1 + DT2 + PLAN can't exceed the hour (60 min, 30 for a half hour)."
       - gR1:
           Control: Classic/DropDown@2.3.1
           Properties:
@@ -1127,8 +1134,8 @@
             HoverBorderColor: =RGBA(117, 120, 123, 1)
             OnChange: |-
               =With({v: If(IsBlank(Self.Text), Blank(), Value(Self.Text))},
-               If(Coalesce(v, 0) + Coalesce(ThisItem.DT, 0) > ThisItem.SlotMin,
-                Notify("DT1 + DT2 can't be more than " & ThisItem.SlotMin & " minutes in this hour. DT2 not saved.", NotificationType.Warning); Reset(Self); true,
+               If(Coalesce(v, 0) + Coalesce(ThisItem.DT, 0) + Coalesce(ThisItem.Planned, 0) > ThisItem.SlotMin,
+                Notify("DT1 + DT2 + PLAN can't be more than " & ThisItem.SlotMin & " minutes in this hour. DT2 not saved.", NotificationType.Warning); Reset(Self); true,
                 Patch(colHours, ThisItem, {DT2: v});
               Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
               Select(btnSaveRow);
@@ -1140,7 +1147,7 @@
             Height: =42
             Fill: =If((!IsBlank(ThisItem.Reason2)) && (IsBlank(ThisItem.DT2)), RGBA(255, 242, 179, 1), RGBA(255, 255, 255, 1))
             BorderThickness: =If((!IsBlank(ThisItem.Reason2)) && (IsBlank(ThisItem.DT2)), 3, 1)
-            Tooltip: ="Unplanned downtime minutes, event 2 (if a second issue hit this hour). DT1 + DT2 can't exceed the hour."
+            Tooltip: ="Unplanned downtime minutes, event 2 (if a second issue hit this hour). DT1 + DT2 + PLAN can't exceed the hour."
       - gR2:
           Control: Classic/DropDown@2.3.1
           Properties:
