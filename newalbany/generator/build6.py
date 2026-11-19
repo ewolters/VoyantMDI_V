@@ -146,6 +146,7 @@ LOAD=('Select(btnFlush);\nIf(IsBlank(varDate), Set(varDate, Today()));\n'   # pi
  '                 DT2: s.DT2_Minutes,\n'
  '                 Reason2: Coalesce(s.DT2_Reason, ""),\n'
  '                 Safety: Coalesce(s.SafetyEvent, false),\n'
+ '                 SafeNote: Coalesce(s.SafetyNotes, ""),\n'
  '                 Notes: Coalesce(s.Notes, "")}))));\n'
  'Set(varLoadedAt, Now())')
 out.append(btn("btnRefresh",'"REFRESH"',LOAD,1222,28,130,52,size=14,fill=TEAL_D,color=WHITE,extra={"RadiusTopLeft":"=6","RadiusTopRight":"=6","RadiusBottomLeft":"=6","RadiusBottomRight":"=6"}))
@@ -207,7 +208,7 @@ kids.append(ti("gDT1",'If(IsBlank(ThisItem.DT), "", Text(ThisItem.DT))',940,9,56
 kids.append(dd("gR1",DT_CODES,1000,9,160,42,default='Coalesce(ThisItem.Reason, " ")',onchange='With({v: Trim(Self.Selected.Value)},\n If(v <> Coalesce(ThisItem.Reason, ""),\n    Patch(colHours, ThisItem, {Reason: v});\n    Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));\n    Select(btnSaveRow)))',size=11,indent=I,extra={"DisplayMode":F(IN)}))
 kids.append(ti("gDT2",'If(IsBlank(ThisItem.DT2), "", Text(ThisItem.DT2))',1164,9,56,42,'With({v: If(IsBlank(Self.Text), Blank(), Value(Self.Text))},\n If(Coalesce(v, 0) + Coalesce(ThisItem.DT, 0) + Coalesce(ThisItem.Planned, 0) > ThisItem.SlotMin,\n  Notify("DT1 + DT2 + PLAN can\'t be more than " & ThisItem.SlotMin & " minutes in this hour. DT2 not saved.", NotificationType.Warning); Reset(Self); true,\n  Patch(colHours, ThisItem, {DT2: v});\n'+ROWSAVE+';\n  true))',hint='"0"',size=14,indent=I,extra={"DisplayMode":F(IN)}))
 kids.append(dd("gR2",DT_CODES,1224,9,160,42,default='Coalesce(ThisItem.Reason2, " ")',onchange='With({v: Trim(Self.Selected.Value)},\n If(v <> Coalesce(ThisItem.Reason2, ""),\n    Patch(colHours, ThisItem, {Reason2: v});\n    Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));\n    Select(btnSaveRow)))',size=11,indent=I,extra={"DisplayMode":F(IN)}))
-kids.append(btn("gSafety",'If(ThisItem.Safety, "EVENT", "OK")','Patch(colHours, ThisItem, {Safety: !ThisItem.Safety});\n'+ROWSAVE,1388,10,64,40,
+kids.append(btn("gSafety",'If(ThisItem.Safety, "EVENT", "OK")','Set(varSafeHr, ThisItem.HourNo); Set(varSafeOpen, true); Reset(txtSafe)',1388,10,64,40,
    fill=f'If(!ThisItem.InShift, {MUTE}, ThisItem.Safety, {RED}, {MUTE})',color=f'If(ThisItem.Safety, {WHITE}, {G5})',size=11,indent=I,extra={"DisplayMode":F(INSAFE)}))
 # NOTES: the row shows a short preview; tapping opens a popup (noteShade ... noteCancel) with room for a real note
 kids.append(btn("gNoteBtn",'If(IsBlank(ThisItem.Notes), "+ note", Left(ThisItem.Notes, 7) & If(Len(ThisItem.Notes) > 7, "…", ""))',
@@ -272,7 +273,7 @@ SAVEROW=('Select(btnFlush);\nIf(IsBlank(varPB), Select(btnRefresh));\nWith({r: v
  '    RunRatePct: If(IsBlank(r.Cum) || r.Tgt = 0, Blank(), (r.Cum - prev) / r.Tgt),\n'
  '    SpeedBPM: r.BPM, PlannedMin: r.Planned,\n'
  '    DT_Minutes: r.DT, DT_Reason: r.Reason, DT2_Minutes: r.DT2, DT2_Reason: r.Reason2,\n'
- '    SafetyEvent: r.Safety, Notes: r.Notes, EnteredBy: User().Email,\n'
+ '    SafetyEvent: r.Safety, SafetyNotes: r.SafeNote, Notes: r.Notes, EnteredBy: User().Email,\n'
  '    ShiftKey: ddLine.Selected.Value & "-" & Text(ddDate.Selected.D, "yyyymmdd") & "-S" & ddShift.Selected.Value,\n'
  '    EscReason: If(c2 > c1, r.Reason2, r.Reason), EscCumMin: Max(c1, c2)}},\n'
  '   IfError(Patch(HxH_Hourly, Coalesce(LookUp(HxH_Hourly, Title = k), Defaults(HxH_Hourly)), rec),\n'
@@ -312,6 +313,24 @@ out.append(btn("btnRetry",'"RETRY NOW"','Select(btnFlush)',1196,94,150,40,size=1
 NOSAVE='Notify("Pick your LINE first (top left). Nothing was saved.", NotificationType.Warning)'
 out.append(btn("btnSaveRow",'""','If('+NOLINE+', '+NOSAVE+',\n'+SAVEROW+';\ntrue)',0,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
 out.append(btn("btnSaveShift",'""','If('+NOLINE+', '+NOSAVE+',\n'+SAVESHIFT+';\ntrue)',2,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
+SV={"Visible":"=varSafeOpen"}
+SHR='LookUp(colHours, HourNo = varSafeHr)'
+SOK='Len(Trim(txtSafe.Text)) >= 5'   # mandatory description: at least a few words
+out.append(rect("safeShade","RGBA(0, 0, 0, 0.45)",0,0,1920,1080).replace("Properties:\n","Properties:\n      Visible: =varSafeOpen\n",1))
+out.append(rect("safePanel",WHITE,460,160,1000,640).replace("Properties:\n","Properties:\n      Visible: =varSafeOpen\n      BorderColor: ="+RED+"\n      BorderThickness: =4\n",1))
+out.append(label("safeTitle",'"⚠  SAFETY EVENT  ·  " & With({h: '+SHR+'}, Substitute(Substitute(Text(h.StartT, "h:mm AM/PM"), " AM", ""), " PM", "") & "–" & Text(DateAdd(h.StartT, h.SlotMin, TimeUnit.Minutes), "h:mm AM/PM")) & "  ·  line " & ddLine.Selected.Value',
+   484,176,952,48,size=20,bold=True,color=RED,font="Georgia",extra=dict(SV)))
+out.append(label("safeSub",'"REQUIRED: briefly describe what happened (near miss, first aid, injury, unsafe condition) and any immediate action taken."',484,226,952,40,size=12,bold=True,color=DARK,extra=dict(SV)))
+out.append(ctrl("txtSafe","Classic/TextInput@2.3.2",{"Default":F(SHR+'.SafeNote'),"Mode":"=TextMode.MultiLine","HintText":'="What happened, where, who was involved, what was done right away..."',
+   "MaxLength":"=2000","Font":"=Font.Arial","Size":"=18","BorderColor":F(RED),"BorderThickness":"=2","FocusedBorderColor":F(RED),"HoverBorderColor":F(G9),**box(484,272,952,400),"Visible":"=varSafeOpen"}))
+out.append(label("safeHint",'If('+SOK+', Text(Len(txtSafe.Text)) & " / 2000", "Write at least a few words to report the event.")',484,680,560,30,size=11,
+   color=f'If({SOK}, {G9}, {RED})',extra=dict(SV)))
+out.append(btn("safeSave",'If('+SHR+'.Safety, "SAVE", "REPORT EVENT")','Patch(colHours, '+SHR+', {Safety: true, SafeNote: Trim(txtSafe.Text)}); Set(varRow, '+SHR+'); Set(varSafeOpen, false); Select(btnSaveRow)',
+   1116,724,190,56,fill=RED,color=WHITE,size=14,extra=dict(SV,**{"DisplayMode":F(f'If({SOK}, DisplayMode.Edit, DisplayMode.Disabled)'),"DisabledFill":F(G1),"DisabledColor":F(G5)})))
+out.append(btn("safeCancel",'"CANCEL"','Set(varSafeOpen, false)',1316,724,120,56,fill=G1,color=DARK,size=14,extra=dict(SV)))
+out.append(btn("safeUndo",'"NOT AN EVENT (UNDO)"','Patch(colHours, '+SHR+', {Safety: false, SafeNote: ""}); Set(varRow, '+SHR+'); Set(varSafeOpen, false); Select(btnSaveRow)',
+   484,724,240,56,fill=WHITE,color=RED,size=12,extra=dict(SV,**{"Visible":F(f'varSafeOpen && {SHR}.Safety'),"BorderColor":F(RED),"BorderThickness":"=1",
+   "Tooltip":'="Only if this hour was marked EVENT by mistake. Removes the event and its description."'})))
 NV={"Visible":"=varNoteOpen"}
 NHR='LookUp(colHours, HourNo = varNoteHr)'
 out.append(rect("noteShade","RGBA(0, 0, 0, 0.35)",0,0,1920,1080).replace("Properties:\n","Properties:\n      Visible: =varNoteOpen\n",1))

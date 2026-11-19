@@ -254,6 +254,7 @@
                          DT2: s.DT2_Minutes,
                          Reason2: Coalesce(s.DT2_Reason, ""),
                          Safety: Coalesce(s.SafetyEvent, false),
+                         SafeNote: Coalesce(s.SafetyNotes, ""),
                          Notes: Coalesce(s.Notes, "")}))));
         Set(varLoadedAt, Now())
       Font: =Font.Arial
@@ -1186,10 +1187,7 @@
           Control: Classic/Button@2.2.0
           Properties:
             Text: =If(ThisItem.Safety, "EVENT", "OK")
-            OnSelect: |-
-              =Patch(colHours, ThisItem, {Safety: !ThisItem.Safety});
-              Set(varRow, LookUp(colHours, HourNo = ThisItem.HourNo));
-              Select(btnSaveRow)
+            OnSelect: =Set(varSafeHr, ThisItem.HourNo); Set(varSafeOpen, true); Reset(txtSafe)
             Font: =Font.Arial
             Size: =11
             FontWeight: =FontWeight.Bold
@@ -1202,7 +1200,7 @@
             Y: =10
             Width: =64
             Height: =40
-            Tooltip: ="Tap if a safety incident or near miss happened this hour. Tap again to undo. Add a note."
+            Tooltip: ="Tap to report a safety incident or near miss this hour. A short description is required. Tap an EVENT to read or edit it."
       - gNoteBtn:
           Control: Classic/Button@2.2.0
           Properties:
@@ -1848,7 +1846,7 @@
             RunRatePct: If(IsBlank(r.Cum) || r.Tgt = 0, Blank(), (r.Cum - prev) / r.Tgt),
             SpeedBPM: r.BPM, PlannedMin: r.Planned,
             DT_Minutes: r.DT, DT_Reason: r.Reason, DT2_Minutes: r.DT2, DT2_Reason: r.Reason2,
-            SafetyEvent: r.Safety, Notes: r.Notes, EnteredBy: User().Email,
+            SafetyEvent: r.Safety, SafetyNotes: r.SafeNote, Notes: r.Notes, EnteredBy: User().Email,
             ShiftKey: ddLine.Selected.Value & "-" & Text(Coalesce(varDate, Today()), "yyyymmdd") & "-S" & ddShift.Selected.Value,
             EscReason: If(c2 > c1, r.Reason2, r.Reason), EscCumMin: Max(c1, c2)}},
            IfError(Patch(HxH_Hourly, Coalesce(LookUp(HxH_Hourly, Title = k), Defaults(HxH_Hourly)), rec),
@@ -1918,6 +1916,142 @@
       Y: =1079
       Width: =1
       Height: =1
+- safeShade:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varSafeOpen
+      Fill: =RGBA(0, 0, 0, 0.45)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =1080
+- safePanel:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varSafeOpen
+      BorderColor: =RGBA(207, 34, 46, 1)
+      BorderThickness: =4
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =460
+      Y: =160
+      Width: =1000
+      Height: =640
+- safeTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="⚠  SAFETY EVENT  ·  " & With({h: LookUp(colHours, HourNo = varSafeHr)}, Substitute(Substitute(Text(h.StartT, "h:mm AM/PM"), " AM", ""), " PM", "") & "–" & Text(DateAdd(h.StartT, h.SlotMin, TimeUnit.Minutes), "h:mm AM/PM")) & "  ·  line " & ddLine.Selected.Value
+      Font: =Font.Georgia
+      Size: =20
+      Color: =RGBA(207, 34, 46, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varSafeOpen
+      X: =484
+      Y: =176
+      Width: =952
+      Height: =48
+- safeSub:
+    Control: Label@2.5.1
+    Properties:
+      Text: |-
+        ="REQUIRED: briefly describe what happened (near miss, first aid, injury, unsafe condition) and any immediate action taken."
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varSafeOpen
+      X: =484
+      Y: =226
+      Width: =952
+      Height: =40
+- txtSafe:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =LookUp(colHours, HourNo = varSafeHr).SafeNote
+      Mode: =TextMode.MultiLine
+      HintText: ="What happened, where, who was involved, what was done right away..."
+      MaxLength: =2000
+      Font: =Font.Arial
+      Size: =18
+      BorderColor: =RGBA(207, 34, 46, 1)
+      BorderThickness: =2
+      FocusedBorderColor: =RGBA(207, 34, 46, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      X: =484
+      Y: =272
+      Width: =952
+      Height: =400
+      Visible: =varSafeOpen
+- safeHint:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(Len(Trim(txtSafe.Text)) >= 5, Text(Len(txtSafe.Text)) & " / 2000", "Write at least a few words to report the event.")
+      Font: =Font.Arial
+      Size: =11
+      Color: =If(Len(Trim(txtSafe.Text)) >= 5, RGBA(117, 120, 123, 1), RGBA(207, 34, 46, 1))
+      Visible: =varSafeOpen
+      X: =484
+      Y: =680
+      Width: =560
+      Height: =30
+- safeSave:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(LookUp(colHours, HourNo = varSafeHr).Safety, "SAVE", "REPORT EVENT")
+      OnSelect: |-
+        =Patch(colHours, LookUp(colHours, HourNo = varSafeHr), {Safety: true, SafeNote: Trim(txtSafe.Text)}); Set(varRow, LookUp(colHours, HourNo = varSafeHr)); Set(varSafeOpen, false); Select(btnSaveRow)
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(207, 34, 46, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varSafeOpen
+      DisplayMode: =If(Len(Trim(txtSafe.Text)) >= 5, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(177, 179, 179, 1)
+      X: =1116
+      Y: =724
+      Width: =190
+      Height: =56
+- safeCancel:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="CANCEL"
+      OnSelect: =Set(varSafeOpen, false)
+      Font: =Font.Arial
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(217, 217, 214, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varSafeOpen
+      X: =1316
+      Y: =724
+      Width: =120
+      Height: =56
+- safeUndo:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="NOT AN EVENT (UNDO)"
+      OnSelect: |-
+        =Patch(colHours, LookUp(colHours, HourNo = varSafeHr), {Safety: false, SafeNote: ""}); Set(varRow, LookUp(colHours, HourNo = varSafeHr)); Set(varSafeOpen, false); Select(btnSaveRow)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(207, 34, 46, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(207, 34, 46, 1)
+      Visible: =varSafeOpen && LookUp(colHours, HourNo = varSafeHr).Safety
+      BorderThickness: =1
+      Tooltip: ="Only if this hour was marked EVENT by mistake. Removes the event and its description."
+      X: =484
+      Y: =724
+      Width: =240
+      Height: =56
 - noteShade:
     Control: Rectangle@2.3.0
     Properties:
