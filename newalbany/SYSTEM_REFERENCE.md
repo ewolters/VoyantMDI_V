@@ -47,7 +47,7 @@ One card per app (lists, flows, start-up formula, who to share with, how to chec
 | Newspaper | `Newspaper_v7` | `np.py` · `np` |
 | SW Manager / PC Audit | `SW_Manager_v4` / `PC_Audit_v4` | `sw.py` · `sw` / `pc.py` · `pc` |
 | Frontier Audit (optional) | `Frontier_Audit_v2` | `fa.py` · `fa` |
-| MDI Settings | Screen1 Escalation · scrDrop · scrLines · scrStd · scrCfg (`Settings_scrCfg_v3`) · scrPeople · scrImport (`Settings_scrImport_v3`) | `settings.py` + `settings_imp.py` · `settings` |
+| MDI Settings | Screen1 Escalation · scrDrop · scrLines · scrStd · scrCfg (`Settings_scrCfg_v4`) · scrPeople · scrImport (`Settings_scrImport_v4`) | `settings.py` + `settings_imp.py` · `settings` |
 
 Shared building blocks: `newalbany/generator/theme.py` (colors, `write_themed`, Voyant theme), `fx_compat.py` (post-processing, e.g. IfError arity), `settings_helpers.py`. Most apps start from `build6.py`'s helper functions (`label`, `btn`, `rect`, `dd`, `gal`, `tap`).
 

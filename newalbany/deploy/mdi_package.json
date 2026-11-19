@@ -1390,6 +1390,36 @@
    ],
    "query": "<OrderBy><FieldRef Name=\"RaisedAt\" Ascending=\"FALSE\" /></OrderBy>",
    "rows": 100
+  },
+  "Settings_Log": {
+   "base": 100,
+   "desc": "Change log for MDI Settings: one row per save (who, when, which tab and item, field: old -> new, and the required reason). Written by the MDI Settings app. Never edited or deleted.",
+   "title": {
+    "name": "Title",
+    "req": true,
+    "fmt": ""
+   },
+   "fields": [
+    "<Field Type=\"DateTime\" Name=\"ChangedAt\" DisplayName=\"ChangedAt\" Format=\"DateTime\" StaticName=\"ChangedAt\"/>",
+    "<Field Type=\"Text\" Name=\"ChangedBy\" DisplayName=\"ChangedBy\" StaticName=\"ChangedBy\"/>",
+    "<Field Type=\"Text\" Name=\"ChangedByEmail\" DisplayName=\"ChangedByEmail\" StaticName=\"ChangedByEmail\"/>",
+    "<Field Type=\"Text\" Name=\"Area\" DisplayName=\"Area\" StaticName=\"Area\"/>",
+    "<Field Type=\"Text\" Name=\"Item\" DisplayName=\"Item\" StaticName=\"Item\"/>",
+    "<Field Type=\"Text\" Name=\"Action\" DisplayName=\"Action\" StaticName=\"Action\"/>",
+    "<Field Type=\"Note\" Name=\"Changes\" DisplayName=\"Changes\" NumLines=\"6\" RichText=\"FALSE\" StaticName=\"Changes\"/>",
+    "<Field Type=\"Note\" Name=\"Reason\" DisplayName=\"Reason\" NumLines=\"4\" RichText=\"FALSE\" StaticName=\"Reason\"/>"
+   ],
+   "view": [
+    "ChangedAt",
+    "ChangedBy",
+    "Area",
+    "Item",
+    "Action",
+    "Changes",
+    "Reason"
+   ],
+   "query": "<OrderBy><FieldRef Name=\"ChangedAt\" Ascending=\"FALSE\" /></OrderBy>",
+   "rows": 100
   }
  },
  "seed": {
@@ -4062,6 +4092,10 @@
    "RaisedAt",
    "Status",
    "Line"
+  ],
+  "Settings_Log": [
+   "ChangedAt",
+   "Area"
   ]
  },
  "perms": {
@@ -4099,7 +4133,8 @@
    "SAF_Results",
    "KPI_Daily",
    "Variances",
-   "NCR"
+   "NCR",
+   "Settings_Log"
   ],
   "log": [
    "Escalation_Log"

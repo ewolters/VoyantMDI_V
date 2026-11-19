@@ -3,7 +3,7 @@ import os, sys
 SCR = __import__("os").environ["MDI_TMP"]+"/set/"
 os.makedirs(SCR, exist_ok=True)
 os.environ["SETOUT"] = SCR
-sys.argv = ["settings.py", "3"]
+sys.argv = ["settings.py", "4"]
 exec(open(__import__("os").environ["MDI_GEN"]+"/settings.py").read())
 FLOWN = "'MDI-ImportHistory'"
 OUTDIR = __import__("os").environ["MDI_OUTDIR"]+"/"
@@ -164,7 +164,7 @@ out.append(vs(btn("iGo", 'If(varIBusy, "IMPORTING…  KEEP THIS OPEN", "IMPORT "
 out.append(vs(label("iGoT", 'If(varAdm, "Large files take a few minutes. Boards pick it up on their next REFRESH.", "Only an MDI admin can import.")', RX + 652, 904, 560, 60, size=11, color=G9)))
 out.append(label("iIdle", '"Scan a workbook on the left. Nothing is written until you tap IMPORT."', RX + 16, 320, RW - 32, 40, size=14, color=G9, extra={"Visible": F('!varIScanned')}))
 
-write_themed(OUTDIR + "Settings_scrImport_v3.pa.yaml", "".join(out))
+write_themed(OUTDIR + "Settings_scrImport_v4.pa.yaml", "".join(out))
 import shutil
-shutil.copy(__import__("os").environ.get("MDI_OUTDIR", SCR.rstrip("/")) + "/Settings_Thresholds_v3.pa.yaml", OUTDIR + "Settings_scrCfg_v3.pa.yaml")
+shutil.copy(__import__("os").environ.get("MDI_OUTDIR", SCR.rstrip("/")) + "/Settings_Thresholds_v4.pa.yaml", OUTDIR + "Settings_scrCfg_v4.pa.yaml")
 print("ok")

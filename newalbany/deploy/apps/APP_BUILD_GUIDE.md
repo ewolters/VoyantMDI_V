@@ -232,7 +232,7 @@ Open **Settings** (gear icon or ⋯ in the top bar).
 ### 11. MDI Settings: escalation rules, dropdown lists, lines, standards, thresholds, people (office)
 | | |
 |---|---|
-| **Files** | 6 screens: `Settings_Escalation_v3` → **Screen1** · `Settings_Dropdowns_v3` → **scrDrop** · `Settings_Lines_v3` → **scrLines** · `Settings_Standards_v3` → **scrStd** · `Settings_scrCfg_v3` → **scrCfg** · `Settings_People_v3` → **scrPeople** · `Settings_scrImport_v3` → **scrImport** |
+| **Files** | 6 screens: `Settings_Escalation_v4` → **Screen1** · `Settings_Dropdowns_v4` → **scrDrop** · `Settings_Lines_v4` → **scrLines** · `Settings_Standards_v4` → **scrStd** · `Settings_scrCfg_v4` → **scrCfg** · `Settings_People_v4` → **scrPeople** · `Settings_scrImport_v4` → **scrImport** |
 | **Name / format** | `MDI Settings`, **Tablet** 1920 × 1080. Create it from **Solutions → MDI → New → App → Canvas app** so it lands in the MDI solution. |
 | **Lists** (8) | Escalation_Contacts, MDI_Config, Lookups, Lines, ValueStreams, PLAYBOOK, KPI_Metrics, People. Turn on Settings → General → *Automatically create environment variables when adding data sources* first; pick the existing variables when offered. |
 | **Flow** | **MDI - Import History** (Power Automate pane → Add flow; used by scrImport) |

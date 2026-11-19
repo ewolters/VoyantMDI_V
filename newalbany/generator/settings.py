@@ -15,8 +15,68 @@ ME = ('Set(varMe, LookUp(People, Lower(Email) = Lower(User().Email)));\n'
       'Set(varNoAdmin, CountRows(Filter(People, MDIAdmin = true)) = 0);\n'
       'Set(varAdm, Coalesce(varMe.MDIAdmin, false) || varNoAdmin);\n'
       'Set(varCan, Coalesce(varMe.CanEditConfig, false) || varAdm)')
-def SAVE(patch, load, ok="Saved"):
-    return f'IfError({patch},\n Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),\n Notify("{ok}", NotificationType.Success); Select({load}))'
+# ---------------- change log (Settings_Log) ----------------
+# A save with a log spec doesn't write straight away: it opens "why are you making this change?" (reason required),
+# then a hidden per-save button (<pfx>Do<n>) saves, and on success writes one Settings_Log row with field: old -> new.
+CURP = None; PENDING = []; SCR_AREAS = {"Screen1": ["Escalation"], "scrDrop": ["Dropdowns"], "scrLines": ["Lines", "Value streams"],
+                                        "scrStd": ["Standards"], "scrCfg": ["Thresholds", "Metrics"], "scrPeople": ["People"]}
+def _split_top(s, sep):
+    out, d, cur, q = [], 0, "", False
+    for ch in s:
+        if ch == '"': q = not q
+        if not q:
+            if ch in "({[": d += 1
+            elif ch in ")}]": d -= 1
+        if ch == sep and d == 0 and not q: out.append(cur); cur = ""
+        else: cur += ch
+    out.append(cur); return out
+def rec_fields(rec):
+    body = rec.strip()[1:-1]
+    res = []
+    for part in _split_top(body, ","):
+        part = part.strip()
+        if not part: continue
+        name, expr = part.split(":", 1) if not part.startswith("'") else (part[:part.index("'", 1) + 1], part[part.index("'", 1) + 2:])
+        res.append((name.strip(), expr.strip()))
+    return res
+def _pair(label, old, new):
+    return f'If({old} <> {new}, "{label}: " & If(IsBlank({old}), "—", {old}) & " → " & If(IsBlank({new}), "—", {new}), "")'
+def diff_rec(rec, o="o", skip=()):
+    ps = []
+    for name, expr in rec_fields(rec):
+        lab = name.strip("'")
+        if lab in skip: continue
+        if expr.startswith("{Value:"):
+            ps.append(_pair(lab, f"{o}.{name}.Value", expr[len("{Value:"):].rstrip("}").strip()))
+        elif expr.startswith("ForAll(") and "{Value:" in expr:
+            ps.append(_pair(lab, f'Concat({o}.{name}, Value, ",")', f'Concat({expr}, Value, ",")'))
+        else:
+            ps.append(_pair(lab, f"Text({o}.{name})", f"Text({expr})"))
+    return ps
+def CHG(pieces): return 'Concat(Filter(Table(' + ", ".join("{t: " + x + "}" for x in pieces) + '), !IsBlank(t)), t, "; ")'
+def SAVE(patch, load, ok="Saved", log=None):
+    done = f'Notify("{ok}", NotificationType.Success); Select({load})'
+    if not log:
+        return f'IfError({patch},\n Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),\n {done})'
+    did = f"{CURP}Do{len(PENDING) + 1}"
+    if "rec" in log:   # record save: old record read fresh from SharePoint just before saving
+        flds = [n.strip("'") for n, _ in rec_fields(log["rec"])]
+        act = '"Added"' if "Active" not in flds else None
+        newA = dict((n.strip("'"), e) for n, e in rec_fields(log["rec"])).get("Active")
+        action = 'If(IsBlank(o), "Added", ' + (f'o.Active && !({newA}), "Retired", !o.Active && ({newA}), "Restored", ' if newA else '') + '"Changed")'
+        head = f'With({{o: {log["old"]}}},\n With({{chg: {CHG(diff_rec(log["rec"], skip=log.get("skip", ())))}}},\n'
+        tail = '))'
+    else:              # setting pairs: (label, old, new)
+        action = '"Changed"'
+        head = f'With({{chg: {CHG([_pair(l, o_, n_) for l, o_, n_ in log["pairs"]])}}},\n'
+        tail = ')'
+    logpatch = (f'IfError(Patch(Settings_Log, Defaults(Settings_Log), {{Title: Left("{log["area"]}: " & {log["item"]}, 250), ChangedAt: Now(), ChangedBy: User().FullName, '
+                f'ChangedByEmail: User().Email, Area: "{log["area"]}", Item: Left({log["item"]}, 250), Action: {action}, '
+                f'Changes: If(IsBlank(chg), "(no field changed)", chg), Reason: Trim({CURP}RsnTxt.Text)}}),\n'
+                f'  Notify("Saved, but the change log entry failed: " & FirstError.Message, NotificationType.Warning), true)')
+    body = (head + f' IfError({patch},\n  Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),\n  {logpatch};\n  {done})' + tail)
+    PENDING.append((did, body))
+    return f'Set(varRsnFor, "{did}"); Reset({CURP}RsnTxt); Set(varRsnOpen, true)'
 
 def _tap_through(k):
     # Labels/rectangles pasted from YAML don't pass taps to their gallery (Studio only adds Select(Parent) when you insert
@@ -41,6 +101,7 @@ def tog(name, var, text, x, y, w, h=40, disp=ED):
                fill=f'If({var}, {TEAL_D}, {WHITE})', color=f'If({var}, {WHITE}, {G9})',
                extra={"BorderColor": F(G5), "BorderThickness": "=1", "DisplayMode": F(disp)})
 def hdr(pfx, cur, load):
+    global CURP, CURS; CURP = pfx; CURS = cur
     o = [rect(f"{pfx}HdrBar", DARK, 0, 0, 1920, 90),
          label(f"{pfx}Brand", '"voyant"', 24, 6, 170, 52, size=34, color=WHITE, font="Georgia"),
          label(f"{pfx}BrandSub", '"NEW ALBANY"', 27, 56, 170, 24, size=10, bold=True, color=TEAL),
@@ -54,8 +115,59 @@ def hdr(pfx, cur, load):
                      fill=TEAL_D if on else WHITE, color=WHITE if on else TEAL_D, extra={"BorderColor": F(TEAL_D), "BorderThickness": "=1"}))
     o.append(btn(f"{pfx}Load", '"↻"', load, 1880, 98, 36, 36, size=14, fill=WHITE, color=TEAL_D,
                  extra={"Tooltip": '="Reload from SharePoint"', "BorderColor": F(G5), "BorderThickness": "=1"}))
+    if cur in SCR_AREAS:
+        o.append(btn(f"{pfx}LogBtn", '"CHANGE LOG"', f'Set(varLogAll, false); Set(varLogOpen, true); IfError(ClearCollect(colSLog, Sort(Filter(Settings_Log, ChangedAt >= DateAdd(Today(), -365, TimeUnit.Days)), ChangedAt, SortOrder.Descending)), Notify("Could not load the change log (Settings_Log): " & FirstError.Message, NotificationType.Error), true)',
+                     640, 24, 190, 44, size=12, fill=TEAL_D, color=WHITE, extra={"BorderColor": F(AQUA), "BorderThickness": "=1", "Tooltip": '="Who changed what in MDI Settings, when, and why"'}))
+    return o
+def logui(pfx, cur):
+    """Reason popup + hidden save buttons + change-log panel, added on top of every editing screen."""
+    o = []
+    RV = {"Visible": "=varRsnOpen"}; LV = {"Visible": "=varLogOpen"}
+    for did, body in PENDING:
+        o.append(btn(did, '""', body, 0, 1079, 1, 1, fill="RGBA(0, 0, 0, 0)", color="RGBA(0, 0, 0, 0)", extra={"TabIndex": "=-1"}))
+    # reason popup
+    ok = f'Len(Trim({pfx}RsnTxt.Text)) >= 5'
+    o.append(rect(f"{pfx}RsnShade", "RGBA(0, 0, 0, 0.45)", 0, 0, 1920, 1080).replace("Properties:\n", "Properties:\n      Visible: =varRsnOpen\n", 1))
+    o.append(rect(f"{pfx}RsnPanel", WHITE, 460, 220, 1000, 520).replace("Properties:\n", "Properties:\n      Visible: =varRsnOpen\n      BorderColor: =" + TEAL_D + "\n      BorderThickness: =3\n", 1))
+    o.append(label(f"{pfx}RsnT", '"WHY ARE YOU MAKING THIS CHANGE?"', 484, 236, 952, 44, size=20, bold=True, color=TEAL_D, font="Georgia", extra=dict(RV)))
+    o.append(label(f"{pfx}RsnS", '"Required. It goes in the change log with your name, the time and what changed (old → new)."', 484, 280, 952, 30, size=12, color=G9, extra=dict(RV)))
+    o.append(ctrl(f"{pfx}RsnTxt", "Classic/TextInput@2.3.2", {"Default": '=""', "Mode": "=TextMode.MultiLine", "HintText": '="e.g. new filler head raised the rate; per plant manager 11/19; correcting a typo"',
+        "MaxLength": "=1000", "Font": "=Font.Arial", "Size": "=16", "BorderColor": F(G5), "FocusedBorderColor": F(TEAL_D), **box(484, 318, 952, 300), "Visible": "=varRsnOpen"}))
+    o.append(label(f"{pfx}RsnH", f'If({ok}, "", "Type a short reason to continue.")', 484, 626, 600, 30, size=11, color=RED, extra=dict(RV)))
+    sw = "Switch(varRsnFor, " + ", ".join(f'"{did}", Select({did})' for did, _ in PENDING) + ")" if PENDING else "false"
+    o.append(btn(f"{pfx}RsnGo", '"SAVE WITH THIS REASON"', f'Set(varRsnOpen, false); {sw}', 1116, 668, 220, 56, size=13, fill=TEAL_D, color=WHITE,
+        extra=dict(RV, **{"DisplayMode": F(f"If({ok}, DisplayMode.Edit, DisplayMode.Disabled)"), "DisabledFill": F(G1), "DisabledColor": F(G5)})))
+    o.append(btn(f"{pfx}RsnNo", '"CANCEL"', 'Set(varRsnOpen, false); Notify("Not saved.", NotificationType.Information)', 1346, 668, 90, 56, size=12, fill=G1, color=DARK, extra=dict(RV)))
+    # change-log panel
+    areas = SCR_AREAS[cur]
+    inArea = "(" + " || ".join(f'Area = "{a}"' for a in areas) + ")"
+    items = f'Filter(colSLog, (varLogAll || {inArea}) && (IsBlank({pfx}LogQ.Text) || {pfx}LogQ.Text in Item || {pfx}LogQ.Text in ChangedBy || {pfx}LogQ.Text in Changes || {pfx}LogQ.Text in Reason))'
+    o.append(rect(f"{pfx}LogShade", "RGBA(0, 0, 0, 0.45)", 0, 0, 1920, 1080).replace("Properties:\n", "Properties:\n      Visible: =varLogOpen\n", 1))
+    o.append(rect(f"{pfx}LogPanel", WHITE, 60, 60, 1800, 960).replace("Properties:\n", "Properties:\n      Visible: =varLogOpen\n      BorderColor: =" + TEAL_D + "\n      BorderThickness: =3\n", 1))
+    o.append(label(f"{pfx}LogT", '"CHANGE LOG  ·  " & If(varLogAll, "ALL TABS", "' + " + ".join(a.upper() for a in areas) + '") & "  ·  last 12 months  ·  " & CountRows(' + items + ') & " changes"',
+        84, 72, 1200, 48, size=18, bold=True, color=TEAL_D, font="Georgia", extra=dict(LV)))
+    o.append(btn(f"{pfx}LogAll", 'If(varLogAll, "THIS TAB ONLY", "ALL TABS")', 'Set(varLogAll, !varLogAll)', 1290, 76, 170, 40, size=11, fill=WHITE, color=TEAL_D, extra=dict(LV, **{"BorderColor": F(TEAL_D), "BorderThickness": "=1"})))
+    o.append(ti(f"{pfx}LogQ", '""', 1470, 76, 250, 40, "false", hint='"search…"', size=12, number=False, extra=dict(LV, **{"Align": "=Align.Left"})))
+    o.append(btn(f"{pfx}LogX", '"✕ CLOSE"', 'Set(varLogOpen, false)', 1730, 76, 110, 40, size=11, fill=G1, color=DARK, extra=dict(LV)))
+    heads = [("WHEN", 0, 150), ("WHO", 154, 170), ("WHAT", 328, 330), ("ACTION", 662, 90), ("CHANGES (old → new)", 756, 560), ("REASON", 1320, 400)]
+    for i, (h, x, w) in enumerate(heads):
+        o.append(label(f"{pfx}LogH{i}", f'"{h}"', 84 + x, 128, w, 26, size=10, bold=True, color=G9, extra=dict(LV)))
+    kids = [label(f"{pfx}LgW", 'Text(ThisItem.ChangedAt, "m/d/yy h:mm AM/PM")', 0, 4, 150, 80, size=11, color=DARK, valign="Top", indent=I),
+            label(f"{pfx}LgB", 'ThisItem.ChangedBy', 154, 4, 170, 80, size=11, bold=True, color=DARK, valign="Top", indent=I),
+            label(f"{pfx}LgI", 'ThisItem.Area & ": " & ThisItem.Item', 328, 4, 330, 80, size=11, color=DARK, valign="Top", indent=I),
+            label(f"{pfx}LgA", 'ThisItem.Action', 662, 4, 90, 80, size=11, bold=True, valign="Top", indent=I,
+                  extra={"Color": F(f'Switch(ThisItem.Action, "Added", {GREEN}, "Retired", {RED}, "Restored", {TEAL_D}, {DARK})')}),
+            label(f"{pfx}LgC", 'ThisItem.Changes', 756, 4, 560, 80, size=10, color=DARK, valign="Top", indent=I, extra={"Tooltip": F('ThisItem.Changes')}),
+            label(f"{pfx}LgR", 'ThisItem.Reason', 1320, 4, 400, 80, size=10, color=G9, valign="Top", indent=I, extra={"Tooltip": F('ThisItem.Reason')})]
+    o.append(ctrl(f"{pfx}LogGal", "Gallery@2.15.0", {"Items": F(items), "TemplateSize": "=88", "TemplatePadding": "=0", "ShowScrollbar": "=true",
+        "TemplateFill": F(f'If(Mod(ThisItem.ID, 2) = 0, {LIGHT}, {WHITE})'), "BorderThickness": "=0", **box(84, 156, 1752, 840), "Visible": "=varLogOpen"}, 0, kids,
+        variant="BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0"))
+    o.append(label(f"{pfx}LogE", '"No changes logged yet."', 84, 200, 1752, 40, size=14, color=G9, align="Center", extra={"Visible": F(f'varLogOpen && CountRows({items}) = 0')}))
     return o
 def write(fname, out):
+    global PENDING
+    if CURS in SCR_AREAS: out = out + logui(CURP, CURS)
+    PENDING = []
     write_themed(OUTD + fname, "".join(out)); print("wrote", fname)
 
 # =============================== ESCALATION (Screen1) ===============================
@@ -66,7 +178,7 @@ out.append(rect("eSetBg", LIGHT, 16, 196, 1888, 84))
 out.append(cap("ecFirst", "FIRST LEVEL (MINUTES)", 32, 202, 220)); out.append(txt("eFirst", 'Coalesce(LookUp(colCfg, Title = "Escalation_FirstLevelMin").SettingValue, "60")', 32, 224, 200, number=True))
 out.append(cap("ecAlert", "SEND FLOW-FAILURE ALERTS TO (E-MAIL, ; BETWEEN)", 260, 202, 520)); out.append(txt("eAlert", 'Coalesce(LookUp(colCfg, Title = "Alert_Email").SettingValue, "")', 260, 224, 640, hint='"name@company.com"'))
 SETPATCH = lambda key, val, kind: f'Patch(MDI_Config, Coalesce(LookUp(MDI_Config, Title = "{key}"), Defaults(MDI_Config)), {{Title: "{key}", SettingValue: {val}, Kind: {{Value: "{kind}"}}}})'
-out.append(btn("eSetSave", '"SAVE SETTINGS"', SAVE(SETPATCH("Escalation_FirstLevelMin", "eFirst.Text", "Threshold") + ';\n ' + SETPATCH("Alert_Email", "eAlert.Text", "Other"), "eLoad", "Settings saved"),
+out.append(btn("eSetSave", '"SAVE SETTINGS"', SAVE(SETPATCH("Escalation_FirstLevelMin", "eFirst.Text", "Threshold") + ';\n ' + SETPATCH("Alert_Email", "eAlert.Text", "Other"), "eLoad", "Settings saved", log=dict(area="Escalation", item='"Escalation settings"', pairs=[("First level (min)", 'LookUp(MDI_Config, Title = "Escalation_FirstLevelMin").SettingValue', 'eFirst.Text'), ("Alert e-mail", 'LookUp(MDI_Config, Title = "Alert_Email").SettingValue', 'eAlert.Text')])),
                930, 224, 200, 44, size=13, fill=TEAL_D, color=WHITE, extra={"DisplayMode": F(ED)}))
 out.append(tog("eAll", "varEAll", '"SHOW RETIRED"', 1720, 228, 170))
 # list
@@ -103,7 +215,7 @@ EREC = ('{Title: eName.Text, Email: Trim(eMail.Text), Role: eRole.Text, Level: V
         '  Shifts: ForAll(Filter(Table({V: "1", On: varES1}, {V: "2", On: varES2}, {V: "3", On: varES3}), On), {Value: V}), Active: varEA}')
 out.append(btn("eSave", '"SAVE CONTACT"',
                'If(IsBlank(eName.Text) || IsBlank(eMail.Text) || !IsNumeric(eLvl.Text), Notify("Name, e-mail and a level in minutes are required.", NotificationType.Warning),\n'
-               + SAVE(f'Patch(Escalation_Contacts, If(IsBlank(varE.ID), Defaults(Escalation_Contacts), LookUp(Escalation_Contacts, ID = varE.ID)), {EREC})', "eLoad", "Contact saved") + ')',
+               + SAVE(f'Patch(Escalation_Contacts, If(IsBlank(varE.ID), Defaults(Escalation_Contacts), LookUp(Escalation_Contacts, ID = varE.ID)), {EREC})', "eLoad", "Contact saved", log=dict(area="Escalation", item='Trim(eName.Text) & " (" & Trim(eMail.Text) & ")"', old='LookUp(Escalation_Contacts, ID = varE.ID)', rec=EREC)) + ')',
                FX + 16, y, 240, 50, size=14, fill=TEAL_D, color=WHITE, extra={"DisplayMode": F(ED)}))
 out.append(btn("eNew", '"+ NEW CONTACT"', 'Set(varE, Blank()); Set(varESS, false); Set(varES1, false); Set(varES2, false); Set(varES3, false); Set(varEA, true); Reset(eName); Reset(eMail); Reset(eRole); Reset(eLvl)',
                FX + 272, y, 220, 50, size=13, fill=WHITE, color=TEAL_D, extra={"BorderColor": F(TEAL_D), "BorderThickness": "=1", "DisplayMode": F(ED)}))
@@ -155,7 +267,7 @@ DREC = '{Title: Trim(dLbl.Text), Category: {Value: varCat}, Group: dGrp.Text, He
 out.append(btn("dSave", '"SAVE REASON"',
                'If(IsBlank(Trim(dLbl.Text)), Notify("A label is required.", NotificationType.Warning),\n'
                ' !IsBlank(LookUp(colLk, Category.Value = varCat && Lower(Title) = Lower(Trim(dLbl.Text)) && ID <> Coalesce(varL.ID, -1))), Notify("That label is already in " & varCat & ".", NotificationType.Warning),\n'
-               + SAVE(f'Patch(Lookups, If(IsBlank(varL.ID), Defaults(Lookups), LookUp(Lookups, ID = varL.ID)), {DREC})', "dLoad", "Reason saved") + ')',
+               + SAVE(f'Patch(Lookups, If(IsBlank(varL.ID), Defaults(Lookups), LookUp(Lookups, ID = varL.ID)), {DREC})', "dLoad", "Reason saved", log=dict(area="Dropdowns", item='varCat & ": " & Trim(dLbl.Text)', old='LookUp(Lookups, ID = varL.ID)', rec=DREC, skip=("SortOrder",))) + ')',
                FX + 16, y, 240, 50, size=14, fill=TEAL_D, color=WHITE, extra={"DisplayMode": F(ED)}))
 out.append(btn("dNew", '"+ NEW REASON"', 'Set(varL, Blank()); Set(varLA, true); Reset(dLbl); Reset(dGrp); Reset(dHelp); Reset(dEq)',
                FX + 272, y, 220, 50, size=13, fill=WHITE, color=TEAL_D, extra={"BorderColor": F(TEAL_D), "BorderThickness": "=1", "DisplayMode": F(ED)}))
@@ -186,7 +298,7 @@ out.append(tog("lLnAct", "varLnA", '"ACTIVE"', 32, 852, 160))
 LNREC = '{Title: Trim(lLnN.Text), ValueStream: lLnV.Selected.Value, DisplayOrder: If(IsNumeric(lLnO.Text), Value(lLnO.Text), Blank()), Active: varLnA}'
 out.append(btn("lLnSave", '"SAVE LINE"',
                'If(IsBlank(Trim(lLnN.Text)), Notify("A line name is required.", NotificationType.Warning),\n !IsBlank(LookUp(colLn, Title = Trim(lLnN.Text) && ID <> Coalesce(varLn.ID, -1))), Notify("That line already exists.", NotificationType.Warning),\n'
-               + SAVE(f'Patch(Lines, If(IsBlank(varLn.ID), Defaults(Lines), LookUp(Lines, ID = varLn.ID)), {LNREC})', "lLoad", "Line saved") + ')',
+               + SAVE(f'Patch(Lines, If(IsBlank(varLn.ID), Defaults(Lines), LookUp(Lines, ID = varLn.ID)), {LNREC})', "lLoad", "Line saved", log=dict(area="Lines", item='"Line " & Trim(lLnN.Text)', old='LookUp(Lines, ID = varLn.ID)', rec=LNREC)) + ')',
                32, 906, 200, 48, size=13, fill=TEAL_D, color=WHITE, extra={"DisplayMode": F(ED)}))
 out.append(btn("lLnNew", '"+ NEW LINE"', 'Set(varLn, Blank()); Set(varLnA, true); Reset(lLnN); Reset(lLnV); Reset(lLnO)', 248, 906, 180, 48, size=12, fill=WHITE, color=TEAL_D,
                extra={"BorderColor": F(TEAL_D), "BorderThickness": "=1", "DisplayMode": F(ED)}))
@@ -215,7 +327,7 @@ out.append(tog("lVsAct", "varVsA", '"ACTIVE"', RX + 16, 930, 160))
 VSREC = '{Title: Trim(lVsN.Text), ParentVS: lVsP.Selected.Value, Leader: lVsL.Text, LeaderEmail: Trim(lVsE.Text), DisplayOrder: If(IsNumeric(lVsO.Text), Value(lVsO.Text), Blank()), Active: varVsA}'
 out.append(btn("lVsSave", '"SAVE VALUE STREAM"',
                'If(IsBlank(Trim(lVsN.Text)), Notify("A name is required.", NotificationType.Warning),\n'
-               + SAVE(f'Patch(ValueStreams, If(IsBlank(varVs.ID), Defaults(ValueStreams), LookUp(ValueStreams, ID = varVs.ID)), {VSREC})', "lLoad", "Value stream saved") + ')',
+               + SAVE(f'Patch(ValueStreams, If(IsBlank(varVs.ID), Defaults(ValueStreams), LookUp(ValueStreams, ID = varVs.ID)), {VSREC})', "lLoad", "Value stream saved", log=dict(area="Value streams", item='Trim(lVsN.Text)', old='LookUp(ValueStreams, ID = varVs.ID)', rec=VSREC)) + ')',
                RX + 200, 926, 240, 48, size=13, fill=TEAL_D, color=WHITE, extra={"DisplayMode": F(ED)}))
 out.append(btn("lVsNew", '"+ NEW VALUE STREAM"', 'Set(varVs, Blank()); Set(varVsA, true); Reset(lVsN); Reset(lVsP); Reset(lVsO); Reset(lVsL); Reset(lVsE)', RX + 456, 926, 240, 48, size=12,
                fill=WHITE, color=TEAL_D, extra={"BorderColor": F(TEAL_D), "BorderThickness": "=1", "DisplayMode": F(ED)}))
@@ -267,7 +379,7 @@ PREC = ('{Title: sL.Selected.Value & "|" & Trim(sS.Text) & "|" & Trim(sF.Text), 
 out.append(btn("sSave", '"SAVE STANDARD"',
                'If(IsBlank(sL.Selected.Value) || IsBlank(Trim(sS.Text)) || IsBlank(Trim(sF.Text)) || !IsNumeric(sRate.Text), Notify("Line, size, form and rate are required.", NotificationType.Warning),\n'
                ' !IsBlank(LookUp(colPB, Line = sL.Selected.Value && Size = Trim(sS.Text) && Form = Trim(sF.Text) && ID <> Coalesce(varP.ID, -1))), Notify("That line already has this size and form.", NotificationType.Warning),\n'
-               + SAVE(f'Patch(PLAYBOOK, If(IsBlank(varP.ID), Defaults(PLAYBOOK), LookUp(PLAYBOOK, ID = varP.ID)), {PREC})', "sLoad", "Standard saved") + ')',
+               + SAVE(f'Patch(PLAYBOOK, If(IsBlank(varP.ID), Defaults(PLAYBOOK), LookUp(PLAYBOOK, ID = varP.ID)), {PREC})', "sLoad", "Standard saved", log=dict(area="Standards", item='sL.Selected.Value & " · " & Trim(sS.Text) & " · " & Trim(sF.Text)', old='LookUp(PLAYBOOK, ID = varP.ID)', rec=PREC, skip=("Title",))) + ')',
                FX + 16, yy + 56, 230, 50, size=14, fill=TEAL_D, color=WHITE, extra={"DisplayMode": F(ED)}))
 out.append(btn("sCopy", '"COPY AS NEW"', 'Set(varP, Patch(varP, {ID: Blank()})); Notify("Copied: change size or form, then SAVE.", NotificationType.Information)', FX + 262, yy + 56, 200, 50, size=12,
                fill=WHITE, color=TEAL_D, extra={"BorderColor": F(TEAL_D), "BorderThickness": "=1", "DisplayMode": F(f'If(varCan && !IsBlank(varP.ID), DisplayMode.Edit, DisplayMode.Disabled)')}))
@@ -304,7 +416,7 @@ out.append(txt("cVal", 'Coalesce(varC.SettingValue, "")', FX + 16, 402, FW - 32,
                "DisplayMode": F('If(varCan && !IsBlank(varC.ID), DisplayMode.Edit, DisplayMode.Disabled)')}))
 out.append(label("cHint", 'Switch(varC.Kind.Value, "App link", "Paste the app\'s web link (Power Apps → app → Details → Web link). Add &hidenavbar=true for TVs.", "Threshold", "A number. Boards read it on their next REFRESH.", "Flow", "Leave as installed unless your MDI contact says otherwise.", "")',
                  FX + 16, 560, FW - 32, 50, size=10, color=TEAL_D, extra={"Visible": F(VS_)}))
-out.append(btn("cSave", '"SAVE SETTING"', SAVE('Patch(MDI_Config, LookUp(MDI_Config, ID = varC.ID), {SettingValue: Trim(cVal.Text)})', "cLoad", "Setting saved"),
+out.append(btn("cSave", '"SAVE SETTING"', SAVE('Patch(MDI_Config, LookUp(MDI_Config, ID = varC.ID), {SettingValue: Trim(cVal.Text)})', "cLoad", "Setting saved", log=dict(area="Thresholds", item='varC.Title', pairs=[("value", 'LookUp(MDI_Config, ID = varC.ID).SettingValue', 'Trim(cVal.Text)')])),
                FX + 16, 620, 240, 50, size=14, fill=TEAL_D, color=WHITE, extra={"DisplayMode": F('If(varCan && !IsBlank(varC.ID), DisplayMode.Edit, DisplayMode.Disabled)'), "Visible": F(VS_)}))
 out.append(btn("cOpen", '"OPEN LINK"', 'Launch(cVal.Text)', FX + 272, 620, 200, 50, size=12, fill=WHITE, color=TEAL_D,
                extra={"BorderColor": F(TEAL_D), "BorderThickness": "=1", "Visible": F(VS_ + ' && StartsWith(cVal.Text, "http")')}))
@@ -336,7 +448,7 @@ out.append(btn("cmAct", 'If(varMA, "✓  SHOWN ON TIER 3", "HIDDEN ON TIER 3")',
                extra={"BorderColor": F(G5), "BorderThickness": "=1", **MV}))
 MREC = '{MetricName: cmName.Text, Short: cmShort.Text, Better: {Value: cmB.Selected.Value}, Green: Value(cmG.Text), Amber: Value(cmA.Text), DisplayOrder: If(IsNumeric(cmO.Text), Value(cmO.Text), Blank()), Active: varMA}'
 out.append(btn("cmSave", '"SAVE METRIC"', 'If(!IsNumeric(cmG.Text) || !IsNumeric(cmA.Text), Notify("Green and amber must be numbers.", NotificationType.Warning),\n'
-               + SAVE(f'Patch(KPI_Metrics, LookUp(KPI_Metrics, ID = varM.ID), {MREC})', "cLoad", "Metric saved") + ')',
+               + SAVE(f'Patch(KPI_Metrics, LookUp(KPI_Metrics, ID = varM.ID), {MREC})', "cLoad", "Metric saved", log=dict(area="Metrics", item='"Metric " & varM.Title', old='LookUp(KPI_Metrics, ID = varM.ID)', rec=MREC)) + ')',
                FX + 16, 606, 240, 50, size=14, fill=TEAL_D, color=WHITE, extra=MV))
 out.append(label("cmNote", '"Tier 3 calculates each metric; here you only set targets, order and whether it shows. A letter tile shows its worst metric."',
                  FX + 16, 670, FW - 32, 50, size=10, color=G9, extra={"Visible": F(VM_)}))
@@ -385,7 +497,7 @@ PPREC = ('{Title: Trim(pN.Text), Email: Trim(pE.Text), Role: {Value: pR.Selected
 out.append(btn("pSave", '"SAVE PERSON"',
                'If(IsBlank(Trim(pN.Text)) || IsBlank(Trim(pE.Text)), Notify("Name and e-mail are required.", NotificationType.Warning),\n'
                ' !IsBlank(LookUp(colPpl, Lower(Email) = Lower(Trim(pE.Text)) && ID <> Coalesce(varPp.ID, -1))), Notify("Someone already has that e-mail.", NotificationType.Warning),\n'
-               + SAVE(f'Patch(People, If(IsBlank(varPp.ID), Defaults(People), LookUp(People, ID = varPp.ID)), {PPREC})', "pLoad", "Person saved") + ')',
+               + SAVE(f'Patch(People, If(IsBlank(varPp.ID), Defaults(People), LookUp(People, ID = varPp.ID)), {PPREC})', "pLoad", "Person saved", log=dict(area="People", item='Trim(pN.Text) & " (" & Trim(pE.Text) & ")"', old='LookUp(People, ID = varPp.ID)', rec=PPREC)) + ')',
                FX + 16, 830, 240, 50, size=14, fill=TEAL_D, color=WHITE, extra={"DisplayMode": F(ED)}))
 out.append(btn("pNew", '"+ NEW PERSON"', 'Set(varPp, Blank()); Set(varPpA, true); Set(varPp1, false); Set(varPp2, false); Set(varPp3, false); Set(varPpL, false); Set(varPpC, false); Set(varPpM, false);'
                ' Reset(pN); Reset(pE); Reset(pR); Reset(pT); Reset(pL); Reset(pAr); Reset(pNo)', FX + 272, 830, 220, 50, size=13, fill=WHITE, color=TEAL_D,

@@ -190,6 +190,25 @@
       Y: =98
       Width: =36
       Height: =36
+- sLogBtn:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="CHANGE LOG"
+      OnSelect: |-
+        =Set(varLogAll, false); Set(varLogOpen, true); IfError(ClearCollect(colSLog, Sort(Filter(Settings_Log, ChangedAt >= DateAdd(Today(), -365, TimeUnit.Days)), ChangedAt, SortOrder.Descending)), Notify("Could not load the change log (Settings_Log): " & FirstError.Message, NotificationType.Error), true)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(176, 227, 228, 1)
+      BorderThickness: =1
+      Tooltip: ="Who changed what in MDI Settings, when, and why"
+      X: =640
+      Y: =24
+      Width: =190
+      Height: =44
 - sFLC:
     Control: Label@2.5.1
     Properties:
@@ -1136,11 +1155,7 @@
       OnSelect: |-
         =If(IsBlank(sL.Selected.Value) || IsBlank(Trim(sS.Text)) || IsBlank(Trim(sF.Text)) || !IsNumeric(sRate.Text), Notify("Line, size, form and rate are required.", NotificationType.Warning),
          !IsBlank(LookUp(colPB, Line = sL.Selected.Value && Size = Trim(sS.Text) && Form = Trim(sF.Text) && ID <> Coalesce(varP.ID, -1))), Notify("That line already has this size and form.", NotificationType.Warning),
-        IfError(Patch(PLAYBOOK, If(IsBlank(varP.ID), Defaults(PLAYBOOK), LookUp(PLAYBOOK, ID = varP.ID)), {Title: sL.Selected.Value & "|" & Trim(sS.Text) & "|" & Trim(sF.Text), Line: sL.Selected.Value, Size: Trim(sS.Text), Form: Trim(sF.Text), Active: varPA,
-          Rate: If(IsNumeric(sRate.Text), Value(sRate.Text), Blank()), 'Playbook Efficiency Target': If(IsNumeric(sEff.Text), Value(sEff.Text), Blank()), 'Available Hrs/Shift': If(IsNumeric(sHrs.Text), Value(sHrs.Text), Blank()), units_per_shift: If(IsNumeric(sUps.Text), Value(sUps.Text), Blank()),
-          'Line Lead': If(IsNumeric(sHc0.Text), Value(sHc0.Text), Blank()), 'Filler Machine Operator': If(IsNumeric(sHc1.Text), Value(sHc1.Text), Blank()), 'Case Pack Machine Operator': If(IsNumeric(sHc2.Text), Value(sHc2.Text), Blank()), 'Bottle / Cap Feeder': If(IsNumeric(sHc3.Text), Value(sHc3.Text), Blank()), 'Box Maker': If(IsNumeric(sHc4.Text), Value(sHc4.Text), Blank()), Packer: If(IsNumeric(sHc5.Text), Value(sHc5.Text), Blank()), Palletizer: If(IsNumeric(sHc6.Text), Value(sHc6.Text), Blank()), Inspector: If(IsNumeric(sHc7.Text), Value(sHc7.Text), Blank()), 'Bottle Flipper': If(IsNumeric(sHc8.Text), Value(sHc8.Text), Blank()), 'Tube Feeder': If(IsNumeric(sHc9.Text), Value(sHc9.Text), Blank()), 'Partition Placer (211 and 209)': If(IsNumeric(sHc10.Text), Value(sHc10.Text), Blank()), 'Taper Machine Pusher': If(IsNumeric(sHc11.Text), Value(sHc11.Text), Blank()), 'Unscrambler Inspector': If(IsNumeric(sHc12.Text), Value(sHc12.Text), Blank())}),
-         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
-         Notify("Standard saved", NotificationType.Success); Select(sLoad)))
+        Set(varRsnFor, "sDo1"); Reset(sRsnTxt); Set(varRsnOpen, true))
       Font: =Font.Arial
       Size: =14
       FontWeight: =FontWeight.Bold
@@ -1201,3 +1216,408 @@
       Y: =826
       Width: =740
       Height: =60
+- sDo1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =With({o: LookUp(PLAYBOOK, ID = varP.ID)},
+         With({chg: Concat(Filter(Table({t: If(Text(o.Line) <> Text(sL.Selected.Value), "Line: " & If(IsBlank(Text(o.Line)), "—", Text(o.Line)) & " → " & If(IsBlank(Text(sL.Selected.Value)), "—", Text(sL.Selected.Value)), "")}, {t: If(Text(o.Size) <> Text(Trim(sS.Text)), "Size: " & If(IsBlank(Text(o.Size)), "—", Text(o.Size)) & " → " & If(IsBlank(Text(Trim(sS.Text))), "—", Text(Trim(sS.Text))), "")}, {t: If(Text(o.Form) <> Text(Trim(sF.Text)), "Form: " & If(IsBlank(Text(o.Form)), "—", Text(o.Form)) & " → " & If(IsBlank(Text(Trim(sF.Text))), "—", Text(Trim(sF.Text))), "")}, {t: If(Text(o.Active) <> Text(varPA), "Active: " & If(IsBlank(Text(o.Active)), "—", Text(o.Active)) & " → " & If(IsBlank(Text(varPA)), "—", Text(varPA)), "")}, {t: If(Text(o.Rate) <> Text(If(IsNumeric(sRate.Text), Value(sRate.Text), Blank())), "Rate: " & If(IsBlank(Text(o.Rate)), "—", Text(o.Rate)) & " → " & If(IsBlank(Text(If(IsNumeric(sRate.Text), Value(sRate.Text), Blank()))), "—", Text(If(IsNumeric(sRate.Text), Value(sRate.Text), Blank()))), "")}, {t: If(Text(o.'Playbook Efficiency Target') <> Text(If(IsNumeric(sEff.Text), Value(sEff.Text), Blank())), "Playbook Efficiency Target: " & If(IsBlank(Text(o.'Playbook Efficiency Target')), "—", Text(o.'Playbook Efficiency Target')) & " → " & If(IsBlank(Text(If(IsNumeric(sEff.Text), Value(sEff.Text), Blank()))), "—", Text(If(IsNumeric(sEff.Text), Value(sEff.Text), Blank()))), "")}, {t: If(Text(o.'Available Hrs/Shift') <> Text(If(IsNumeric(sHrs.Text), Value(sHrs.Text), Blank())), "Available Hrs/Shift: " & If(IsBlank(Text(o.'Available Hrs/Shift')), "—", Text(o.'Available Hrs/Shift')) & " → " & If(IsBlank(Text(If(IsNumeric(sHrs.Text), Value(sHrs.Text), Blank()))), "—", Text(If(IsNumeric(sHrs.Text), Value(sHrs.Text), Blank()))), "")}, {t: If(Text(o.units_per_shift) <> Text(If(IsNumeric(sUps.Text), Value(sUps.Text), Blank())), "units_per_shift: " & If(IsBlank(Text(o.units_per_shift)), "—", Text(o.units_per_shift)) & " → " & If(IsBlank(Text(If(IsNumeric(sUps.Text), Value(sUps.Text), Blank()))), "—", Text(If(IsNumeric(sUps.Text), Value(sUps.Text), Blank()))), "")}, {t: If(Text(o.'Line Lead') <> Text(If(IsNumeric(sHc0.Text), Value(sHc0.Text), Blank())), "Line Lead: " & If(IsBlank(Text(o.'Line Lead')), "—", Text(o.'Line Lead')) & " → " & If(IsBlank(Text(If(IsNumeric(sHc0.Text), Value(sHc0.Text), Blank()))), "—", Text(If(IsNumeric(sHc0.Text), Value(sHc0.Text), Blank()))), "")}, {t: If(Text(o.'Filler Machine Operator') <> Text(If(IsNumeric(sHc1.Text), Value(sHc1.Text), Blank())), "Filler Machine Operator: " & If(IsBlank(Text(o.'Filler Machine Operator')), "—", Text(o.'Filler Machine Operator')) & " → " & If(IsBlank(Text(If(IsNumeric(sHc1.Text), Value(sHc1.Text), Blank()))), "—", Text(If(IsNumeric(sHc1.Text), Value(sHc1.Text), Blank()))), "")}, {t: If(Text(o.'Case Pack Machine Operator') <> Text(If(IsNumeric(sHc2.Text), Value(sHc2.Text), Blank())), "Case Pack Machine Operator: " & If(IsBlank(Text(o.'Case Pack Machine Operator')), "—", Text(o.'Case Pack Machine Operator')) & " → " & If(IsBlank(Text(If(IsNumeric(sHc2.Text), Value(sHc2.Text), Blank()))), "—", Text(If(IsNumeric(sHc2.Text), Value(sHc2.Text), Blank()))), "")}, {t: If(Text(o.'Bottle / Cap Feeder') <> Text(If(IsNumeric(sHc3.Text), Value(sHc3.Text), Blank())), "Bottle / Cap Feeder: " & If(IsBlank(Text(o.'Bottle / Cap Feeder')), "—", Text(o.'Bottle / Cap Feeder')) & " → " & If(IsBlank(Text(If(IsNumeric(sHc3.Text), Value(sHc3.Text), Blank()))), "—", Text(If(IsNumeric(sHc3.Text), Value(sHc3.Text), Blank()))), "")}, {t: If(Text(o.'Box Maker') <> Text(If(IsNumeric(sHc4.Text), Value(sHc4.Text), Blank())), "Box Maker: " & If(IsBlank(Text(o.'Box Maker')), "—", Text(o.'Box Maker')) & " → " & If(IsBlank(Text(If(IsNumeric(sHc4.Text), Value(sHc4.Text), Blank()))), "—", Text(If(IsNumeric(sHc4.Text), Value(sHc4.Text), Blank()))), "")}, {t: If(Text(o.Packer) <> Text(If(IsNumeric(sHc5.Text), Value(sHc5.Text), Blank())), "Packer: " & If(IsBlank(Text(o.Packer)), "—", Text(o.Packer)) & " → " & If(IsBlank(Text(If(IsNumeric(sHc5.Text), Value(sHc5.Text), Blank()))), "—", Text(If(IsNumeric(sHc5.Text), Value(sHc5.Text), Blank()))), "")}, {t: If(Text(o.Palletizer) <> Text(If(IsNumeric(sHc6.Text), Value(sHc6.Text), Blank())), "Palletizer: " & If(IsBlank(Text(o.Palletizer)), "—", Text(o.Palletizer)) & " → " & If(IsBlank(Text(If(IsNumeric(sHc6.Text), Value(sHc6.Text), Blank()))), "—", Text(If(IsNumeric(sHc6.Text), Value(sHc6.Text), Blank()))), "")}, {t: If(Text(o.Inspector) <> Text(If(IsNumeric(sHc7.Text), Value(sHc7.Text), Blank())), "Inspector: " & If(IsBlank(Text(o.Inspector)), "—", Text(o.Inspector)) & " → " & If(IsBlank(Text(If(IsNumeric(sHc7.Text), Value(sHc7.Text), Blank()))), "—", Text(If(IsNumeric(sHc7.Text), Value(sHc7.Text), Blank()))), "")}, {t: If(Text(o.'Bottle Flipper') <> Text(If(IsNumeric(sHc8.Text), Value(sHc8.Text), Blank())), "Bottle Flipper: " & If(IsBlank(Text(o.'Bottle Flipper')), "—", Text(o.'Bottle Flipper')) & " → " & If(IsBlank(Text(If(IsNumeric(sHc8.Text), Value(sHc8.Text), Blank()))), "—", Text(If(IsNumeric(sHc8.Text), Value(sHc8.Text), Blank()))), "")}, {t: If(Text(o.'Tube Feeder') <> Text(If(IsNumeric(sHc9.Text), Value(sHc9.Text), Blank())), "Tube Feeder: " & If(IsBlank(Text(o.'Tube Feeder')), "—", Text(o.'Tube Feeder')) & " → " & If(IsBlank(Text(If(IsNumeric(sHc9.Text), Value(sHc9.Text), Blank()))), "—", Text(If(IsNumeric(sHc9.Text), Value(sHc9.Text), Blank()))), "")}, {t: If(Text(o.'Partition Placer (211 and 209)') <> Text(If(IsNumeric(sHc10.Text), Value(sHc10.Text), Blank())), "Partition Placer (211 and 209): " & If(IsBlank(Text(o.'Partition Placer (211 and 209)')), "—", Text(o.'Partition Placer (211 and 209)')) & " → " & If(IsBlank(Text(If(IsNumeric(sHc10.Text), Value(sHc10.Text), Blank()))), "—", Text(If(IsNumeric(sHc10.Text), Value(sHc10.Text), Blank()))), "")}, {t: If(Text(o.'Taper Machine Pusher') <> Text(If(IsNumeric(sHc11.Text), Value(sHc11.Text), Blank())), "Taper Machine Pusher: " & If(IsBlank(Text(o.'Taper Machine Pusher')), "—", Text(o.'Taper Machine Pusher')) & " → " & If(IsBlank(Text(If(IsNumeric(sHc11.Text), Value(sHc11.Text), Blank()))), "—", Text(If(IsNumeric(sHc11.Text), Value(sHc11.Text), Blank()))), "")}, {t: If(Text(o.'Unscrambler Inspector') <> Text(If(IsNumeric(sHc12.Text), Value(sHc12.Text), Blank())), "Unscrambler Inspector: " & If(IsBlank(Text(o.'Unscrambler Inspector')), "—", Text(o.'Unscrambler Inspector')) & " → " & If(IsBlank(Text(If(IsNumeric(sHc12.Text), Value(sHc12.Text), Blank()))), "—", Text(If(IsNumeric(sHc12.Text), Value(sHc12.Text), Blank()))), "")}), !IsBlank(t)), t, "; ")},
+         IfError(Patch(PLAYBOOK, If(IsBlank(varP.ID), Defaults(PLAYBOOK), LookUp(PLAYBOOK, ID = varP.ID)), {Title: sL.Selected.Value & "|" & Trim(sS.Text) & "|" & Trim(sF.Text), Line: sL.Selected.Value, Size: Trim(sS.Text), Form: Trim(sF.Text), Active: varPA,
+          Rate: If(IsNumeric(sRate.Text), Value(sRate.Text), Blank()), 'Playbook Efficiency Target': If(IsNumeric(sEff.Text), Value(sEff.Text), Blank()), 'Available Hrs/Shift': If(IsNumeric(sHrs.Text), Value(sHrs.Text), Blank()), units_per_shift: If(IsNumeric(sUps.Text), Value(sUps.Text), Blank()),
+          'Line Lead': If(IsNumeric(sHc0.Text), Value(sHc0.Text), Blank()), 'Filler Machine Operator': If(IsNumeric(sHc1.Text), Value(sHc1.Text), Blank()), 'Case Pack Machine Operator': If(IsNumeric(sHc2.Text), Value(sHc2.Text), Blank()), 'Bottle / Cap Feeder': If(IsNumeric(sHc3.Text), Value(sHc3.Text), Blank()), 'Box Maker': If(IsNumeric(sHc4.Text), Value(sHc4.Text), Blank()), Packer: If(IsNumeric(sHc5.Text), Value(sHc5.Text), Blank()), Palletizer: If(IsNumeric(sHc6.Text), Value(sHc6.Text), Blank()), Inspector: If(IsNumeric(sHc7.Text), Value(sHc7.Text), Blank()), 'Bottle Flipper': If(IsNumeric(sHc8.Text), Value(sHc8.Text), Blank()), 'Tube Feeder': If(IsNumeric(sHc9.Text), Value(sHc9.Text), Blank()), 'Partition Placer (211 and 209)': If(IsNumeric(sHc10.Text), Value(sHc10.Text), Blank()), 'Taper Machine Pusher': If(IsNumeric(sHc11.Text), Value(sHc11.Text), Blank()), 'Unscrambler Inspector': If(IsNumeric(sHc12.Text), Value(sHc12.Text), Blank())}),
+          Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+          IfError(Patch(Settings_Log, Defaults(Settings_Log), {Title: Left("Standards: " & sL.Selected.Value & " · " & Trim(sS.Text) & " · " & Trim(sF.Text), 250), ChangedAt: Now(), ChangedBy: User().FullName, ChangedByEmail: User().Email, Area: "Standards", Item: Left(sL.Selected.Value & " · " & Trim(sS.Text) & " · " & Trim(sF.Text), 250), Action: If(IsBlank(o), "Added", o.Active && !(varPA), "Retired", !o.Active && (varPA), "Restored", "Changed"), Changes: If(IsBlank(chg), "(no field changed)", chg), Reason: Trim(sRsnTxt.Text)}),
+          Notify("Saved, but the change log entry failed: " & FirstError.Message, NotificationType.Warning), true);
+          Notify("Standard saved", NotificationType.Success); Select(sLoad))))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      TabIndex: =-1
+      X: =0
+      Y: =1079
+      Width: =1
+      Height: =1
+- sRsnShade:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varRsnOpen
+      Fill: =RGBA(0, 0, 0, 0.45)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =1080
+- sRsnPanel:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varRsnOpen
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =3
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =460
+      Y: =220
+      Width: =1000
+      Height: =520
+- sRsnT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHY ARE YOU MAKING THIS CHANGE?"
+      Font: =Font.Georgia
+      Size: =20
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varRsnOpen
+      X: =484
+      Y: =236
+      Width: =952
+      Height: =44
+- sRsnS:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Required. It goes in the change log with your name, the time and what changed (old → new)."
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varRsnOpen
+      X: =484
+      Y: =280
+      Width: =952
+      Height: =30
+- sRsnTxt:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      Mode: =TextMode.MultiLine
+      HintText: ="e.g. new filler head raised the rate; per plant manager 11/19; correcting a typo"
+      MaxLength: =1000
+      Font: =Font.Arial
+      Size: =16
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      X: =484
+      Y: =318
+      Width: =952
+      Height: =300
+      Visible: =varRsnOpen
+- sRsnH:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(Len(Trim(sRsnTxt.Text)) >= 5, "", "Type a short reason to continue.")
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(207, 34, 46, 1)
+      Visible: =varRsnOpen
+      X: =484
+      Y: =626
+      Width: =600
+      Height: =30
+- sRsnGo:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SAVE WITH THIS REASON"
+      OnSelect: =Set(varRsnOpen, false); Switch(varRsnFor, "sDo1", Select(sDo1))
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varRsnOpen
+      DisplayMode: =If(Len(Trim(sRsnTxt.Text)) >= 5, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(177, 179, 179, 1)
+      X: =1116
+      Y: =668
+      Width: =220
+      Height: =56
+- sRsnNo:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="CANCEL"
+      OnSelect: =Set(varRsnOpen, false); Notify("Not saved.", NotificationType.Information)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(217, 217, 214, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varRsnOpen
+      X: =1346
+      Y: =668
+      Width: =90
+      Height: =56
+- sLogShade:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varLogOpen
+      Fill: =RGBA(0, 0, 0, 0.45)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =1080
+- sLogPanel:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varLogOpen
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =3
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =60
+      Y: =60
+      Width: =1800
+      Height: =960
+- sLogT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CHANGE LOG  ·  " & If(varLogAll, "ALL TABS", "STANDARDS") & "  ·  last 12 months  ·  " & CountRows(Filter(colSLog, (varLogAll || (Area = "Standards")) && (IsBlank(sLogQ.Text) || sLogQ.Text in Item || sLogQ.Text in ChangedBy || sLogQ.Text in Changes || sLogQ.Text in Reason))) & " changes"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =84
+      Y: =72
+      Width: =1200
+      Height: =48
+- sLogAll:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varLogAll, "THIS TAB ONLY", "ALL TABS")
+      OnSelect: =Set(varLogAll, !varLogAll)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      Visible: =varLogOpen
+      BorderThickness: =1
+      X: =1290
+      Y: =76
+      Width: =170
+      Height: =40
+- sLogQ:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="search…"
+      Font: =Font.Arial
+      Size: =12
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =varLogOpen
+      X: =1470
+      Y: =76
+      Width: =250
+      Height: =40
+- sLogX:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="✕ CLOSE"
+      OnSelect: =Set(varLogOpen, false)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(217, 217, 214, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varLogOpen
+      X: =1730
+      Y: =76
+      Width: =110
+      Height: =40
+- sLogH0:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHEN"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =84
+      Y: =128
+      Width: =150
+      Height: =26
+- sLogH1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHO"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =238
+      Y: =128
+      Width: =170
+      Height: =26
+- sLogH2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHAT"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =412
+      Y: =128
+      Width: =330
+      Height: =26
+- sLogH3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ACTION"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =746
+      Y: =128
+      Width: =90
+      Height: =26
+- sLogH4:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CHANGES (old → new)"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =840
+      Y: =128
+      Width: =560
+      Height: =26
+- sLogH5:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="REASON"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =1404
+      Y: =128
+      Width: =400
+      Height: =26
+- sLogGal:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =Filter(colSLog, (varLogAll || (Area = "Standards")) && (IsBlank(sLogQ.Text) || sLogQ.Text in Item || sLogQ.Text in ChangedBy || sLogQ.Text in Changes || sLogQ.Text in Reason))
+      TemplateSize: =88
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      TemplateFill: =If(Mod(ThisItem.ID, 2) = 0, RGBA(244, 245, 245, 1), RGBA(255, 255, 255, 1))
+      BorderThickness: =0
+      X: =84
+      Y: =156
+      Width: =1752
+      Height: =840
+      Visible: =varLogOpen
+    Children:
+      - sLgW:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.ChangedAt, "m/d/yy h:mm AM/PM")
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            VerticalAlign: =VerticalAlign.Top
+            X: =0
+            Y: =4
+            Width: =150
+            Height: =80
+      - sLgB:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.ChangedBy
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            VerticalAlign: =VerticalAlign.Top
+            X: =154
+            Y: =4
+            Width: =170
+            Height: =80
+      - sLgI:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.Area & ": " & ThisItem.Item
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            VerticalAlign: =VerticalAlign.Top
+            X: =328
+            Y: =4
+            Width: =330
+            Height: =80
+      - sLgA:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Action
+            Font: =Font.Arial
+            Size: =11
+            Color: =Switch(ThisItem.Action, "Added", RGBA(46, 160, 67, 1), "Retired", RGBA(207, 34, 46, 1), "Restored", RGBA(0, 72, 81, 1), RGBA(7, 39, 45, 1))
+            FontWeight: =FontWeight.Bold
+            VerticalAlign: =VerticalAlign.Top
+            X: =662
+            Y: =4
+            Width: =90
+            Height: =80
+      - sLgC:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Changes
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(7, 39, 45, 1)
+            VerticalAlign: =VerticalAlign.Top
+            Tooltip: =ThisItem.Changes
+            X: =756
+            Y: =4
+            Width: =560
+            Height: =80
+      - sLgR:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Reason
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(117, 120, 123, 1)
+            VerticalAlign: =VerticalAlign.Top
+            Tooltip: =ThisItem.Reason
+            X: =1320
+            Y: =4
+            Width: =400
+            Height: =80
+- sLogE:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No changes logged yet."
+      Font: =Font.Arial
+      Size: =14
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Center
+      Visible: =varLogOpen && CountRows(Filter(colSLog, (varLogAll || (Area = "Standards")) && (IsBlank(sLogQ.Text) || sLogQ.Text in Item || sLogQ.Text in ChangedBy || sLogQ.Text in Changes || sLogQ.Text in Reason))) = 0
+      X: =84
+      Y: =200
+      Width: =1752
+      Height: =40

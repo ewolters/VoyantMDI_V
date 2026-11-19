@@ -190,6 +190,25 @@
       Y: =98
       Width: =36
       Height: =36
+- lLogBtn:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="CHANGE LOG"
+      OnSelect: |-
+        =Set(varLogAll, false); Set(varLogOpen, true); IfError(ClearCollect(colSLog, Sort(Filter(Settings_Log, ChangedAt >= DateAdd(Today(), -365, TimeUnit.Days)), ChangedAt, SortOrder.Descending)), Notify("Could not load the change log (Settings_Log): " & FirstError.Message, NotificationType.Error), true)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(176, 227, 228, 1)
+      BorderThickness: =1
+      Tooltip: ="Who changed what in MDI Settings, when, and why"
+      X: =640
+      Y: =24
+      Width: =190
+      Height: =44
 - lLnT:
     Control: Label@2.5.1
     Properties:
@@ -476,9 +495,7 @@
       OnSelect: |-
         =If(IsBlank(Trim(lLnN.Text)), Notify("A line name is required.", NotificationType.Warning),
          !IsBlank(LookUp(colLn, Title = Trim(lLnN.Text) && ID <> Coalesce(varLn.ID, -1))), Notify("That line already exists.", NotificationType.Warning),
-        IfError(Patch(Lines, If(IsBlank(varLn.ID), Defaults(Lines), LookUp(Lines, ID = varLn.ID)), {Title: Trim(lLnN.Text), ValueStream: lLnV.Selected.Value, DisplayOrder: If(IsNumeric(lLnO.Text), Value(lLnO.Text), Blank()), Active: varLnA}),
-         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
-         Notify("Line saved", NotificationType.Success); Select(lLoad)))
+        Set(varRsnFor, "lDo1"); Reset(lRsnTxt); Set(varRsnOpen, true))
       Font: =Font.Arial
       Size: =13
       FontWeight: =FontWeight.Bold
@@ -869,9 +886,7 @@
       Text: ="SAVE VALUE STREAM"
       OnSelect: |-
         =If(IsBlank(Trim(lVsN.Text)), Notify("A name is required.", NotificationType.Warning),
-        IfError(Patch(ValueStreams, If(IsBlank(varVs.ID), Defaults(ValueStreams), LookUp(ValueStreams, ID = varVs.ID)), {Title: Trim(lVsN.Text), ParentVS: lVsP.Selected.Value, Leader: lVsL.Text, LeaderEmail: Trim(lVsE.Text), DisplayOrder: If(IsNumeric(lVsO.Text), Value(lVsO.Text), Blank()), Active: varVsA}),
-         Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
-         Notify("Value stream saved", NotificationType.Success); Select(lLoad)))
+        Set(varRsnFor, "lDo2"); Reset(lRsnTxt); Set(varRsnOpen, true))
       Font: =Font.Arial
       Size: =13
       FontWeight: =FontWeight.Bold
@@ -914,3 +929,430 @@
       Y: =982
       Width: =908
       Height: =70
+- lDo1:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =With({o: LookUp(Lines, ID = varLn.ID)},
+         With({chg: Concat(Filter(Table({t: If(Text(o.Title) <> Text(Trim(lLnN.Text)), "Title: " & If(IsBlank(Text(o.Title)), "—", Text(o.Title)) & " → " & If(IsBlank(Text(Trim(lLnN.Text))), "—", Text(Trim(lLnN.Text))), "")}, {t: If(Text(o.ValueStream) <> Text(lLnV.Selected.Value), "ValueStream: " & If(IsBlank(Text(o.ValueStream)), "—", Text(o.ValueStream)) & " → " & If(IsBlank(Text(lLnV.Selected.Value)), "—", Text(lLnV.Selected.Value)), "")}, {t: If(Text(o.DisplayOrder) <> Text(If(IsNumeric(lLnO.Text), Value(lLnO.Text), Blank())), "DisplayOrder: " & If(IsBlank(Text(o.DisplayOrder)), "—", Text(o.DisplayOrder)) & " → " & If(IsBlank(Text(If(IsNumeric(lLnO.Text), Value(lLnO.Text), Blank()))), "—", Text(If(IsNumeric(lLnO.Text), Value(lLnO.Text), Blank()))), "")}, {t: If(Text(o.Active) <> Text(varLnA), "Active: " & If(IsBlank(Text(o.Active)), "—", Text(o.Active)) & " → " & If(IsBlank(Text(varLnA)), "—", Text(varLnA)), "")}), !IsBlank(t)), t, "; ")},
+         IfError(Patch(Lines, If(IsBlank(varLn.ID), Defaults(Lines), LookUp(Lines, ID = varLn.ID)), {Title: Trim(lLnN.Text), ValueStream: lLnV.Selected.Value, DisplayOrder: If(IsNumeric(lLnO.Text), Value(lLnO.Text), Blank()), Active: varLnA}),
+          Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+          IfError(Patch(Settings_Log, Defaults(Settings_Log), {Title: Left("Lines: " & "Line " & Trim(lLnN.Text), 250), ChangedAt: Now(), ChangedBy: User().FullName, ChangedByEmail: User().Email, Area: "Lines", Item: Left("Line " & Trim(lLnN.Text), 250), Action: If(IsBlank(o), "Added", o.Active && !(varLnA), "Retired", !o.Active && (varLnA), "Restored", "Changed"), Changes: If(IsBlank(chg), "(no field changed)", chg), Reason: Trim(lRsnTxt.Text)}),
+          Notify("Saved, but the change log entry failed: " & FirstError.Message, NotificationType.Warning), true);
+          Notify("Line saved", NotificationType.Success); Select(lLoad))))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      TabIndex: =-1
+      X: =0
+      Y: =1079
+      Width: =1
+      Height: =1
+- lDo2:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =""
+      OnSelect: |-
+        =With({o: LookUp(ValueStreams, ID = varVs.ID)},
+         With({chg: Concat(Filter(Table({t: If(Text(o.Title) <> Text(Trim(lVsN.Text)), "Title: " & If(IsBlank(Text(o.Title)), "—", Text(o.Title)) & " → " & If(IsBlank(Text(Trim(lVsN.Text))), "—", Text(Trim(lVsN.Text))), "")}, {t: If(Text(o.ParentVS) <> Text(lVsP.Selected.Value), "ParentVS: " & If(IsBlank(Text(o.ParentVS)), "—", Text(o.ParentVS)) & " → " & If(IsBlank(Text(lVsP.Selected.Value)), "—", Text(lVsP.Selected.Value)), "")}, {t: If(Text(o.Leader) <> Text(lVsL.Text), "Leader: " & If(IsBlank(Text(o.Leader)), "—", Text(o.Leader)) & " → " & If(IsBlank(Text(lVsL.Text)), "—", Text(lVsL.Text)), "")}, {t: If(Text(o.LeaderEmail) <> Text(Trim(lVsE.Text)), "LeaderEmail: " & If(IsBlank(Text(o.LeaderEmail)), "—", Text(o.LeaderEmail)) & " → " & If(IsBlank(Text(Trim(lVsE.Text))), "—", Text(Trim(lVsE.Text))), "")}, {t: If(Text(o.DisplayOrder) <> Text(If(IsNumeric(lVsO.Text), Value(lVsO.Text), Blank())), "DisplayOrder: " & If(IsBlank(Text(o.DisplayOrder)), "—", Text(o.DisplayOrder)) & " → " & If(IsBlank(Text(If(IsNumeric(lVsO.Text), Value(lVsO.Text), Blank()))), "—", Text(If(IsNumeric(lVsO.Text), Value(lVsO.Text), Blank()))), "")}, {t: If(Text(o.Active) <> Text(varVsA), "Active: " & If(IsBlank(Text(o.Active)), "—", Text(o.Active)) & " → " & If(IsBlank(Text(varVsA)), "—", Text(varVsA)), "")}), !IsBlank(t)), t, "; ")},
+         IfError(Patch(ValueStreams, If(IsBlank(varVs.ID), Defaults(ValueStreams), LookUp(ValueStreams, ID = varVs.ID)), {Title: Trim(lVsN.Text), ParentVS: lVsP.Selected.Value, Leader: lVsL.Text, LeaderEmail: Trim(lVsE.Text), DisplayOrder: If(IsNumeric(lVsO.Text), Value(lVsO.Text), Blank()), Active: varVsA}),
+          Notify("NOT SAVED: " & FirstError.Message, NotificationType.Error),
+          IfError(Patch(Settings_Log, Defaults(Settings_Log), {Title: Left("Value streams: " & Trim(lVsN.Text), 250), ChangedAt: Now(), ChangedBy: User().FullName, ChangedByEmail: User().Email, Area: "Value streams", Item: Left(Trim(lVsN.Text), 250), Action: If(IsBlank(o), "Added", o.Active && !(varVsA), "Retired", !o.Active && (varVsA), "Restored", "Changed"), Changes: If(IsBlank(chg), "(no field changed)", chg), Reason: Trim(lRsnTxt.Text)}),
+          Notify("Saved, but the change log entry failed: " & FirstError.Message, NotificationType.Warning), true);
+          Notify("Value stream saved", NotificationType.Success); Select(lLoad))))
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(0, 0, 0, 0)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      TabIndex: =-1
+      X: =0
+      Y: =1079
+      Width: =1
+      Height: =1
+- lRsnShade:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varRsnOpen
+      Fill: =RGBA(0, 0, 0, 0.45)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =1080
+- lRsnPanel:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varRsnOpen
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =3
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =460
+      Y: =220
+      Width: =1000
+      Height: =520
+- lRsnT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHY ARE YOU MAKING THIS CHANGE?"
+      Font: =Font.Georgia
+      Size: =20
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varRsnOpen
+      X: =484
+      Y: =236
+      Width: =952
+      Height: =44
+- lRsnS:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Required. It goes in the change log with your name, the time and what changed (old → new)."
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      Visible: =varRsnOpen
+      X: =484
+      Y: =280
+      Width: =952
+      Height: =30
+- lRsnTxt:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      Mode: =TextMode.MultiLine
+      HintText: ="e.g. new filler head raised the rate; per plant manager 11/19; correcting a typo"
+      MaxLength: =1000
+      Font: =Font.Arial
+      Size: =16
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      X: =484
+      Y: =318
+      Width: =952
+      Height: =300
+      Visible: =varRsnOpen
+- lRsnH:
+    Control: Label@2.5.1
+    Properties:
+      Text: =If(Len(Trim(lRsnTxt.Text)) >= 5, "", "Type a short reason to continue.")
+      Font: =Font.Arial
+      Size: =11
+      Color: =RGBA(207, 34, 46, 1)
+      Visible: =varRsnOpen
+      X: =484
+      Y: =626
+      Width: =600
+      Height: =30
+- lRsnGo:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="SAVE WITH THIS REASON"
+      OnSelect: =Set(varRsnOpen, false); Switch(varRsnFor, "lDo1", Select(lDo1), "lDo2", Select(lDo2))
+      Font: =Font.Arial
+      Size: =13
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varRsnOpen
+      DisplayMode: =If(Len(Trim(lRsnTxt.Text)) >= 5, DisplayMode.Edit, DisplayMode.Disabled)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(177, 179, 179, 1)
+      X: =1116
+      Y: =668
+      Width: =220
+      Height: =56
+- lRsnNo:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="CANCEL"
+      OnSelect: =Set(varRsnOpen, false); Notify("Not saved.", NotificationType.Information)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(217, 217, 214, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varRsnOpen
+      X: =1346
+      Y: =668
+      Width: =90
+      Height: =56
+- lLogShade:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varLogOpen
+      Fill: =RGBA(0, 0, 0, 0.45)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =1080
+- lLogPanel:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varLogOpen
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =3
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =60
+      Y: =60
+      Width: =1800
+      Height: =960
+- lLogT:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CHANGE LOG  ·  " & If(varLogAll, "ALL TABS", "LINES + VALUE STREAMS") & "  ·  last 12 months  ·  " & CountRows(Filter(colSLog, (varLogAll || (Area = "Lines" || Area = "Value streams")) && (IsBlank(lLogQ.Text) || lLogQ.Text in Item || lLogQ.Text in ChangedBy || lLogQ.Text in Changes || lLogQ.Text in Reason))) & " changes"
+      Font: =Font.Georgia
+      Size: =18
+      Color: =RGBA(0, 72, 81, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =84
+      Y: =72
+      Width: =1200
+      Height: =48
+- lLogAll:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =If(varLogAll, "THIS TAB ONLY", "ALL TABS")
+      OnSelect: =Set(varLogAll, !varLogAll)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(0, 72, 81, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      Visible: =varLogOpen
+      BorderThickness: =1
+      X: =1290
+      Y: =76
+      Width: =170
+      Height: =40
+- lLogQ:
+    Control: Classic/TextInput@2.3.2
+    Properties:
+      Default: =""
+      HintText: ="search…"
+      Font: =Font.Arial
+      Size: =12
+      Align: =Align.Left
+      BorderColor: =RGBA(177, 179, 179, 1)
+      FocusedBorderColor: =RGBA(0, 72, 81, 1)
+      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      OnChange: =false
+      Visible: =varLogOpen
+      X: =1470
+      Y: =76
+      Width: =250
+      Height: =40
+- lLogX:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="✕ CLOSE"
+      OnSelect: =Set(varLogOpen, false)
+      Font: =Font.Arial
+      Size: =11
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(217, 217, 214, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varLogOpen
+      X: =1730
+      Y: =76
+      Width: =110
+      Height: =40
+- lLogH0:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHEN"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =84
+      Y: =128
+      Width: =150
+      Height: =26
+- lLogH1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHO"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =238
+      Y: =128
+      Width: =170
+      Height: =26
+- lLogH2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="WHAT"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =412
+      Y: =128
+      Width: =330
+      Height: =26
+- lLogH3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="ACTION"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =746
+      Y: =128
+      Width: =90
+      Height: =26
+- lLogH4:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="CHANGES (old → new)"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =840
+      Y: =128
+      Width: =560
+      Height: =26
+- lLogH5:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="REASON"
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Visible: =varLogOpen
+      X: =1404
+      Y: =128
+      Width: =400
+      Height: =26
+- lLogGal:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: =Filter(colSLog, (varLogAll || (Area = "Lines" || Area = "Value streams")) && (IsBlank(lLogQ.Text) || lLogQ.Text in Item || lLogQ.Text in ChangedBy || lLogQ.Text in Changes || lLogQ.Text in Reason))
+      TemplateSize: =88
+      TemplatePadding: =0
+      ShowScrollbar: =true
+      TemplateFill: =If(Mod(ThisItem.ID, 2) = 0, RGBA(244, 245, 245, 1), RGBA(255, 255, 255, 1))
+      BorderThickness: =0
+      X: =84
+      Y: =156
+      Width: =1752
+      Height: =840
+      Visible: =varLogOpen
+    Children:
+      - lLgW:
+          Control: Label@2.5.1
+          Properties:
+            Text: =Text(ThisItem.ChangedAt, "m/d/yy h:mm AM/PM")
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            VerticalAlign: =VerticalAlign.Top
+            X: =0
+            Y: =4
+            Width: =150
+            Height: =80
+      - lLgB:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.ChangedBy
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            FontWeight: =FontWeight.Bold
+            VerticalAlign: =VerticalAlign.Top
+            X: =154
+            Y: =4
+            Width: =170
+            Height: =80
+      - lLgI:
+          Control: Label@2.5.1
+          Properties:
+            Text: |-
+              =ThisItem.Area & ": " & ThisItem.Item
+            Font: =Font.Arial
+            Size: =11
+            Color: =RGBA(7, 39, 45, 1)
+            VerticalAlign: =VerticalAlign.Top
+            X: =328
+            Y: =4
+            Width: =330
+            Height: =80
+      - lLgA:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Action
+            Font: =Font.Arial
+            Size: =11
+            Color: =Switch(ThisItem.Action, "Added", RGBA(46, 160, 67, 1), "Retired", RGBA(207, 34, 46, 1), "Restored", RGBA(0, 72, 81, 1), RGBA(7, 39, 45, 1))
+            FontWeight: =FontWeight.Bold
+            VerticalAlign: =VerticalAlign.Top
+            X: =662
+            Y: =4
+            Width: =90
+            Height: =80
+      - lLgC:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Changes
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(7, 39, 45, 1)
+            VerticalAlign: =VerticalAlign.Top
+            Tooltip: =ThisItem.Changes
+            X: =756
+            Y: =4
+            Width: =560
+            Height: =80
+      - lLgR:
+          Control: Label@2.5.1
+          Properties:
+            Text: =ThisItem.Reason
+            Font: =Font.Arial
+            Size: =10
+            Color: =RGBA(117, 120, 123, 1)
+            VerticalAlign: =VerticalAlign.Top
+            Tooltip: =ThisItem.Reason
+            X: =1320
+            Y: =4
+            Width: =400
+            Height: =80
+- lLogE:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="No changes logged yet."
+      Font: =Font.Arial
+      Size: =14
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Center
+      Visible: =varLogOpen && CountRows(Filter(colSLog, (varLogAll || (Area = "Lines" || Area = "Value streams")) && (IsBlank(lLogQ.Text) || lLogQ.Text in Item || lLogQ.Text in ChangedBy || lLogQ.Text in Changes || lLogQ.Text in Reason))) = 0
+      X: =84
+      Y: =200
+      Width: =1752
+      Height: =40

@@ -54,7 +54,7 @@ def check():
     """Every deployed screen and flow must be rebuilt byte-for-byte by the generators."""
     apps = os.path.join(ROOT, "deploy", "apps")
     flows = os.path.join(ROOT, "deploy", "flows", "json")
-    alias = {"Settings_Thresholds_v3.pa.yaml": "Settings_scrCfg_v3.pa.yaml"}   # same screen; scrCfg is its deployed name
+    alias = {"Settings_Thresholds_v4.pa.yaml": "Settings_scrCfg_v4.pa.yaml"}   # same screen; scrCfg is its deployed name
     same = diff = 0; covered = set()
     for f in sorted(os.listdir(OUT)):
         if not f.endswith(".pa.yaml"): continue
