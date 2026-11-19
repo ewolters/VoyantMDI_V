@@ -9,7 +9,7 @@ The repo has one folder per plant, laid out the same way:
 ```
 README.md  START_HERE.md  CLAUDE.md  HANDOFF.md     both plants
 RISK_REGISTER.md                                    what can break, how you'd know, how to fix (both plants)
-.claude/skills/                                     /change-app  /change-flow  /ship-upgrade  /troubleshoot  /new-app
+.claude/skills/                                     /change-app  /change-flow  /change-list  /ship-upgrade  /troubleshoot  /new-app
 newalbany/                    holmdel/
   README.md                     README.md           overview, where to look
   TROUBLESHOOTING.md            TROUBLESHOOTING.md  error -> cause -> fix

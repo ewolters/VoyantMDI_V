@@ -136,3 +136,48 @@ Solutions → MDI → **Environment variables**: there must be one named exactly
 | `check` keeps saying the setup package differs | The new MDI Setup zip isn't in `newalbany/solution/` yet | Step 9 |
 
 See also: `RISK_REGISTER.md` §4–5, `newalbany/TROUBLESHOOTING.md` §2–4.
+
+---
+
+## Part 4. Changing an existing list (add a column, add a choice, index it)
+
+**Read this first.** MDI Dev (`MDI_Sandbox`) and production read the **same SharePoint site** (Ohio). A change to a list is live for production the moment it's made. So:
+- Only **add** things (a column, a choice, an index). Adding is safe: apps and flows ignore columns they don't use.
+- **List first, app second.** The column has to exist before any screen or flow uses it.
+- Never rename, delete or change the type of a column that's in use (see "Don't" below).
+
+Example: add a **SafetyCategory** choice column to **HxH_Hourly**.
+
+### A. Add a column (most common)
+1. **Decide (Kenny + Claude).** Which list, the column name, the type, and whether the app must require it.
+   - Name: letters and digits, no spaces (`SafetyCategory`). Not `Value`, `Text`, `Date`, `Author`, `Title`, `Parent` or other Power Fx words.
+   - Type: Text, Note (multi-line), Number, Date only, Choice, Yes/No.
+   - **Required:** make it required **in the app**, never "Require that this column contains information" in SharePoint. A required SharePoint column makes every save from the current production apps fail until they're upgraded.
+2. **Claude updates the package**, so a rebuilt or new site gets the column too: adds the field to `schema.<List>.fields` in `newalbany/deploy/mdi_package.json` (plus `indexes` if the app will filter on it), rebuilds the Set Up Site flow and the next `MDISetup_UNMANAGED_v*.zip` (Part 2, step 3), runs `check`, pushes.
+3. **Kenny adds the column on the site.** Pick one:
+   - **By hand (recommended for 1–3 columns; touches nothing else):** open the site → **Site contents** → the list (e.g. **HxH_Hourly**) → ⚙ (top right) → **List settings** → under Columns, **Create column** → **Column name**: type it **exactly** as Claude gave it (this sets its permanent internal name) → pick the type (for Choice, type the choices one per line) → leave "Require…" on **No** → **OK**.
+   - **By running the updated MDI - Set Up Site** (adds every missing column at once): import the new MDI Setup zip in MDI Dev and run it as a site owner. It also **resets the default views and permissions on every MDI list**; ask first if anyone has customized those.
+4. **Check:** List settings → the column is listed with the right name and type. Send Claude a screenshot.
+5. **Make it visible to the app (MDI Dev):** open the app in Edit → left bar **Data** → the list → **⋯** → **Refresh**. Until this is done, formulas can't see the new column (red "name isn't valid" errors).
+6. **Use it in the app:** `/change-app` (new version, paste, Publish, test). If a flow must write it: `/change-flow`.
+7. **Ship:** `/ship-upgrade`. Production apps keep working before and after, because the column is only added.
+8. **Claude closes it out:** log entry, `check` all identical, merge to `main` once live.
+
+### B. Add a choice to a Choice column
+- **Dropdowns in the apps mostly come from the Lookups list**, not from Choice columns. For those (downtime, scrap, rework, speed-loss reasons…), there's no list change at all: **MDI Settings → DROPDOWN LISTS → add the row.**
+- For a real Choice column (e.g. Newspaper **Source**): List settings → click the column → add the new choice on its own line → **OK**. Claude adds it to `choiceAdds` in the package so new sites get it.
+
+### C. Index a column (lists past 5,000 rows, or "list view threshold" errors)
+List settings → **Indexed columns** → **Create a new index** → pick the column → **Create**. Claude adds it to `indexes` in the package.
+
+### Don't (on a list that's in use)
+| Don't | Why | Do instead (Claude plans it with you) |
+|---|---|---|
+| Rename a column | Apps use the display name: every formula using it breaks in production at once | Add a new column, switch the app to it in a new version, stop using the old one |
+| Delete a column | Data is gone (recycle bin doesn't keep columns); apps break | Hide it from the view; leave it in the list |
+| Change a column's type | Data can be lost or converted wrongly | New column of the right type, copy the data over, switch the app |
+| Make an existing column required in SharePoint | Saves from apps that don't fill it fail | Require it in the app |
+| Rename a list | Environment variables and Connect Site match lists by name | Don't; ask Claude |
+
+**Bigger changes** (several columns, a type change, data copy): do them on a **scratch site** first (HANDOFF.md §3C), test the apps there, then repeat on Ohio.
+
