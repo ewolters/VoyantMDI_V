@@ -152,31 +152,26 @@
       Y: =6
       Width: =190
       Height: =20
-- ddDate:
-    Control: Classic/DropDown@2.3.1
+- btnDate:
+    Control: Classic/Button@2.2.0
     Properties:
-      Items: |-
-        =ForAll(Sequence(7, 0, -1), With({d: DateAdd(Today(), Value, TimeUnit.Days)}, {Value: Text(d, "ddd m/d"), D: d}))
-      OnChange: =Select(btnRefresh)
+      Text: =Text(Coalesce(varDate, Today()), "ddd m/d") & "  ▾"
+      OnSelect: =Set(varCalM, Date(Year(Coalesce(varDate, Today())), Month(Coalesce(varDate, Today())), 1)); Set(varCal, true)
       Font: =Font.Arial
       Size: =18
-      ChevronBackground: =RGBA(255, 255, 255, 1)
-      ChevronFill: =RGBA(117, 120, 123, 1)
-      ChevronHoverBackground: =RGBA(217, 217, 214, 1)
-      ChevronHoverFill: =RGBA(7, 39, 45, 1)
-      ChevronDisabledBackground: =RGBA(255, 255, 255, 1)
-      ChevronDisabledFill: =RGBA(217, 217, 214, 1)
-      SelectionFill: =RGBA(0, 72, 81, 1)
-      SelectionColor: =RGBA(255, 255, 255, 1)
+      FontWeight: =FontWeight.Normal
+      Fill: =RGBA(255, 255, 255, 1)
+      Color: =RGBA(7, 39, 45, 1)
       HoverFill: =RGBA(176, 227, 228, 1)
-      PressedFill: =RGBA(176, 227, 228, 1)
-      FocusedBorderColor: =RGBA(0, 72, 81, 1)
-      HoverBorderColor: =RGBA(117, 120, 123, 1)
+      BorderColor: =RGBA(177, 179, 179, 1)
+      Align: =Align.Left
+      PaddingLeft: =12
+      BorderThickness: =1
       X: =920
       Y: =28
       Width: =190
       Height: =52
-      Tooltip: ="Date the shift STARTED (night shift keeps its start date after midnight)."
+      Tooltip: ="Date the shift STARTED (night shift keeps its start date after midnight). Tap for a calendar."
 - cShift:
     Control: Label@2.5.1
     Properties:
@@ -220,14 +215,15 @@
       Text: ="REFRESH"
       OnSelect: |-
         =Select(btnFlush);
+        If(IsBlank(varDate), Set(varDate, Today()));
         ClearCollect(colLk, Filter(Lookups, Active = true));
         ClearCollect(colLkDT, {Value: " ", Help: ""}, ForAll(Sort(Filter(colLk, Category.Value = "Downtime"), SortOrder), {Value: Label, Help: Help}));
         ClearCollect(colLkScrap, {Value: "", Help: ""}, ForAll(Sort(Filter(colLk, Category.Value = "Scrap"), SortOrder), {Value: Label, Help: Help}));
         ClearCollect(colLkSpeed, {Value: "", Help: ""}, ForAll(Sort(Filter(colLk, Category.Value = "Speed loss"), SortOrder), {Value: Label, Help: Help}));
         ClearCollect(colLkStaff, {Value: "", Help: ""}, ForAll(Sort(Filter(colLk, Category.Value = "Extra headcount"), SortOrder), {Value: Label, Help: Help}));
-        Set(varShiftKey, ddLine.Selected.Value & "-" & Text(ddDate.Selected.D, "yyyymmdd") & "-S" & ddShift.Selected.Value);
+        Set(varShiftKey, ddLine.Selected.Value & "-" & Text(Coalesce(varDate, Today()), "yyyymmdd") & "-S" & ddShift.Selected.Value);
         Set(varKey, varShiftKey & "-H");
-        ClearCollect(colRunHist, Filter(HxH_Hourly, Line = ddLine.Selected.Value && ShiftDate >= DateAdd(ddDate.Selected.D, -30, TimeUnit.Days) && ShiftDate <= ddDate.Selected.D));
+        ClearCollect(colRunHist, Filter(HxH_Hourly, Line = ddLine.Selected.Value && ShiftDate >= DateAdd(Coalesce(varDate, Today()), -30, TimeUnit.Days) && ShiftDate <= Coalesce(varDate, Today())));
         With({h: Filter(colRunHist, ShiftKey <> varShiftKey && Coalesce(RunRatePct, 0) > 0 && RunRatePct < 3 && Coalesce(HourlyTarget, 0) > 0)}, Set(varRunN, CountRows(h)); Set(varRunMean, Average(h, RunRatePct)); Set(varRunSD, StdevP(h, RunRatePct)));
         Set(varStarCut, If(varRunN >= 20, Max(1.05, varRunMean + 2 * varRunSD), 1.15));
         Set(varShiftRec, LookUp(HxH_Shift, Title = varShiftKey));
@@ -237,8 +233,8 @@
         Set(varTmax, Coalesce(varPB.Rate, 0));
         Set(varStartM, If(IsBlank(varShiftRec.ActualStartTime), If(ddShift.Selected.Value = "1", 360, 990), Hour(TimeValue(varShiftRec.ActualStartTime)) * 60 + Minute(TimeValue(varShiftRec.ActualStartTime))));
         Set(varEndM, If(IsBlank(varShiftRec.ActualEndTime), If(ddShift.Selected.Value = "1", 990, 180), Hour(TimeValue(varShiftRec.ActualEndTime)) * 60 + Minute(TimeValue(varShiftRec.ActualEndTime))));
-        Set(varDurM, With({d0: ddDate.Selected.D}, With({d1: If(varEndM <= varStartM, DateAdd(d0, 1, TimeUnit.Days), d0)}, DateDiff(DateTime(Year(d0), Month(d0), Day(d0), RoundDown(varStartM / 60, 0), Mod(varStartM, 60), 0), DateTime(Year(d1), Month(d1), Day(d1), RoundDown(varEndM / 60, 0), Mod(varEndM, 60), 0), TimeUnit.Minutes))));
-        Set(varStart, DateTime(Year(ddDate.Selected.D), Month(ddDate.Selected.D), Day(ddDate.Selected.D), RoundDown(varStartM / 60, 0), Mod(varStartM, 60), 0));
+        Set(varDurM, With({d0: Coalesce(varDate, Today())}, With({d1: If(varEndM <= varStartM, DateAdd(d0, 1, TimeUnit.Days), d0)}, DateDiff(DateTime(Year(d0), Month(d0), Day(d0), RoundDown(varStartM / 60, 0), Mod(varStartM, 60), 0), DateTime(Year(d1), Month(d1), Day(d1), RoundDown(varEndM / 60, 0), Mod(varEndM, 60), 0), TimeUnit.Minutes))));
+        Set(varStart, DateTime(Year(Coalesce(varDate, Today())), Month(Coalesce(varDate, Today())), Day(Coalesce(varDate, Today())), RoundDown(varStartM / 60, 0), Mod(varStartM, 60), 0));
         ClearCollect(colSaved, Filter(HxH_Hourly, StartsWith(Title, varKey)));
         ClearCollect(colHours,
             ForAll(Sequence(Max(12, RoundUp(varDurM / 60, 0))),
@@ -1826,11 +1822,11 @@
         =If(ddLine.Selected.Value = "— PICK LINE —", Notify("Pick your LINE first (top left). Nothing was saved.", NotificationType.Warning),
         Select(btnFlush);
         If(IsBlank(varPB), Select(btnRefresh));
-        With({r: varRow, k: ddLine.Selected.Value & "-" & Text(ddDate.Selected.D, "yyyymmdd") & "-S" & ddShift.Selected.Value & "-H" & Text(varRow.HourNo, "00")},
+        With({r: varRow, k: ddLine.Selected.Value & "-" & Text(Coalesce(varDate, Today()), "yyyymmdd") & "-S" & ddShift.Selected.Value & "-H" & Text(varRow.HourNo, "00")},
          With({cumT: Sum(Filter(colHours, HourNo <= r.HourNo), Tgt), prev: Coalesce(LookUp(colHours, HourNo = r.HourNo - 1).Cum, 0),
                c1: If(IsBlank(r.Reason), 0, Sum(Filter(colHours, Reason = r.Reason), Coalesce(DT, 0)) + Sum(Filter(colHours, Reason2 = r.Reason), Coalesce(DT2, 0))),
                c2: If(IsBlank(r.Reason2), 0, Sum(Filter(colHours, Reason = r.Reason2), Coalesce(DT, 0)) + Sum(Filter(colHours, Reason2 = r.Reason2), Coalesce(DT2, 0)))},
-          With({rec: {Title: k, Line: ddLine.Selected.Value, ShiftDate: ddDate.Selected.D, Shift: Value(ddShift.Selected.Value),
+          With({rec: {Title: k, Line: ddLine.Selected.Value, ShiftDate: Coalesce(varDate, Today()), Shift: Value(ddShift.Selected.Value),
             HourNo: r.HourNo, HourStart: r.StartT, SlotMin: r.SlotMin,
             ProductForm: If(varProd = "— PICK PRODUCT —", "", varPB.Size & " " & varPB.Form),
             PlaybookKey: If(varProd = "— PICK PRODUCT —", "", ddLine.Selected.Value & "|" & varPB.Size & "|" & varPB.Form),
@@ -1841,7 +1837,7 @@
             SpeedBPM: r.BPM, PlannedMin: r.Planned,
             DT_Minutes: r.DT, DT_Reason: r.Reason, DT2_Minutes: r.DT2, DT2_Reason: r.Reason2,
             SafetyEvent: r.Safety, Notes: r.Notes, EnteredBy: User().Email,
-            ShiftKey: ddLine.Selected.Value & "-" & Text(ddDate.Selected.D, "yyyymmdd") & "-S" & ddShift.Selected.Value,
+            ShiftKey: ddLine.Selected.Value & "-" & Text(Coalesce(varDate, Today()), "yyyymmdd") & "-S" & ddShift.Selected.Value,
             EscReason: If(c2 > c1, r.Reason2, r.Reason), EscCumMin: Max(c1, c2)}},
            IfError(Patch(HxH_Hourly, Coalesce(LookUp(HxH_Hourly, Title = k), Defaults(HxH_Hourly)), rec),
             RemoveIf(colPending, K = k); Collect(colPending, {K: k, HourNo: r.HourNo, Rec: rec, At: Now()});
@@ -1871,7 +1867,7 @@
         =If(ddLine.Selected.Value = "— PICK LINE —", Notify("Pick your LINE first (top left). Nothing was saved.", NotificationType.Warning),
         With({act: Max(colHours, Coalesce(Cum, 0)), tgt: Sum(colHours, Tgt),
               bpm: If(CountRows(Filter(colHours, Coalesce(BPM, 0) > 0)) = 0, Blank(), Average(Filter(colHours, Coalesce(BPM, 0) > 0), BPM)),
-              avail: With({d0: ddDate.Selected.D}, With({d1: If(ddEnd.Selected.M <= ddStart.Selected.M, DateAdd(d0, 1, TimeUnit.Days), d0)}, DateDiff(DateTime(Year(d0), Month(d0), Day(d0), RoundDown(ddStart.Selected.M / 60, 0), Mod(ddStart.Selected.M, 60), 0), DateTime(Year(d1), Month(d1), Day(d1), RoundDown(ddEnd.Selected.M / 60, 0), Mod(ddEnd.Selected.M, 60), 0), TimeUnit.Minutes))) - Coalesce(Value(txtLunch.Text), 0) - Coalesce(Value(txtBreak.Text), 0),
+              avail: With({d0: Coalesce(varDate, Today())}, With({d1: If(ddEnd.Selected.M <= ddStart.Selected.M, DateAdd(d0, 1, TimeUnit.Days), d0)}, DateDiff(DateTime(Year(d0), Month(d0), Day(d0), RoundDown(ddStart.Selected.M / 60, 0), Mod(ddStart.Selected.M, 60), 0), DateTime(Year(d1), Month(d1), Day(d1), RoundDown(ddEnd.Selected.M / 60, 0), Mod(ddEnd.Selected.M, 60), 0), TimeUnit.Minutes))) - Coalesce(Value(txtLunch.Text), 0) - Coalesce(Value(txtBreak.Text), 0),
               scrap: Coalesce(Value(txtScrap.Text), 0),
               rep: Sum(colHours, Coalesce(DT, 0) + Coalesce(DT2, 0))},
          With({up: If(Coalesce(bpm, 0) > 0, act / bpm, Blank())},
@@ -1879,13 +1875,13 @@
                 P: If(varTmax > 0 && Coalesce(bpm, 0) > 0, bpm / varTmax, Blank()),
                 Q: If(act > 0, 1 - scrap / act, Blank())},
            IfError(Patch(HxH_Shift,
-            Coalesce(LookUp(HxH_Shift, Title = ddLine.Selected.Value & "-" & Text(ddDate.Selected.D, "yyyymmdd") & "-S" & ddShift.Selected.Value), Defaults(HxH_Shift)),
-            {Title: ddLine.Selected.Value & "-" & Text(ddDate.Selected.D, "yyyymmdd") & "-S" & ddShift.Selected.Value, Line: ddLine.Selected.Value, ShiftDate: ddDate.Selected.D, Shift: Value(ddShift.Selected.Value),
+            Coalesce(LookUp(HxH_Shift, Title = ddLine.Selected.Value & "-" & Text(Coalesce(varDate, Today()), "yyyymmdd") & "-S" & ddShift.Selected.Value), Defaults(HxH_Shift)),
+            {Title: ddLine.Selected.Value & "-" & Text(Coalesce(varDate, Today()), "yyyymmdd") & "-S" & ddShift.Selected.Value, Line: ddLine.Selected.Value, ShiftDate: Coalesce(varDate, Today()), Shift: Value(ddShift.Selected.Value),
              ProductForm: If(varProd = "— PICK PRODUCT —", "", varProd),
              PlaybookKey: If(varProd = "— PICK PRODUCT —", "", ddLine.Selected.Value & "|" & varPB.Size & "|" & varPB.Form),
              Job1: txtJob1.Text,
              Job2: Coalesce(Last(Filter(colHours, !IsBlank(Job) && Job <> txtJob1.Text)).Job, ""),
-             PlannedShiftHrs: With({d0: ddDate.Selected.D}, With({d1: If(ddEnd.Selected.M <= ddStart.Selected.M, DateAdd(d0, 1, TimeUnit.Days), d0)}, DateDiff(DateTime(Year(d0), Month(d0), Day(d0), RoundDown(ddStart.Selected.M / 60, 0), Mod(ddStart.Selected.M, 60), 0), DateTime(Year(d1), Month(d1), Day(d1), RoundDown(ddEnd.Selected.M / 60, 0), Mod(ddEnd.Selected.M, 60), 0), TimeUnit.Minutes))) / 60,
+             PlannedShiftHrs: With({d0: Coalesce(varDate, Today())}, With({d1: If(ddEnd.Selected.M <= ddStart.Selected.M, DateAdd(d0, 1, TimeUnit.Days), d0)}, DateDiff(DateTime(Year(d0), Month(d0), Day(d0), RoundDown(ddStart.Selected.M / 60, 0), Mod(ddStart.Selected.M, 60), 0), DateTime(Year(d1), Month(d1), Day(d1), RoundDown(ddEnd.Selected.M / 60, 0), Mod(ddEnd.Selected.M, 60), 0), TimeUnit.Minutes))) / 60,
              ActualStartTime: ddStart.Selected.Value, ActualEndTime: ddEnd.Selected.Value,
              LunchMin: Coalesce(Value(txtLunch.Text), 0), BreakMin: Coalesce(Value(txtBreak.Text), 0),
              TargetUnits: tgt, ActualUnits: act, AvgBPM: bpm, TmaxBPM: varTmax,
@@ -1910,3 +1906,278 @@
       Y: =1079
       Width: =1
       Height: =1
+- calShade:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varCal
+      OnSelect: =Set(varCal, false)
+      Fill: =RGBA(0, 0, 0, 0.35)
+      X: =0
+      Y: =0
+      Width: =1920
+      Height: =1080
+- calPanel:
+    Control: Rectangle@2.3.0
+    Properties:
+      Visible: =varCal
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =2
+      Fill: =RGBA(255, 255, 255, 1)
+      X: =880
+      Y: =88
+      Width: =416
+      Height: =520
+- calPrev:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="<"
+      OnSelect: =Set(varCalM, DateAdd(varCalM, -1, TimeUnit.Months))
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varCal
+      X: =892
+      Y: =100
+      Width: =56
+      Height: =44
+- calTitle:
+    Control: Label@2.5.1
+    Properties:
+      Text: =Upper(Text(varCalM, "mmmm yyyy"))
+      Font: =Font.Arial
+      Size: =16
+      Color: =RGBA(7, 39, 45, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Visible: =varCal
+      X: =948
+      Y: =100
+      Width: =280
+      Height: =44
+- calNext:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: =">"
+      OnSelect: =Set(varCalM, DateAdd(varCalM, 1, TimeUnit.Months))
+      Font: =Font.Arial
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(0, 72, 81, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      DisplayMode: =If(varCalM >= Date(Year(Today()), Month(Today()), 1), DisplayMode.Disabled, DisplayMode.Edit)
+      DisabledFill: =RGBA(217, 217, 214, 1)
+      DisabledColor: =RGBA(177, 179, 179, 1)
+      Visible: =varCal
+      X: =1228
+      Y: =100
+      Width: =56
+      Height: =44
+- calWd0:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="S"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Visible: =varCal
+      X: =892
+      Y: =150
+      Width: =56
+      Height: =26
+- calWd1:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="M"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Visible: =varCal
+      X: =948
+      Y: =150
+      Width: =56
+      Height: =26
+- calWd2:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="T"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Visible: =varCal
+      X: =1004
+      Y: =150
+      Width: =56
+      Height: =26
+- calWd3:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="W"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Visible: =varCal
+      X: =1060
+      Y: =150
+      Width: =56
+      Height: =26
+- calWd4:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="T"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Visible: =varCal
+      X: =1116
+      Y: =150
+      Width: =56
+      Height: =26
+- calWd5:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="F"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Visible: =varCal
+      X: =1172
+      Y: =150
+      Width: =56
+      Height: =26
+- calWd6:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="S"
+      Font: =Font.Arial
+      Size: =12
+      Color: =RGBA(117, 120, 123, 1)
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Visible: =varCal
+      X: =1228
+      Y: =150
+      Width: =56
+      Height: =26
+- galCal:
+    Control: Gallery@2.15.0
+    Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+    Properties:
+      Items: |-
+        =ForAll(Sequence(42) As i, {D: DateAdd(varCalM, i.Value - Weekday(varCalM), TimeUnit.Days)})
+      WrapCount: =7
+      TemplateSize: =50
+      TemplatePadding: =0
+      ShowScrollbar: =false
+      BorderThickness: =0
+      TemplateFill: =RGBA(0, 0, 0, 0)
+      X: =892
+      Y: =178
+      Width: =392
+      Height: =300
+      Visible: =varCal
+    Children:
+      - calDay:
+          Control: Classic/Button@2.2.0
+          Properties:
+            Text: =Text(Day(ThisItem.D))
+            OnSelect: =Set(varDate, ThisItem.D); Set(varCal, false); Select(btnRefresh)
+            Font: =Font.Arial
+            Size: =14
+            FontWeight: =FontWeight.Normal
+            Fill: =If(ThisItem.D = Coalesce(varDate, Today()), RGBA(0, 178, 169, 1), ThisItem.D = Today(), RGBA(176, 227, 228, 1), RGBA(244, 244, 242, 1))
+            Color: =If(ThisItem.D = Coalesce(varDate, Today()), RGBA(255, 255, 255, 1), Month(ThisItem.D) = Month(varCalM), RGBA(7, 39, 45, 1), RGBA(205, 205, 205, 1))
+            HoverFill: =RGBA(0, 178, 169, 0.75)
+            BorderColor: =RGBA(255, 255, 255, 1)
+            DisplayMode: =If(ThisItem.D > Today(), DisplayMode.Disabled, DisplayMode.Edit)
+            DisabledFill: =RGBA(244, 244, 242, 1)
+            DisabledColor: =RGBA(205, 205, 205, 1)
+            BorderThickness: =2
+            Tooltip: =Text(ThisItem.D, "dddd m/d/yyyy")
+            X: =0
+            Y: =0
+            Width: =56
+            Height: =50
+- calNote:
+    Control: Label@2.5.1
+    Properties:
+      Text: ="Pick the date the shift STARTED. Night shift keeps its start date after midnight."
+      Font: =Font.Arial
+      Size: =10
+      Color: =RGBA(117, 120, 123, 1)
+      Align: =Align.Center
+      Visible: =varCal
+      X: =892
+      Y: =482
+      Width: =392
+      Height: =40
+- calToday:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="TODAY"
+      OnSelect: =Set(varDate, Today()); Set(varCal, false); Select(btnRefresh)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(244, 244, 242, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      Visible: =varCal
+      X: =892
+      Y: =534
+      Width: =128
+      Height: =44
+- calYest:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="YESTERDAY"
+      OnSelect: =Set(varDate, DateAdd(Today(), -1, TimeUnit.Days)); Set(varCal, false); Select(btnRefresh)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(244, 244, 242, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =RGBA(0, 72, 81, 1)
+      BorderThickness: =1
+      Visible: =varCal
+      X: =1026
+      Y: =534
+      Width: =128
+      Height: =44
+- calCancel:
+    Control: Classic/Button@2.2.0
+    Properties:
+      Text: ="CANCEL"
+      OnSelect: =Set(varCal, false)
+      Font: =Font.Arial
+      Size: =12
+      FontWeight: =FontWeight.Bold
+      Fill: =RGBA(217, 217, 214, 1)
+      Color: =RGBA(7, 39, 45, 1)
+      HoverFill: =ColorFade(Self.Fill, -15%)
+      BorderColor: =Self.Fill
+      Visible: =varCal
+      X: =1160
+      Y: =534
+      Width: =124
+      Height: =44

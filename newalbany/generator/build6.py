@@ -101,9 +101,11 @@ out.append(dd("ddProduct",'Ungroup(Table({t: Table({Value: '+PH+', Size: "", For
    extra={"Fill":F('If(Coalesce(varProd, '+PH+') = '+PH+', RGBA(255, 236, 179, 1), '+WHITE+')'),"BorderColor":F('If(Coalesce(varProd, '+PH+') = '+PH+', '+AMBER+', '+G5+')')}))
 out.append(ti("txtProdFind",'""',830,28,80,52,"Select(btnRefresh)",hint='"find"',size=14,number=False))
 out.append(cap("cDate","DATE",920,6,190,color=G5))
-out.append(dd("ddDate",'ForAll(Sequence(7, 0, -1), With({d: DateAdd(Today(), Value, TimeUnit.Days)}, {Value: Text(d, "ddd m/d"), D: d}))',920,28,190,52,onchange="Select(btnRefresh)",size=18))
+DTE='Coalesce(varDate, Today())'   # the shift date; set by the calendar (DATE button), today until picked
+out.append(btn("btnDate",'Text('+DTE+', "ddd m/d") & "  ▾"','Set(varCalM, Date(Year('+DTE+'), Month('+DTE+'), 1)); Set(varCal, true)',920,28,190,52,fill=WHITE,color=DARK,size=18,
+   extra={"FontWeight":"=FontWeight.Normal","Align":"=Align.Left","PaddingLeft":"=12","BorderColor":F(G5),"BorderThickness":"=1","HoverFill":F(AQUA)}))
 out.append(cap("cShift","SHIFT",1120,6,90,color=G5)); out.append(dd("ddShift",'["1", "2"]',1120,28,90,52,onchange="Select(btnRefresh)",size=20,bold=True))
-LOAD=('Select(btnFlush);\n'
+LOAD=('Select(btnFlush);\nIf(IsBlank(varDate), Set(varDate, Today()));\n'   # pin the date at first load: a night shift past midnight keeps its date
  'ClearCollect(colLk, Filter(Lookups, Active = true));\n'
  'ClearCollect(colLkDT, {Value: " ", Help: ""}, ForAll(Sort(Filter(colLk, Category.Value = "Downtime"), SortOrder), {Value: Label, Help: Help}));\n'
  'ClearCollect(colLkScrap, {Value: "", Help: ""}, ForAll(Sort(Filter(colLk, Category.Value = "Scrap"), SortOrder), {Value: Label, Help: Help}));\n'
@@ -304,5 +306,32 @@ out.append(btn("btnRetry",'"RETRY NOW"','Select(btnFlush)',1196,94,150,40,size=1
 NOSAVE='Notify("Pick your LINE first (top left). Nothing was saved.", NotificationType.Warning)'
 out.append(btn("btnSaveRow",'""','If('+NOLINE+', '+NOSAVE+',\n'+SAVEROW+';\ntrue)',0,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
 out.append(btn("btnSaveShift",'""','If('+NOLINE+', '+NOSAVE+',\n'+SAVESHIFT+';\ntrue)',2,1079,1,1,fill=CLEAR,color=CLEAR,extra=HELP))
+CV={"Visible":"=varCal"}
+def cv(d=None): d=dict(d or {}); d.update(CV); return d
+CX=880; CY=88   # panel under the DATE button
+out.append(rect("calShade","RGBA(0, 0, 0, 0.35)",0,0,1920,1080).replace("Properties:\n","Properties:\n      Visible: =varCal\n      OnSelect: =Set(varCal, false)\n",1))
+out.append(rect("calPanel",WHITE,CX,CY,416,520).replace("Properties:\n","Properties:\n      Visible: =varCal\n      BorderColor: ="+TEAL_D+"\n      BorderThickness: =2\n",1))
+out.append(btn("calPrev",'"<"','Set(varCalM, DateAdd(varCalM, -1, TimeUnit.Months))',CX+12,CY+12,56,44,fill=TEAL_D,color=WHITE,size=18,extra=cv()))
+out.append(label("calTitle",'Upper(Text(varCalM, "mmmm yyyy"))',CX+68,CY+12,280,44,size=16,bold=True,color=DARK,align="Center",extra=cv()))
+out.append(btn("calNext",'">"','Set(varCalM, DateAdd(varCalM, 1, TimeUnit.Months))',CX+348,CY+12,56,44,fill=TEAL_D,color=WHITE,size=18,
+   extra=cv({"DisplayMode":"=If(varCalM >= Date(Year(Today()), Month(Today()), 1), DisplayMode.Disabled, DisplayMode.Edit)","DisabledFill":F(G1),"DisabledColor":F(G5)})))
+for i,w in enumerate("SMTWTFS"):
+    out.append(label(f"calWd{i}",f'"{w}"',CX+12+i*56,CY+62,56,26,size=12,bold=True,color=G9,align="Center",extra=cv()))
+SEL='ThisItem.D = '+DTE
+day=btn("calDay",'Text(Day(ThisItem.D))','Set(varDate, ThisItem.D); Set(varCal, false); Select(btnRefresh)',0,0,56,50,fill=f'If({SEL}, {TEAL}, ThisItem.D = Today(), {AQUA}, RGBA(244, 244, 242, 1))',
+   color=f'If({SEL}, {WHITE}, Month(ThisItem.D) = Month(varCalM), {DARK}, RGBA(205, 205, 205, 1))',size=14,indent=6,
+   extra={"DisplayMode":"=If(ThisItem.D > Today(), DisplayMode.Disabled, DisplayMode.Edit)","DisabledFill":"=RGBA(244, 244, 242, 1)","DisabledColor":"=RGBA(205, 205, 205, 1)",
+          "HoverFill":"=RGBA(0, 178, 169, 0.75)","BorderColor":F(WHITE),"BorderThickness":"=2","FontWeight":"=FontWeight.Normal","Tooltip":'=Text(ThisItem.D, "dddd m/d/yyyy")'})
+out.append(ctrl("galCal","Gallery@2.15.0",{"Items":"=ForAll(Sequence(42) As i, {D: DateAdd(varCalM, i.Value - Weekday(varCalM), TimeUnit.Days)})","WrapCount":"=7","TemplateSize":"=50",
+   "TemplatePadding":"=0","ShowScrollbar":"=false","BorderThickness":"=0","TemplateFill":"=RGBA(0, 0, 0, 0)",**box(CX+12,CY+90,392,300),"Visible":"=varCal"},0,[day],
+   variant="BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0"))
+out.append(label("calNote",'"Pick the date the shift STARTED. Night shift keeps its start date after midnight."',CX+12,CY+394,392,40,size=10,color=G9,align="Center",extra=cv()))
+for i,(nm,tx,d) in enumerate([("calToday","TODAY","Today()"),("calYest","YESTERDAY","DateAdd(Today(), -1, TimeUnit.Days)")]):
+    out.append(btn(nm,f'"{tx}"',f'Set(varDate, {d}); Set(varCal, false); Select(btnRefresh)',CX+12+i*134,CY+446,128,44,fill="RGBA(244, 244, 242, 1)",color=DARK,size=12,
+       extra=cv({"BorderColor":F(TEAL_D),"BorderThickness":"=1"})))
+out.append(btn("calCancel",'"CANCEL"','Set(varCal, false)',CX+280,CY+446,124,44,fill=G1,color=DARK,size=12,extra=cv()))
+# every formula that read the old dropdown now reads the picked date
+out=[s.replace("ddDate.Selected.D", DTE) for s in out]
+assert not any("ddDate" in s for s in out)
 write_themed(__import__("os").environ["MDI_OUTDIR"]+"/HxH_Board_v23.pa.yaml", "".join(out))
 print("ok", sum(len(x) for x in out))

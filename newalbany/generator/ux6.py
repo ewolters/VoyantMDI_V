@@ -72,7 +72,7 @@ E("h09", Text='"● PLAN" & Char(10) & Text(Sum(colHours, Planned)) & "/" & Text
 T={"ddLine":"Production line. Standards load from the PLAYBOOK list.",
  "ddProduct":"Item running now (Size | Form). Long list? Type part of the size or form in FIND to narrow it. Sets standard speed, units/hr and crew from the PLAYBOOK.",
  "txtProdFind":"Type part of the size or form (for example 10 oz or wash) to narrow the product list. Clear it to see all.",
- "ddDate":"Date the shift STARTED (night shift keeps its start date after midnight).",
+ "btnDate":"Date the shift STARTED (night shift keeps its start date after midnight). Tap for a calendar.",
  "ddShift":"1 = first shift, 2 = second shift.",
  "btnRefresh":"Reload this line / date / shift from SharePoint. Display screens: press to pick up the latest entries.",
  "ddStart":"Actual shift start. Changing it rebuilds the hour rows and targets.",
