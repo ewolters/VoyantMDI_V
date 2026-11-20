@@ -51,7 +51,7 @@ Production stays untouched; every change is built and tested in a separate envir
 
 ### Replacing a screen (the paste steps, in plain words)
 Use these every time Claude gives you a new screen file. Example: the Hour x Hour board.
-1. **Copy the new file.** Open the link Claude gives you. Press **Ctrl+A** (selects all the text), then **Ctrl+C** (copies it).
+1. **Copy the new file.** Open the link Claude gives you. GitHub can show an older copy for a few minutes after an update: press **Ctrl+F** and search for the word Claude tells you (something only the new version has); if it isn't found, wait a few minutes and reload. Press **Ctrl+A** (selects all the text), then **Ctrl+C** (copies it).
 2. **Open the app for editing:** make.powerapps.com → top right, check the environment says **MDI_Sandbox** → **Solutions** → **MDI** → **Apps** → click the app → **Edit**.
 3. **Find the screen.** On the left is a panel called **Tree view**, a list of the app's screens (Screen1, scrPeriods, …). Click the **name of the screen** Claude told you (for example **Screen1**).
 4. **Empty the screen.** Click once on the picture of the board in the middle of the window. Press **Ctrl+A**: every box on the board gets a thin outline. Press **Delete**: the board goes blank.

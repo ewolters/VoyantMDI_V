@@ -112,6 +112,17 @@ Nothing at Holmdel lives outside the Excel boards and two small files the sync w
 - **Holmdel:** app-change route via an unmanaged dev import is documented but untested (`holmdel/README.md`). The TV account's password label is on the back of the Holmdel TV.
 - **Ownership:** second flow owners / service account (§6) not yet done.
 
+## 7a. Work in progress (Nov 20, 2026): what's on which branch
+Nothing below is in production yet except where it says so. `main` = what production runs (MDI 1.1.4.2).
+
+| Branch | Contains | State |
+|---|---|---|
+| `hxh/pick-line-first` | **Hour x Hour v26** (pick line first, calendar DATE, notes popup, job exactly 6 digits, DT1 + DT2 + PLAN ≤ the hour, required safety description) · **MDI Settings v4** (rows open for editing; change log with required reason; new list **Settings_Log**) · **MDI Setup 1.0.0.1** (34 lists) · docs: versioning rule, plain-words paste steps, `/change-list` + NEW_APP_GUIDE Part 4, INTEGRATIONS.md | HxH v23 was pasted and working in MDI_Sandbox; v26 not pasted yet. Settings_Log **created on the Ohio site** with MDI - Set Up Site 1.0.0.1 and added to MDI Settings in MDI_Sandbox (environment variable `Settings_Log` exists); Settings v4 screens not pasted yet. |
+| `t3/variance-close-fix` | **Tier 3 Variances v8** (CLOSE works on the first card) | Not tested. During the first paste attempt Screen1 of Tier 3 in MDI_Sandbox lost its controls (errors on btnRefresh/varLoadedAt); fix = re-paste `T3_Board_v9` onto Screen1, then v8 onto scrVariance. Outcome not reported. |
+| `t2/by-form` | **Tier 2 v20 + BY FORM v1** (new screen `scrForm`) | Not pasted. Waiting on Kenny: A) LINE/FORM switch on the floor view, or B) keep the separate screen tied to the daily board. |
+
+**Next release (MDI 1.1.4.3)** once tested in MDI_Sandbox: Hour x Hour v26 + MDI Settings v4 (+ Tier 3 Variances v8). Then merge those branches to `main` (one PR each, or merge `t3/variance-close-fix` into the release branch first). The old branches `test/solution-1.1.4.2` and `fix/escalation-first-level` are merged/obsolete and can be deleted on GitHub (this cloud session can't delete branches).
+
 ## 8. Facts worth keeping
 
 | | |

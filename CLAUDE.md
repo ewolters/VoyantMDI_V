@@ -63,6 +63,7 @@ New Albany details:
 - `newalbany/deploy/apps/*.pa.yaml`: the current screen source for every app (one file per screen; `newalbany/deploy/apps/APP_BUILD_GUIDE.md` says which file goes on which app/screen).
 - `newalbany/deploy/flows/json/`: flow definitions. `newalbany/deploy/tools/`: browser-console scripts. `newalbany/deploy/package/build_package.js`: rewires a managed export to another site (only needed for a new plant).
 - `newalbany/generator/`: Python that **writes** the `.pa.yaml` and flow JSON. **The generators are the source of truth**, not the YAML. `newalbany/generator/make.py` is the entry point; `setup_package.py` rebuilds the MDI Setup zip and `starter_app.py` writes a starter screen for a new list.
+- **Connecting Epicor or other data feeds:** `newalbany/INTEGRATIONS.md` (routes, licenses, limits; nothing built yet).
 - **Change an existing list (add a column, choice or index):** `newalbany/NEW_APP_GUIDE.md` Part 4 and the `/change-list` skill. MDI Dev and production share the Ohio site, so only additive changes go straight to the site.
 - **New list or new app:** `newalbany/NEW_APP_GUIDE.md` (how the install works: package → Set Up Site → environment variables → apps) and the `/new-app` skill.
 
